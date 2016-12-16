@@ -50,3 +50,16 @@ Falls diese Annahmen bei Ihnen nicht zutreffen, sind möglicherweise
 
 Die Liste der Annahmen ist möglicherweise nicht vollständig.
      
+## Screenshots
+
+* Für Studierende hat dieser Block keine Funktion. Er wird nicht angezeigt, auch wenn er zum Kurs hinzugefügt ist.
+
+* Für Lehrende hat der Block im Kurs zwei Ansichten:
+
+Initial wird nur ein Button angezeigt. Erst nach Klick wird Kontakt zum EvaSys-Webserver aufgenommen. Dabei wird zunächst nur abgefragt, ob Befragungen anstehen.  
+![Screenshot: Initiale Ansicht](https://cloud.githubusercontent.com/assets/432117/21270915/ef71e874-c3b8-11e6-922e-e071767a9b02.png)
+
+Nach Klick auf obigen Button wird eine Übersicht über Befragungen angezeigt, die zum aktuellen Kurs in EvaSys hinterlegt sind:  
+![Screenshot: Keine Evaluationen](https://cloud.githubusercontent.com/assets/432117/21270916/ef7220f0-c3b8-11e6-8c8c-9d7211d7385d.png)
+
+In diesem Fall sind keine Befragungen vorbereitet. Falls Befragungen da sind, wird zusätzlich ein Button angezeigt, der zur Übertragung der Teilnehmerliste dient.
