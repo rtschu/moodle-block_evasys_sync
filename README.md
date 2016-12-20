@@ -62,4 +62,5 @@ Initial wird nur ein Button angezeigt. Erst nach Klick wird Kontakt zum EvaSys-W
 Nach Klick auf obigen Button wird eine Übersicht über Befragungen angezeigt, die zum aktuellen Kurs in EvaSys hinterlegt sind:  
 ![Screenshot: Keine Evaluationen](https://cloud.githubusercontent.com/assets/432117/21270916/ef7220f0-c3b8-11e6-8c8c-9d7211d7385d.png)
 
-In diesem Fall sind keine Befragungen vorbereitet. Falls Befragungen da sind, wird zusätzlich ein Button angezeigt, der zur Übertragung der Teilnehmerliste dient.
+In diesem Fall sind keine Befragungen vorbereitet. Falls Befragungen vorhanden sind, wird zusätzlich ein Button angezeigt, der zur Übertragung der Teilnehmerliste dient:  
+![Screenshot: Mit Evaluationen](https://cloud.githubusercontent.com/assets/432117/21343860/1d4ce964-c699-11e6-8cd9-2b20f3155153.png)
