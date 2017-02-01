@@ -45,7 +45,7 @@ Falls diese Annahmen bei Ihnen nicht zutreffen, sind möglicherweise
 - [x] Moodle und EvaSys sind (zumindest oberflächlich) mit LSF integriert: 
     * Zur Synchronisation muss das courseid-Feld des Moodle-Kurses die sog. "publishid" des LSF enthalten.
     * EvaSys-Umfragen sind nach dem Schema "[Veranstaltungsnummer] [Semester]" nach der Nomenklatur des LSF benannt. *publishid ist **ungleich** mit Veranstaltungsnummer!*
-    * Moodle hat jederzeit Zugriff auf einen LSF-View, um ad hoc die Zuordnung *publishid --> Veranstaltungsnummer* vornehmen zu können. Daher nutzt dieses Plugin [local_lsf_unification](https://github.com/learnweb/his_unification).
+    * Moodle hat jederzeit Zugriff auf einen LSF-View, um ad hoc die Zuordnung *publishid --> Veranstaltungsnummer* vornehmen zu können. Dazu nutzt dieses Plugin [local_lsf_unification](https://github.com/learnweb/his_unification).
 - [x] Der Moodle-Webserver kann den EvaSys-Webserver erreichen.
 
 Die Liste der Annahmen ist möglicherweise nicht vollständig.
