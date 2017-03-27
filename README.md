@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/learnweb/moodle-block_evasys_sync.svg?branch=master)]
-(https://travis-ci.org/learnweb/moodle-block_evasys_sync)
-
 # moodle-block_evasys_sync *(release_candidate)* 
+[![Build Status](https://travis-ci.org/learnweb/moodle-block_evasys_sync.svg?branch=master)](https://travis-ci.org/learnweb/moodle-block_evasys_sync)
+[![codecov](https://codecov.io/gh/learnweb/moodle-block_evasys_sync/branch/master/graph/badge.svg)](https://codecov.io/gh/learnweb/moodle-block_evasys_sync)
+
 :100: Anonyme Lehrevaluation mit EvaSys und Moodle
 
 Entwickelt von: Max Inden, Dennis Grzyb, [Nina Herrmann](https://github.com/NinaHerrmann), [Tobias Reischmann](https://github.com/tobiasreischmann) und [Jan Dageförde](https://github.com/Dagefoerde) (WWU Münster).
