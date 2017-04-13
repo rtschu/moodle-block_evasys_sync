@@ -180,7 +180,7 @@ class evasys_synchronizer {
     }
     /**
      * Sends an e-mail with the request to start a Evaluation for a course
-     * @throws Exception when e-mail request fails
+     * @throws \Exception when e-mail request fails
      */
     public function notify_evaluation_responsible_person() {
         global $USER;
@@ -213,7 +213,7 @@ class evasys_synchronizer {
 
         $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext);
         if (!$mailresult) {
-            return new \Exception('Could not send e-mail to person responsible for evaluation');
+            throw new \Exception('Could not send e-mail to person responsible for evaluation');
         }
 
     }
