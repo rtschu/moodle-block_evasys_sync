@@ -42,9 +42,21 @@ if ($ADMIN->fulltree) {
     $description = get_string('settings_wsdl_urldesc', 'block_evasys_sync');
     $settings->add(new admin_setting_configtext($name, $title, $description, ''));
 
-    // Learnweb user for notifications.
-    $name = 'block_evasys_sync/evasys_moodleuser';
+    // Default Learnweb user for notifications.
+    $name = 'block_evasys_sync/default_evasys_moodleuser';
     $title = get_string('settings_moodleuser', 'block_evasys_sync');
     $description = get_string('settings_moodleuserdesc', 'block_evasys_sync');
     $settings->add(new admin_setting_configtext($name, $title, $description, 25989, PARAM_INT));
+
+    // Special Learnweb user for notifications for course categories.
+    $name = 'block_evasys_sync/evasys_moodleuser_select';
+    $title = get_string('settings_moodleuser_select', 'block_evasys_sync');
+    $description = get_string('settings_moodleuser_selectdesc', 'block_evasys_sync');
+    $records = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
+    $choices = array();
+    foreach($records as $value) {
+        $choices[$value->id] = $value->name;
+    }
+    $settings->add(new admin_setting_configselect($name, $title, $description, 0, $choices));
+
 }

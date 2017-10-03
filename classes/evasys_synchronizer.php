@@ -186,7 +186,7 @@ class evasys_synchronizer {
         global $USER;
         $course = get_course($this->courseid);
 
-        $userto = \core_user::get_user(get_config('block_evasys_sync', 'evasys_moodleuser'));
+        $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
         if (!$userto) {
             throw new \Exception('Could not find the specified user to send an email to.');
         }
