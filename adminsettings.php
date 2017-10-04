@@ -34,12 +34,35 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     // Form is submitted.
     if ($data = $mform->get_data()) {
+        var_dump($data);
+        if(isset($data->evasys_wsdl_url)) {
+            set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
+        }
+        if(isset($data->evasys_soap_url)) {
+            set_config('evasys_soap_url', $data->evasys_soap_url, 'block_evasys_sync');
+        }
+        if(isset($data->evasys_username)) {
+            set_config('evasys_username', $data->evasys_username, 'block_evasys_sync');
+        }
+        if(isset($data->evasys_password)) {
+            set_config('evasys_password', $data->evasys_password, 'block_evasys_sync');
+        }
+        if(isset($data->default_evasys_moodleuser)) {
+            set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
+        }
 
-
-    }
+        $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
+        foreach ($categories as $category) {
+            $name = 'category_'.$category->id;
+            // TODO noch sprachenspezifisch ändern
+            if($data->$name != 'Default') {
+                // or insert!!
+                $DB->execute('UPDATE {evasys_sync_categories} SET userid='.$data->$name.'WHERE course_category='.$category->id);
+            }
+        }
+        }
 
     $mform->display();
-
 
     echo $OUTPUT->footer();
 }

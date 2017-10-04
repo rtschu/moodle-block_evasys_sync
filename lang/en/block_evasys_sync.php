@@ -52,3 +52,11 @@ $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
 $string['settings_moodleuserdesc'] = 'The ID of the moodle user who will receive email notifications after (successful) synchronisation by default.';
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_moodleuser_selectdesc'] = 'Choose the course category for which you want to add custom moodle user who will receive email nofications.';
+$string['submit'] = 'Save changes';
+
+// Settings - category table
+$string['category_name'] = 'Course Category';
+$string['responsible_user'] = 'Moodle user';
+$string['action'] = 'Action';
+$string['modify'] = 'Modify';
+$string['tablecaption'] = 'Custom mail recipients after sync';
