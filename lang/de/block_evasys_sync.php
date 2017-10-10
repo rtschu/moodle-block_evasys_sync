@@ -52,3 +52,10 @@ $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfä
 $string['settings_moodleuserdesc'] = 'Die ID des Moodle-Benutzers, an welchen standardmäßig nach erfolgter Synchronisation informative Mails versendet werden.';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_moodleuser_selectdesc'] = 'Wähle die Kurskategorie, für die ein benutzerdefinierter Moodle-Benutzer gewählt werden soll, an welchen nach erfolgter Synchronisation informative Mails versendet werden.';
+$string['submit'] = 'Speichern';
+
+// Settings - category table
+$string['category_name'] = 'Kurskategorie';
+$string['responsible_user'] = 'Moodle-Benutzer';
+$string['tablecaption'] = 'Custom mail recipients after sync';
+$string['default'] = 'Standard';

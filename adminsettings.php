@@ -34,33 +34,46 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     // Form is submitted.
     if ($data = $mform->get_data()) {
-        var_dump($data);
-        if(isset($data->evasys_wsdl_url)) {
+        if (isset($data->evasys_wsdl_url)) {
             set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
         }
-        if(isset($data->evasys_soap_url)) {
+        if (isset($data->evasys_soap_url)) {
             set_config('evasys_soap_url', $data->evasys_soap_url, 'block_evasys_sync');
         }
-        if(isset($data->evasys_username)) {
+        if (isset($data->evasys_username)) {
             set_config('evasys_username', $data->evasys_username, 'block_evasys_sync');
         }
-        if(isset($data->evasys_password)) {
+        if (isset($data->evasys_password)) {
             set_config('evasys_password', $data->evasys_password, 'block_evasys_sync');
         }
-        if(isset($data->default_evasys_moodleuser)) {
+        if (isset($data->default_evasys_moodleuser)) {
             set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
         }
 
         $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
         foreach ($categories as $category) {
-            $name = 'category_'.$category->id;
-            // TODO noch sprachenspezifisch ändern
-            if($data->$name != 'Default') {
-                // or insert!!
-                $DB->execute('UPDATE {evasys_sync_categories} SET userid='.$data->$name.'WHERE course_category='.$category->id);
+            $newvalue = 'category_' . $category->id;
+            $oldvalue = $DB->get_record('evasys_sync_categories', array('course_category' => $category->id));
+
+            if ($data->$newvalue === get_string('default', 'block_evasys_sync')) {
+                // Reset to default user.
+                if ($oldvalue) {
+                    $DB->delete_records('evasys_sync_categories', array('course_category' => $category->id));
+                }
+            } else {
+                if (!$oldvalue) {
+                    // Insert new record.
+                    $record = new stdClass();
+                    $record->course_category = $category->id;
+                    $record->userid = $data->$newvalue;
+                    $DB->insert_record('evasys_sync_categories', $record, false);
+                } else if ($data->$newvalue != $oldvalue->userid) {
+                    // Update record.
+                    $DB->execute('UPDATE {evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
+                }
             }
         }
-        }
+    }
 
     $mform->display();
 

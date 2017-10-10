@@ -57,6 +57,5 @@ $string['submit'] = 'Save changes';
 // Settings - category table
 $string['category_name'] = 'Course Category';
 $string['responsible_user'] = 'Moodle user';
-$string['action'] = 'Action';
-$string['modify'] = 'Modify';
 $string['tablecaption'] = 'Custom mail recipients after sync';
+$string['default'] = 'Default';

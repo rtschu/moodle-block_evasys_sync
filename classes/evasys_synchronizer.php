@@ -183,10 +183,17 @@ class evasys_synchronizer {
      * @throws \Exception when e-mail request fails
      */
     public function notify_evaluation_responsible_person() {
-        global $USER;
+        global $USER, $DB;
         $course = get_course($this->courseid);
 
-        $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
+        $user = $DB->get_record('evasys_sync_categories', array('course_category' => $course->category));
+        if(!$user) {
+            $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
+        }
+        else {
+            $userto = \core_user::get_user($user->userid);
+        }
+
         if (!$userto) {
             throw new \Exception('Could not find the specified user to send an email to.');
         }

@@ -5,3 +5,11 @@
     margin-bottom: 0;
     margin-left: 0;
 }
+
+#course_category_table .fitemtitle {
+    width: 0;
+}
+
+#course_category_table .felement {
+    margin-left: 0;
+}

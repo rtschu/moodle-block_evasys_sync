@@ -74,12 +74,15 @@ class admin_form extends moodleform {
         $mform->addElement('html', $this->tablehead());
         $this->table_body();
 
-        $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_qrcode'));
+        $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_evasys_sync'));
     }
 
 
+    /**
+     * Prints the table head (e.g. column names).
+     * @return string
+     */
     public function tablehead() {
-        // explicitly assigned properties override those defined via $table->attributes
         $attributes['class'] = 'generaltable';
         $attributes['id'] = 'course_category_table';
         $output = html_writer::start_tag('table', $attributes);
@@ -100,14 +103,11 @@ class admin_form extends moodleform {
         $output .= html_writer::end_tag('tr');
         $output .= html_writer::end_tag('thead');
 
-        $output .= html_writer::start_tag('tbody');
-        $output .= html_writer::tag('tr', '');
-        $output .= html_writer::end_tag('tbody');
-
         return $output;
     }
 
     /**
+     * Prints course categories and assigned moodle users.
      * @return string
      */
     private function table_body() {
@@ -119,7 +119,7 @@ class admin_form extends moodleform {
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>'.$category->name.'</div></td>');
             $mform->addElement('html', '<td class="cell c1 lastcol">');
-            $mform->addElement('text', 'category_' . $category->id, '');
+            $mform->addElement('text', 'category_' . $category->id, null);
             $mform->setType('category_' . $category->id, PARAM_TEXT);
             $mform->setDefault('category_' . $category->id, $this->getUser($category->id));
             $mform->addElement('html', '</td></tr>');
@@ -128,43 +128,10 @@ class admin_form extends moodleform {
         $mform->addElement('html', '</table>');
     }
 
-
     /**
-     * @return string
+     * Returns all course categories.
+     * @return array
      */
-    private function category_table() {
-        global $DB;
-        $table = new \html_table();
-        $table->id = 'course_category_table';
-        $table->head = array(
-            get_string('category_name', 'block_evasys_sync'),
-            get_string('responsible_user', 'block_evasys_sync'),
-        );
-        $table->headspan = array(1, 1);
-
-
-        $categories = $this->getCategories();
-        foreach ($categories as $category) {
-            $row = new \html_table_row();
-
-            $categoryname = html_writer::tag('div', $category->name);
-            $attributes = array('type' => 'hidden', 'name' => 'categoryid', 'value' => $category->id);
-            $categoryname .= html_writer::empty_tag('input', $attributes) . "\n";
-            $categoryname = new html_table_cell($categoryname);
-
-
-            $moodleuser = html_writer::empty_tag('input', array('type' => 'text',
-                'id' => 'moodleuser', 'name' => 'moodleuser', 'value' => $this->getUser($category->id)));
-            $moodleuser = new html_table_cell($moodleuser);
-
-            $row->cells = array(
-                $categoryname, $moodleuser
-            );
-            $table->data[] = $row;
-        }
-        return html_writer::table($table);
-    }
-
     private function getCategories() {
         global $DB;
         $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
@@ -172,7 +139,8 @@ class admin_form extends moodleform {
     }
 
     /**
-     * @param $id
+     * Returns assigned moodle user.
+     * @param $id course category
      * @return string
      */
     private function getUser($id) {
@@ -181,7 +149,7 @@ class admin_form extends moodleform {
         if ($user !== false) {
             return $user->userid;
         } else {
-            return 'Default';
+            return get_string('default', 'block_evasys_sync');
         }
     }
 }
