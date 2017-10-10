@@ -53,12 +53,12 @@ if (has_capability('moodle/site:config', context_system::instance())) {
         $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
         foreach ($categories as $category) {
             $newvalue = 'category_' . $category->id;
-            $oldvalue = $DB->get_record('evasys_sync_categories', array('course_category' => $category->id));
+            $oldvalue = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category->id));
 
             if ($data->$newvalue === get_string('default', 'block_evasys_sync')) {
                 // Reset to default user.
                 if ($oldvalue) {
-                    $DB->delete_records('evasys_sync_categories', array('course_category' => $category->id));
+                    $DB->delete_records('block_evasys_sync_categories', array('course_category' => $category->id));
                 }
             } else {
                 if (!$oldvalue) {
@@ -66,10 +66,10 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     $record = new stdClass();
                     $record->course_category = $category->id;
                     $record->userid = $data->$newvalue;
-                    $DB->insert_record('evasys_sync_categories', $record, false);
+                    $DB->insert_record('block_evasys_sync_categories', $record, false);
                 } else if ($data->$newvalue != $oldvalue->userid) {
                     // Update record.
-                    $DB->execute('UPDATE {evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
+                    $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
                 }
             }
         }

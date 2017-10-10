@@ -4,7 +4,7 @@
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="evasys_sync_categories" COMMENT="Responsible moodle users for course categories">
+        <TABLE NAME="block_evasys_sync_categories" COMMENT="Responsible moodle users for course categories">
             <FIELDS>
                 <FIELD NAME="course_category" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

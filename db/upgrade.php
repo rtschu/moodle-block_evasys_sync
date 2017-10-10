@@ -42,7 +42,7 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
     if ($oldversion < 2017100401) {
 
         // Define table evasys_sync_categories to be created.
-        $table = new xmldb_table('evasys_sync_categories');
+        $table = new xmldb_table('block_evasys_sync_categories');
 
         // Adding fields to table evasys_sync_categories.
         $table->add_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);

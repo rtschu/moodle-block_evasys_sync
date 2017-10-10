@@ -60,7 +60,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         $record = new stdClass();
         $record->course_category = $categoryone->id;
         $record->userid = $userone->id;
-        $DB->insert_record('evasys_sync_categories', $record, false);
+        $DB->insert_record('block_evasys_sync_categories', $record, false);
         $userto2 = $this->notify_evaluation_responsible_person();
         self::assertEquals($userto2, $userone);
         self::assertNotEquals($userto, $userto2);
@@ -76,7 +76,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         global $USER, $DB;
         $course = get_course($this->courseid);
 
-        $user = $DB->get_record('evasys_sync_categories', array('course_category' => $course->category));
+        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
         if (!$user) {
             $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
         } else {

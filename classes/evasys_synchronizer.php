@@ -190,7 +190,7 @@ class evasys_synchronizer {
         global $USER, $DB;
         $course = get_course($this->courseid);
 
-        $user = $DB->get_record('evasys_sync_categories', array('course_category' => $course->category));
+        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
         if (!$user) {
             $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
         } else {

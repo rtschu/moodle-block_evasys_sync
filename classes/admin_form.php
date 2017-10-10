@@ -33,7 +33,6 @@ require_once($CFG->libdir . '/formslib.php');
 
 class admin_form extends moodleform {
     protected function definition() {
-        global $DB;
         $mform = $this->_form;
 
         // Username.
@@ -144,7 +143,7 @@ class admin_form extends moodleform {
      */
     private function getuser($id) {
         global $DB;
-        $user = $DB->get_record('evasys_sync_categories', array('course_category' => $id));
+        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $id));
         if ($user !== false) {
             return $user->userid;
         } else {

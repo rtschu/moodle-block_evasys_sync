@@ -66,7 +66,7 @@ class block_evasys_sync_renderer extends plugin_renderer_base {
      */
     private function getuser($id) {
         global $DB;
-        $user = $DB->get_record('evasys_sync_categories', array('course_category' => $id));
+        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $id));
         if ($user !== false) {
             return $user->userid;
         } else {
