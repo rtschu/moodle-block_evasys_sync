@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the moodleoverflow module
+ * This file keeps track of upgrades to the evasys_sync block
  *
  * Sometimes, changes between versions involve alterations to database
  * structures and other major things that may break installations. The upgrade
@@ -37,5 +37,28 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_block_evasys_sync_upgrade($oldversion) {
+    global $DB;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2017100401) {
+
+        // Define table evasys_sync_categories to be created.
+        $table = new xmldb_table('evasys_sync_categories');
+
+        // Adding fields to table evasys_sync_categories.
+        $table->add_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table evasys_sync_categories.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('course_category'));
+        $table->add_key('course_category', XMLDB_KEY_FOREIGN, array('course_category'), 'course_categories', array('id'));
+
+        // Conditionally launch create table for evasys_sync_categories.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, XXXXXXXXXX, 'evasys_sync');
+    }
     return true;
 }
