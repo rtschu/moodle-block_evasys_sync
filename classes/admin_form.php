@@ -99,7 +99,6 @@ class admin_form extends moodleform {
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('responsible_user', 'block_evasys_sync'), $attributes);
 
-
         $output .= html_writer::end_tag('tr');
         $output .= html_writer::end_tag('thead');
 
@@ -114,14 +113,14 @@ class admin_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('html', '<tbody>');
-        $categories = $this->getCategories();
+        $categories = $this->getcategories();
         foreach ($categories as $category) {
             $mform->addElement('html', '<tr>');
-            $mform->addElement('html', '<td class="cell c0"><div>'.$category->name.'</div></td>');
+            $mform->addElement('html', '<td class="cell c0"><div>' . $category->name . '</div></td>');
             $mform->addElement('html', '<td class="cell c1 lastcol">');
             $mform->addElement('text', 'category_' . $category->id, null);
             $mform->setType('category_' . $category->id, PARAM_TEXT);
-            $mform->setDefault('category_' . $category->id, $this->getUser($category->id));
+            $mform->setDefault('category_' . $category->id, $this->getuser($category->id));
             $mform->addElement('html', '</td></tr>');
         }
         $mform->addElement('html', '</tbody>');
@@ -132,7 +131,7 @@ class admin_form extends moodleform {
      * Returns all course categories.
      * @return array
      */
-    private function getCategories() {
+    private function getcategories() {
         global $DB;
         $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
         return $categories;
@@ -143,7 +142,7 @@ class admin_form extends moodleform {
      * @param $id course category
      * @return string
      */
-    private function getUser($id) {
+    private function getuser($id) {
         global $DB;
         $user = $DB->get_record('evasys_sync_categories', array('course_category' => $id));
         if ($user !== false) {

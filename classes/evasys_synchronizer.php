@@ -18,7 +18,7 @@ namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot."/local/lsf_unification/lib_his.php");
+require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
 
 class evasys_synchronizer {
     private $courseid;
@@ -43,7 +43,7 @@ class evasys_synchronizer {
 
         // Fetch veranstnr from LSF view.
         establish_secondary_DB_connection();
-        $lsfentry = get_course_by_veranstid( intval($course->idnumber) );
+        $lsfentry = get_course_by_veranstid(intval($course->idnumber));
         close_secondary_DB_connection();
 
         $this->evasyscourseid = trim($lsfentry->veranstnr) . ' ' . trim($lsfentry->semestertxt);
@@ -73,6 +73,7 @@ class evasys_synchronizer {
         }
         return $soapresult;
     }
+
     /**
      * Builds array with all surveys and additional information to surveys
      * @return array of surveys with additional information
@@ -138,6 +139,7 @@ class evasys_synchronizer {
 
         return count($this->courseinformation->m_aoParticipants->Persons);
     }
+
     /**
      * Gets all email addresses of enrolled students
      * @return array of e-mail addresses of all enrolled students
@@ -153,6 +155,7 @@ class evasys_synchronizer {
 
         return $emailadresses;
     }
+
     /**
      * Updates the students who can participate in the survey
      */
@@ -171,13 +174,14 @@ class evasys_synchronizer {
             $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
             array_push($students, $student);
         }
-        $personlist = new \SoapVar( $students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
+        $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
         $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourseid, 'PUBLIC', false);
         if (is_soap_fault($soapresult)) {
             throw new \Exception('Sending list of participants to evasys server failed.');
         }
         return $soapresult;
     }
+
     /**
      * Sends an e-mail with the request to start a Evaluation for a course
      * @throws \Exception when e-mail request fails
@@ -187,10 +191,9 @@ class evasys_synchronizer {
         $course = get_course($this->courseid);
 
         $user = $DB->get_record('evasys_sync_categories', array('course_category' => $course->category));
-        if(!$user) {
+        if (!$user) {
             $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
-        }
-        else {
+        } else {
             $userto = \core_user::get_user($user->userid);
         }
 
