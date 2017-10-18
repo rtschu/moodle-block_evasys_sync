@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+defined('MOODLE_INTERNAL') || die;
 /**
  * Block evasys_sync renderer.
  * @package   block_evasys_sync
@@ -25,7 +25,6 @@ class block_evasys_sync_renderer extends plugin_renderer_base {
      * @return string
      */
     private function category_table() {
-        global $DB;
         $table = new \html_table();
         $table->id = 'course_category_table';
         $table->head = array(

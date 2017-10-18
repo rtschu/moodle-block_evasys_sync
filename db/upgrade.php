@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_block_evasys_sync_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-    if ($oldversion < 2017100401) {
+    if ($oldversion < 2017100404) {
 
         // Define table evasys_sync_categories to be created.
         $table = new xmldb_table('block_evasys_sync_categories');
@@ -58,7 +58,7 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         }
 
         // Evasys_sync savepoint reached.
-        upgrade_block_savepoint(true, XXXXXXXXXX, 'evasys_sync');
+        upgrade_block_savepoint(true, 2017100404, 'evasys_sync');
     }
     return true;
 }

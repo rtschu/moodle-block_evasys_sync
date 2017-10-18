@@ -36,13 +36,13 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
      * @runInSeparateProcess
      */
     public function test_create_image() {
-        global $CFG, $DB;
+        global $DB;
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
-        $categoryone = $this->getDataGenerator()->create_category();
-        $categorytwo = $this->getDataGenerator()->create_category();
-        $defaultuser = $this->getDataGenerator()->create_user();
+        $categoryone = $generator->create_category();
+        $categorytwo = $generator->create_category();
+        $defaultuser = $generator->create_user();
         $userone = $this->getDataGenerator()->create_user();
         set_config('default_evasys_moodleuser', $defaultuser->id, 'block_evasys_sync');
 
@@ -73,7 +73,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
      * @throws \Exception when e-mail request fails
      */
     private function notify_evaluation_responsible_person() {
-        global $USER, $DB;
+        global $DB;
         $course = get_course($this->courseid);
 
         $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));

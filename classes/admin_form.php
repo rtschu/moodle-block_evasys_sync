@@ -56,7 +56,7 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_TEXT);
 
         // WSDL URL.
-        $name = 'vasys_wsdl_url';
+        $name = 'evasys_wsdl_url';
         $title = get_string('settings_wsdl_url', 'block_evasys_sync');
         $description = get_string('settings_wsdl_urldesc', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
@@ -69,6 +69,11 @@ class admin_form extends moodleform {
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
+
+        // Course category select
+        $name = 'evasys_course_category_select';
+        $title = get_string('settings_cc_select', 'block_evasys_sync');
+        // TODO
 
         $mform->addElement('html', $this->tablehead());
         $this->table_body();
