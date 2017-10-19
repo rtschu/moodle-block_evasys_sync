@@ -53,7 +53,9 @@ $string['settings_moodleuserdesc'] = 'The ID of the moodle user who will receive
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_moodleuser_selectdesc'] = 'Choose the course category for which you want to add custom moodle user who will receive email nofications.';
 $string['settings_cc_select'] = 'Select course category';
+$string['settings_cc_user'] = 'Recipient (moodle user) for selected course category';
 $string['submit'] = 'Save changes';
+$string['addcat'] = 'Add Category';
 
 // Settings - category table
 $string['category_name'] = 'Course Category';

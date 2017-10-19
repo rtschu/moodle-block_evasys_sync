@@ -71,10 +71,19 @@ class admin_form extends moodleform {
         $mform->setDefault($name, 25989);
 
         // Course category select
-        $name = 'evasys_course_category_select';
+        $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
-        // TODO
+        $mform->addElement('select', $name, $title, make_categories_options());
 
+        $name = 'evasys_cc_user';
+        $title = get_string('settings_cc_user', 'block_evasys_sync');
+        $mform->addElement('text', $name, $title);
+        $mform->setType($name, PARAM_INT);
+
+        // Add Button
+        $mform->addElement('submit', 'addcatbutton', get_string('addcat', 'block_evasys_sync'));
+
+        // Add Table
         $mform->addElement('html', $this->tablehead());
         $this->table_body();
 
@@ -119,12 +128,13 @@ class admin_form extends moodleform {
         $mform->addElement('html', '<tbody>');
         $categories = $this->getcategories();
         foreach ($categories as $category) {
+            // TODO name der course categories
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' . $category->name . '</div></td>');
             $mform->addElement('html', '<td class="cell c1 lastcol">');
-            $mform->addElement('text', 'category_' . $category->id, null);
-            $mform->setType('category_' . $category->id, PARAM_TEXT);
-            $mform->setDefault('category_' . $category->id, $this->getuser($category->id));
+            $mform->addElement('text', 'category_' . $category->course_category, null);
+            $mform->setType('category_' . $category->course_category, PARAM_TEXT);
+            $mform->setDefault('category_' . $category->course_category, $category->userid);
             $mform->addElement('html', '</td></tr>');
         }
         $mform->addElement('html', '</tbody>');
@@ -132,27 +142,12 @@ class admin_form extends moodleform {
     }
 
     /**
-     * Returns all course categories.
+     * Returns all course categories to which a custom user is assigned.
      * @return array
      */
     private function getcategories() {
         global $DB;
-        $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
+        $categories = $DB->get_records_sql('SELECT course_category, userid FROM {block_evasys_sync_categories}');
         return $categories;
-    }
-
-    /**
-     * Returns assigned moodle user.
-     * @param $id course category
-     * @return string
-     */
-    private function getuser($id) {
-        global $DB;
-        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $id));
-        if ($user !== false) {
-            return $user->userid;
-        } else {
-            return get_string('default', 'block_evasys_sync');
-        }
     }
 }

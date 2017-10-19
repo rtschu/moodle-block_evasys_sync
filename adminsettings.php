@@ -23,6 +23,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot.'/course/lib.php');
 require_login();
 
 if (has_capability('moodle/site:config', context_system::instance())) {
@@ -34,42 +35,59 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     // Form is submitted.
     if ($data = $mform->get_data()) {
-        if (isset($data->evasys_wsdl_url)) {
-            set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
-        }
-        if (isset($data->evasys_soap_url)) {
-            set_config('evasys_soap_url', $data->evasys_soap_url, 'block_evasys_sync');
-        }
-        if (isset($data->evasys_username)) {
-            set_config('evasys_username', $data->evasys_username, 'block_evasys_sync');
-        }
-        if (isset($data->evasys_password)) {
-            set_config('evasys_password', $data->evasys_password, 'block_evasys_sync');
-        }
-        if (isset($data->default_evasys_moodleuser)) {
-            set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
+        // Added course category
+        if(isset($data->addcatbutton)) {
+            $category = $data->evasys_cc_select;
+            $user = $data->evasys_cc_user;
+
+            // Was wenn bereits eingefügt?
+            // Insert new record.
+            $record = new stdClass();
+            $record->course_category = $category;
+            $record->userid = $user;
+            $DB->insert_record('block_evasys_sync_categories', $record, false);
         }
 
-        $categories = $DB->get_records_sql('SELECT id, name FROM {course_categories}');
-        foreach ($categories as $category) {
-            $newvalue = 'category_' . $category->id;
-            $oldvalue = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category->id));
+        // Form is submitted
+        if(isset($data->submitbutton)) {
+            if (isset($data->evasys_wsdl_url)) {
+                set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
+            }
+            if (isset($data->evasys_soap_url)) {
+                set_config('evasys_soap_url', $data->evasys_soap_url, 'block_evasys_sync');
+            }
+            if (isset($data->evasys_username)) {
+                set_config('evasys_username', $data->evasys_username, 'block_evasys_sync');
+            }
+            if (isset($data->evasys_password)) {
+                set_config('evasys_password', $data->evasys_password, 'block_evasys_sync');
+            }
+            if (isset($data->default_evasys_moodleuser)) {
+                set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
+            }
 
-            if ($data->$newvalue === get_string('default', 'block_evasys_sync')) {
-                // Reset to default user.
-                if ($oldvalue) {
-                    $DB->delete_records('block_evasys_sync_categories', array('course_category' => $category->id));
-                }
-            } else {
-                if (!$oldvalue) {
-                    // Insert new record.
-                    $record = new stdClass();
-                    $record->course_category = $category->id;
-                    $record->userid = $data->$newvalue;
-                    $DB->insert_record('block_evasys_sync_categories', $record, false);
-                } else if ($data->$newvalue != $oldvalue->userid) {
-                    // Update record.
-                    $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
+            $categories = $DB->get_records_sql('SELECT course_category, userid FROM {block_evasys_sync_categories}');
+            foreach ($categories as $category) {
+                $newvalue = 'category_' . $category->course_category;
+                $oldvalue = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category->course_category));
+
+                // TODO nicht mehr so machen sondern über kreuz
+                if ($data->$newvalue === get_string('default', 'block_evasys_sync')) {
+                    // Reset to default user.
+                    if ($oldvalue) {
+                        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $category->course_category));
+                    }
+                } else {
+                    if (!$oldvalue) {
+                        // Insert new record.
+                        $record = new stdClass();
+                        $record->course_category = $category->course_category;
+                        $record->userid = $data->$newvalue;
+                        $DB->insert_record('block_evasys_sync_categories', $record, false);
+                    } else if ($data->$newvalue != $oldvalue->userid) {
+                        // Update record.
+                        $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
+                    }
                 }
             }
         }
