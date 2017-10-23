@@ -8,10 +8,12 @@
             <FIELDS>
                 <FIELD NAME="course_category" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="course_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="course_category"/>
                 <KEY NAME="course_category" TYPE="foreign" FIELDS="course_category" REFTABLE="course_categories" REFFIELDS="id"/>
+                <KEY NAME="course_name" TYPE="foreign" FIELDS="course_name" REFTABLE="course_categories" REFFIELDS="name"/>
             </KEYS>
         </TABLE>
     </TABLES>

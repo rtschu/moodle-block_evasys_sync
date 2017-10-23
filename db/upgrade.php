@@ -60,5 +60,21 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2017100404, 'evasys_sync');
     }
+    if ($oldversion < 2017100406) {
+
+        // Define field course_category to be added to block_evasys_sync_categories.
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null);
+
+        // Conditionally launch add field course_category.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2017100406, 'evasys_sync');
+    }
+
+
     return true;
 }

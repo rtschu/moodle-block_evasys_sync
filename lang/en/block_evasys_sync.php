@@ -62,3 +62,5 @@ $string['category_name'] = 'Course Category';
 $string['responsible_user'] = 'Moodle user';
 $string['tablecaption'] = 'Custom mail recipients after sync';
 $string['default'] = 'Default';
+$string['delete_category_user'] = 'Delete user';
+$string['delete_user_text'] = 'Delete';

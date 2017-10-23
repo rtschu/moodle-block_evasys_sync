@@ -108,9 +108,13 @@ class admin_form extends moodleform {
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('category_name', 'block_evasys_sync'), $attributes);
         $attributes = array();
-        $attributes['class'] = 'header c1 lastcol';
+        $attributes['class'] = 'header c1';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('responsible_user', 'block_evasys_sync'), $attributes);
+        $attributes = array();
+        $attributes['class'] = 'header c2 lastcol';
+        $attributes['scope'] = 'col';
+        $output .= html_writer::tag('th', get_string('delete_category_user', 'block_evasys_sync'), $attributes);
 
         $output .= html_writer::end_tag('tr');
         $output .= html_writer::end_tag('thead');
@@ -131,11 +135,15 @@ class admin_form extends moodleform {
             // TODO name der course categories
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' . $category->name . '</div></td>');
-            $mform->addElement('html', '<td class="cell c1 lastcol">');
+            $mform->addElement('html', '<td class="cell c1">');
             $mform->addElement('text', 'category_' . $category->course_category, null);
             $mform->setType('category_' . $category->course_category, PARAM_TEXT);
             $mform->setDefault('category_' . $category->course_category, $category->userid);
-            $mform->addElement('html', '</td></tr>');
+            $mform->addElement('html', '</td><td class="cell c2 lastcol">');
+            $link = '/blocks/qrcode/adminsettings.php';
+            $editurl = new \moodle_url($link, array('d' => $category->course_category));
+            $text = get_string('delete_user_text', 'block_evasys_sync');
+            $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
         }
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
