@@ -24,6 +24,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+$delcat = optional_param('d', null, PARAM_INT);
 require_login();
 
 if (has_capability('moodle/site:config', context_system::instance())) {
@@ -33,8 +34,13 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     $mform = new block_evasys_sync\admin_form();
 
+    // Course category user is deleted
+    if(!is_null($delcat)) {
+        // TODO seite direkt aktualisieren und info anzeigen
+        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $delcat));
+    }
     // Form is submitted.
-    if ($data = $mform->get_data()) {
+    else if ($data = $mform->get_data()) {
         // Added course category
         if(isset($data->addcatbutton)) {
             $category = $data->evasys_cc_select;

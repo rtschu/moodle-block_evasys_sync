@@ -132,7 +132,6 @@ class admin_form extends moodleform {
         $mform->addElement('html', '<tbody>');
         $categories = $this->getcategories();
         foreach ($categories as $category) {
-            // TODO name der course categories
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' . $category->name . '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
@@ -140,7 +139,7 @@ class admin_form extends moodleform {
             $mform->setType('category_' . $category->course_category, PARAM_TEXT);
             $mform->setDefault('category_' . $category->course_category, $category->userid);
             $mform->addElement('html', '</td><td class="cell c2 lastcol">');
-            $link = '/blocks/qrcode/adminsettings.php';
+            $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $category->course_category));
             $text = get_string('delete_user_text', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
@@ -155,7 +154,10 @@ class admin_form extends moodleform {
      */
     private function getcategories() {
         global $DB;
-        $categories = $DB->get_records_sql('SELECT course_category, userid FROM {block_evasys_sync_categories}');
+        $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category, {block_evasys_sync_categories}.userid, {course_categories}.name 
+                                                FROM {block_evasys_sync_categories} 
+                                                INNER JOIN {course_categories} 
+                                                WHERE {block_evasys_sync_categories}.course_category = {course_categories}.id');
         return $categories;
     }
 }
