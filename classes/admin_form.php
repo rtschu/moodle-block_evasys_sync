@@ -156,8 +156,7 @@ class admin_form extends moodleform {
         global $DB;
         $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category, {block_evasys_sync_categories}.userid, {course_categories}.name 
                                                 FROM {block_evasys_sync_categories} 
-                                                INNER JOIN {course_categories} 
-                                                WHERE {block_evasys_sync_categories}.course_category = {course_categories}.id');
+                                                JOIN {course_categories}  ON {block_evasys_sync_categories}.course_category = {course_categories}.id');
         return $categories;
     }
 }
