@@ -38,34 +38,29 @@ class admin_form extends moodleform {
         // Username.
         $name = 'evasys_username';
         $title = get_string('settings_username', 'block_evasys_sync');
-        $description = get_string('settings_usernamedesc', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_TEXT);
 
         // Password.
         $name = 'evasys_password';
         $title = get_string('settings_password', 'block_evasys_sync');
-        $description = get_string('settings_passworddesc', 'block_evasys_sync');
         $mform->addElement('passwordunmask', $name, $title);
 
         // SOAP URL.
         $name = 'evasys_soap_url';
         $title = get_string('settings_soap_url', 'block_evasys_sync');
-        $description = get_string('settings_soap_urldesc', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_TEXT);
 
         // WSDL URL.
         $name = 'evasys_wsdl_url';
         $title = get_string('settings_wsdl_url', 'block_evasys_sync');
-        $description = get_string('settings_wsdl_urldesc', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_TEXT);
 
         // Default Learnweb user for notifications.
         $name = 'default_evasys_moodleuser';
         $title = get_string('settings_moodleuser', 'block_evasys_sync');
-        $description = get_string('settings_moodleuserdesc', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
@@ -73,7 +68,7 @@ class admin_form extends moodleform {
         // Course category select
         $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
-        $mform->addElement('select', $name, $title, make_categories_options());
+        $mform->addElement('select', $name, $title, $this->getunassignedcats());
 
         $name = 'evasys_cc_user';
         $title = get_string('settings_cc_user', 'block_evasys_sync');
@@ -141,7 +136,7 @@ class admin_form extends moodleform {
             $mform->addElement('html', '</td><td class="cell c2 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $category->course_category));
-            $text = get_string('delete_user_text', 'block_evasys_sync');
+            $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
         }
         $mform->addElement('html', '</tbody>');
@@ -158,5 +153,23 @@ class admin_form extends moodleform {
                                                 FROM {block_evasys_sync_categories} 
                                                 JOIN {course_categories}  ON {block_evasys_sync_categories}.course_category = {course_categories}.id');
         return $categories;
+    }
+
+    /**
+     * Returns all course categories to which no custom user is assigend.
+     * @return array
+     */
+    private function getunassignedcats() {
+        global $DB;
+        $categories = $DB->get_records_sql('SELECT {course_categories}.id, {course_categories}.name
+                                                FROM {course_categories}
+                                                LEFT JOIN {block_evasys_sync_categories} ON {block_evasys_sync_categories}.course_category = {course_categories}.id
+                                                WHERE {block_evasys_sync_categories}.course_category IS NULL');
+
+        $cat = array();
+        foreach ($categories as $category) {
+            $cat[$category->id] = $category->name;
+        }
+        return $cat;
     }
 }

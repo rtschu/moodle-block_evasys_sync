@@ -24,20 +24,36 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
-$delcat = optional_param('d', null, PARAM_INT);
+$delcat = optional_param('d', 0, PARAM_INT);
+$confirm = optional_param('c', 0 , PARAM_INT);
 require_login();
+
+// Set the URL that should be used to return to this page.
+$PAGE->set_url('/blocks/evasys_sync/adminsettings');
 
 if (has_capability('moodle/site:config', context_system::instance())) {
     admin_externalpage_setup('block_evasys_sync');
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
+
+    if(!empty($delcat) && !empty($confirm)) {
+        // Course category user is deleted
+        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $delcat));
+        redirect($PAGE->url);
+        exit();
+    }
 
     $mform = new block_evasys_sync\admin_form();
 
-    // Course category user is deleted
-    if(!is_null($delcat)) {
-        // TODO seite direkt aktualisieren und info anzeigen
-        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $delcat));
+    if(!empty($delcat)) {
+        // Deletion has to be confirmed.
+
+        // Print a confirmation message.
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
+        echo $OUTPUT->confirm(get_string("delete_confirm", "block_evasys_sync"),
+                "adminsettings.php?d=$delcat&c=$delcat",
+                'adminsettings.php');
+        echo $OUTPUT->footer();
+        exit();
     }
     // Form is submitted.
     else if ($data = $mform->get_data()) {
@@ -46,16 +62,13 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             $category = $data->evasys_cc_select;
             $user = $data->evasys_cc_user;
 
-            // Was wenn bereits eingefügt?
             // Insert new record.
-            $record = new stdClass();
-            $record->course_category = $category;
-            $record->userid = $user;
-            $DB->insert_record('block_evasys_sync_categories', $record, false);
+            $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($category, $user));
+            redirect($PAGE->url);
+            exit();
         }
-
-        // Form is submitted
-        if(isset($data->submitbutton)) {
+        // Form is submitted.
+         else if(isset($data->submitbutton)) {
             if (isset($data->evasys_wsdl_url)) {
                 set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
             }
@@ -99,6 +112,8 @@ if (has_capability('moodle/site:config', context_system::instance())) {
         }
     }
 
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
     $mform->display();
 
     echo $OUTPUT->footer();

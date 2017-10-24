@@ -56,6 +56,7 @@ $string['settings_cc_select'] = 'Select course category';
 $string['settings_cc_user'] = 'Recipient (moodle user) for selected course category';
 $string['submit'] = 'Save changes';
 $string['addcat'] = 'Add Category';
+$string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 
 // Settings - category table
 $string['category_name'] = 'Course Category';
@@ -63,4 +64,4 @@ $string['responsible_user'] = 'Moodle user';
 $string['tablecaption'] = 'Custom mail recipients after sync';
 $string['default'] = 'Default';
 $string['delete_category_user'] = 'Delete user';
-$string['delete_user_text'] = 'Delete';
+$string['delete'] = 'Delete';
