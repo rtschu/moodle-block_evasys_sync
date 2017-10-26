@@ -192,7 +192,18 @@ class evasys_synchronizer {
 
         $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
         if (!$user) {
-            $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
+            // Loop through parents.
+            $parents = \coursecat::get($course->category)->get_parents();
+            for($i = count($parents) - 1; $i >= 0; $i--)
+            {
+                $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                if($user) {
+                    $userto = \core_user::get_user($user->userid);
+                }
+            }
+            if(!$user) {
+                $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
+            }
         } else {
             $userto = \core_user::get_user($user->userid);
         }

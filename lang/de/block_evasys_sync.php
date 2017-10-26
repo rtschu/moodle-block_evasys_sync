@@ -41,21 +41,22 @@ $string['evasys_sync:synchronize'] = 'Teilnehmer zu EvaSys synchronisieren';
 // Settings.
 $string['settings'] = 'EvaSys Sync Block Einstellungen';
 $string['settings_username'] = 'EvaSys-API-Nutzername';
-$string['settings_usernamedesc'] = 'Nutzername zur Anmeldung an der EvaSys-API';
 $string['settings_password'] = 'EvaSys-API-Password';
-$string['settings_passworddesc'] = 'Passwort zur Anmeldung an der EvaSys-API';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
-$string['settings_soap_urldesc'] = 'URL des EvaSys-SOAP-Webservices';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
-$string['settings_wsdl_urldesc'] = 'URL der WSDL-Datei des EvaSys-Webservices';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
-$string['settings_moodleuserdesc'] = 'Die ID des Moodle-Benutzers, an welchen standardmäßig nach erfolgter Synchronisation informative Mails versendet werden.';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
-$string['settings_moodleuser_selectdesc'] = 'Wähle die Kurskategorie, für die ein benutzerdefinierter Moodle-Benutzer gewählt werden soll, an welchen nach erfolgter Synchronisation informative Mails versendet werden.';
+$string['settings_cc_select'] = 'Select course category';
+$string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
 $string['submit'] = 'Speichern';
+$string['addcat'] = 'Kategorie hinzufügen';
+$string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
+
 
 // Settings - category table
 $string['category_name'] = 'Kurskategorie';
 $string['responsible_user'] = 'Moodle-Benutzer';
 $string['tablecaption'] = 'Custom mail recipients after sync';
 $string['default'] = 'Standard';
+$string['delete_category_user'] = 'Nutzer löschen';
+$string['delete'] = 'Löschen';

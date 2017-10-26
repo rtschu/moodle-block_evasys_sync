@@ -41,17 +41,11 @@ $string['evasys_sync:synchronize'] = 'Export participants to EvaSys';
 // Settings
 $string['settings'] = 'EvaSys Sync Block Settings';
 $string['settings_username'] = 'EvaSys Username';
-$string['settings_usernamedesc'] = 'Username of the EvaSys API User';
 $string['settings_password'] = 'EvaSys Password';
-$string['settings_passworddesc'] = 'Password of the EvaSys API User';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
-$string['settings_soap_urldesc'] = 'URL of the EvaSys SOAP web service';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
-$string['settings_wsdl_urldesc'] = 'URL of the WSDL file of the EvaSys web service';
 $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
-$string['settings_moodleuserdesc'] = 'The ID of the moodle user who will receive email notifications after (successful) synchronisation by default.';
 $string['settings_moodleuser_select'] = 'Course categories';
-$string['settings_moodleuser_selectdesc'] = 'Choose the course category for which you want to add custom moodle user who will receive email nofications.';
 $string['settings_cc_select'] = 'Select course category';
 $string['settings_cc_user'] = 'Recipient (moodle user) for selected course category';
 $string['submit'] = 'Save changes';
