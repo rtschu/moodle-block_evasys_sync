@@ -90,23 +90,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 $newvalue = 'category_' . $category->course_category;
                 $oldvalue = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category->course_category));
 
-                // TODO nicht mehr so machen sondern über kreuz
-                if ($data->$newvalue === get_string('default', 'block_evasys_sync')) {
-                    // Reset to default user.
-                    if ($oldvalue) {
-                        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $category->course_category));
-                    }
-                } else {
-                    if (!$oldvalue) {
-                        // Insert new record.
-                        $record = new stdClass();
-                        $record->course_category = $category->course_category;
-                        $record->userid = $data->$newvalue;
-                        $DB->insert_record('block_evasys_sync_categories', $record, false);
-                    } else if ($data->$newvalue != $oldvalue->userid) {
-                        // Update record.
-                        $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->id);
-                    }
+                // Update db entry.
+                if($data->$newvalue != $oldvalue) {
+                    $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->course_category);
                 }
             }
         }
@@ -114,7 +100,21 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
-    $mform->display();
 
+    // Load existing setttings.
+    if (empty($entry->id)) {
+        $entry = new stdClass;
+        $entry->id = 0;
+    }
+
+    $entry->evasys_username = get_config('block_evasys_sync', 'evasys_username');
+    $entry->evasys_password = get_config('block_evasys_sync', 'evasys_password');
+    $entry->evasys_soap_url = get_config('block_evasys_sync', 'evasys_soap_url');
+    $entry->evasys_wsdl_url = get_config('block_evasys_sync', 'evasys_wsdl_url');
+    $entry->default_evasys_moodleuser = get_config('block_evasys_sync', 'default_evasys_moodleuser');
+
+
+    $mform->set_data($entry);
+    $mform->display();
     echo $OUTPUT->footer();
 }

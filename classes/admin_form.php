@@ -128,7 +128,7 @@ class admin_form extends moodleform {
         $categories = $this->getcategories();
         foreach ($categories as $category) {
             $mform->addElement('html', '<tr>');
-            $mform->addElement('html', '<td class="cell c0"><div>' . $category->name . '</div></td>');
+            $mform->addElement('html', '<td class="cell c0"><div>' . $this->getcategoryhierachie($category) . '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
             $mform->addElement('text', 'category_' . $category->course_category, null);
             $mform->setType('category_' . $category->course_category, PARAM_TEXT);
@@ -171,5 +171,27 @@ class admin_form extends moodleform {
             $cat[$category->id] = $category->name;
         }
         return $cat;
+    }
+
+    /**
+     * Returns the hierachie of a category as string.
+     * @return string
+     */
+    private function getcategoryhierachie($cat) {
+        $text = '';
+        $spaces = '';
+        $parents = \coursecat::get($cat->course_category)->get_parents();
+        foreach($parents as $pcat) {
+            $name = \coursecat::get($pcat)->name;
+            $text .= $spaces.' '.$name.'<br/>';
+            $spaces .= '-';
+        }
+        if(empty($parents)) {
+            $text = $cat->name;
+        }
+        else {
+            $text .= $spaces.' '.$cat->name;
+        }
+        return $text;
     }
 }
