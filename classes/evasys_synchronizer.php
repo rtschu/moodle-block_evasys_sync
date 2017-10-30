@@ -191,20 +191,27 @@ class evasys_synchronizer {
         $course = get_course($this->courseid);
 
         $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
+        // Custom user has not been set
         if (!$user) {
             // Loop through parents.
             $parents = \coursecat::get($course->category)->get_parents();
+            // Start with direct parent
             for($i = count($parents) - 1; $i >= 0; $i--)
             {
                 $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                // Stop if a parent has been assigned a custom user
                 if($user) {
                     $userto = \core_user::get_user($user->userid);
+                    break;
                 }
             }
+            // Custom user has not been set for parents
             if(!$user) {
+                // User default user
                 $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
             }
         } else {
+            // Use custom user of the course category of the course
             $userto = \core_user::get_user($user->userid);
         }
 

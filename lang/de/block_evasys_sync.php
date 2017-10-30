@@ -46,7 +46,7 @@ $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
-$string['settings_cc_select'] = 'Select course category';
+$string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
 $string['submit'] = 'Speichern';
 $string['addcat'] = 'Kategorie hinzufügen';
@@ -56,7 +56,7 @@ $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskat
 // Settings - category table
 $string['category_name'] = 'Kurskategorie';
 $string['responsible_user'] = 'Moodle-Benutzer';
-$string['tablecaption'] = 'Custom mail recipients after sync';
+$string['tablecaption'] = 'Benutzerdefinierter Mail-Empfänger nach Synchronisation';
 $string['default'] = 'Standard';
 $string['delete_category_user'] = 'Nutzer löschen';
 $string['delete'] = 'Löschen';

@@ -35,9 +35,9 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
     /**
      * @runInSeparateProcess
      */
-    public function test_create_image() {
+    public function test_notify_person() {
         global $DB;
-        $this->resetAfterTest(true);
+        $this->resetAfterTest(true);;
 
         $generator = $this->getDataGenerator();
         $categoryone = $generator->create_category();
@@ -52,8 +52,8 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
 
         $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course',
             'category' => $categoryone->id));
-        $coursesubsubone = $this->getDataGenerator()->create_course(array('category' => $subsubcategoryone));
-        $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'First course',
+        $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course', 'category' => $subsubcategoryone->id));
+        $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'Second course',
             'category' => $categorytwo->id));
 
         // Test default user.
@@ -66,10 +66,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         self::assertEquals($defaultuser, $this->notify_evaluation_responsible_person());
 
         // Insert new record.
-        $record = new stdClass();
-        $record->course_category = $categoryone->id;
-        $record->userid = $userone->id;
-        $DB->insert_record('block_evasys_sync_categories', $record, false);
+        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($categoryone->id, $userone->id));
 
         // Test custom user.
         $this->courseid = $courseone->id;
@@ -84,18 +81,12 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         self::assertEquals($userone, $this->notify_evaluation_responsible_person());
 
         // Insert new record for subcategory.
-        $record = new stdClass();
-        $record->course_category = $subcategoryone->id;
-        $record->userid = $usersubone->id;
-        $DB->insert_record('block_evasys_sync_categories', $record, false);
+        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subcategoryone->id, $usersubone->id));
 
         self::assertEquals($usersubone, $this->notify_evaluation_responsible_person());
 
         // Insert new record for subsubcategory.
-        $record = new stdClass();
-        $record->course_category = $subsubcategoryone->id;
-        $record->userid = $usersubsubone->id;
-        $DB->insert_record('block_evasys_sync_categories', $record, false);
+        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subsubcategoryone->id, $usersubsubone->id));
 
         self::assertEquals($usersubsubone, $this->notify_evaluation_responsible_person());
     }
@@ -117,6 +108,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
                 $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
                 if($user) {
                     $userto = \core_user::get_user($user->userid);
+                    break;
                 }
             }
             if(!$user) {
