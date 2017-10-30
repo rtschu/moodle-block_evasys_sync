@@ -20,8 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
 
-class evasys_synchronizer
-{
+class evasys_synchronizer {
     private $courseid;
     private $soapclient;
     private $blockcontext;
@@ -29,16 +28,14 @@ class evasys_synchronizer
 
     private $evasyscourseid;
 
-    public function __construct($courseid)
-    {
+    public function __construct($courseid) {
         $this->courseid = $courseid;
         $this->init_soap_client();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
     }
 
-    public function get_evasys_courseid()
-    {
+    public function get_evasys_courseid() {
         if ($this->evasyscourseid !== null) {
             return $this->evasyscourseid;
         }
@@ -53,8 +50,7 @@ class evasys_synchronizer
         return $this->evasyscourseid;
     }
 
-    private function init_soap_client()
-    {
+    private function init_soap_client() {
         $this->soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
             'trace' => 1,
             'exceptions' => 0,
@@ -69,8 +65,7 @@ class evasys_synchronizer
         $this->soapclient->__setSoapHeaders($header);
     }
 
-    private function get_course_information()
-    {
+    private function get_course_information() {
         $soapresult = $this->soapclient->GetCourse($this->get_evasys_courseid(), 'PUBLIC', true, true);
         if (is_soap_fault($soapresult)) {
             // This happens e.g. if there is no corresponding course in EvaSys.
@@ -83,8 +78,7 @@ class evasys_synchronizer
      * Builds array with all surveys and additional information to surveys
      * @return array of surveys with additional information
      */
-    public function get_surveys()
-    {
+    public function get_surveys() {
         if ($this->courseinformation === null) {
             return array();
         }
@@ -108,8 +102,7 @@ class evasys_synchronizer
      * @param \stdClass $rawsurvey Survey without additional information
      * @return \stdClass Survey with additional information
      */
-    private function enrich_survey($rawsurvey)
-    {
+    private function enrich_survey($rawsurvey) {
         $enrichedsurvey = new \stdClass();
         $enrichedsurvey->amountOfCompletedForms = $rawsurvey->m_nFormCount;
         $enrichedsurvey->surveyStatus = $this->get_survey_status($rawsurvey->m_nOpenState);
@@ -119,8 +112,7 @@ class evasys_synchronizer
         return $enrichedsurvey;
     }
 
-    private function get_survey_status($statusnumber)
-    {
+    private function get_survey_status($statusnumber) {
         if ($statusnumber === 1) {
             return 'open';
         } else {
@@ -128,22 +120,19 @@ class evasys_synchronizer
         }
     }
 
-    private function get_public_formid($formid)
-    {
+    private function get_public_formid($formid) {
         $soapresult = $this->soapclient->GetForm($formid, 'INTERNAL', false);
         $formidpub = $soapresult->FormName;
         return $formidpub;
     }
 
-    private function get_form_name($formid)
-    {
+    private function get_form_name($formid) {
         $soapresult = $this->soapclient->GetForm($formid, 'INTERNAL', false);
         $formname = $soapresult->FormTitle;
         return $formname;
     }
 
-    public function get_amount_participants()
-    {
+    public function get_amount_participants() {
         if ($this->courseinformation === null || !property_exists($this->courseinformation->m_aoParticipants, "Persons")) {
             return 0;
         }
@@ -155,8 +144,7 @@ class evasys_synchronizer
      * Gets all email addresses of enrolled students.
      * @return array of e-mail addresses of all enrolled students
      */
-    private function get_enrolled_student_email_adresses()
-    {
+    private function get_enrolled_student_email_adresses() {
         $emailadresses = array();
 
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
@@ -171,8 +159,7 @@ class evasys_synchronizer
     /**
      * Updates the students who can participate in the survey.
      */
-    public function sync_students()
-    {
+    public function sync_students() {
         if ($this->courseinformation === null) {
             throw new \Exception('Cannot sync: Course not known to EvaSys');
         }
@@ -199,34 +186,11 @@ class evasys_synchronizer
      * Sends an e-mail with the request to start a Evaluation for a course.
      * @throws \Exception when e-mail request fails
      */
-    public function notify_evaluation_responsible_person()
-    {
+    public function notify_evaluation_responsible_person() {
         global $USER, $DB;
         $course = get_course($this->courseid);
 
-        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
-        // Custom user has not been set.
-        if (!$user) {
-            // Loop through parents.
-            $parents = \coursecat::get($course->category)->get_parents();
-            // Start with direct parent.
-            for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                // Stop if a parent has been assigned a custom user.
-                if ($user) {
-                    $userto = \core_user::get_user($user->userid);
-                    break;
-                }
-            }
-            // Custom user has not been set for parents.
-            if (!$user) {
-                // User default user.
-                $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
-            }
-        } else {
-            // Use custom user of the course category of the course.
-            $userto = \core_user::get_user($user->userid);
-        }
+        $userto = $this->get_assigned_user($course);
 
         if (!$userto) {
             throw new \Exception('Could not find the specified user to send an email to.');
@@ -256,6 +220,39 @@ class evasys_synchronizer
         if (!$mailresult) {
             throw new \Exception('Could not send e-mail to person responsible for evaluation');
         }
+    }
 
+    /**
+     * Returns the user to whom the email is sent.
+     * @param $course
+     * @return bool|\stdClass user
+     */
+    static public function get_assigned_user($course) {
+        global $DB;
+
+        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
+        // Custom user has not been set.
+        if (!$user) {
+            // Loop through parents.
+            $parents = \coursecat::get($course->category)->get_parents();
+            // Start with direct parent.
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                // Stop if a parent has been assigned a custom user.
+                if ($user) {
+                    $userto = \core_user::get_user($user->userid);
+                    break;
+                }
+            }
+            // Custom user has not been set for parents.
+            if (!$user) {
+                // User default user.
+                $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
+            }
+        } else {
+            // Use custom user of the course category of the course.
+            $userto = \core_user::get_user($user->userid);
+        }
+        return $userto;
     }
 }

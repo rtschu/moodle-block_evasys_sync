@@ -29,17 +29,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 T Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_evasys_sync_notify_testcase extends advanced_testcase
-{
-    protected $courseid;
-
+class block_evasys_sync_notify_testcase extends advanced_testcase {
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person()
-    {
+    public function test_notify_person() {
         global $DB;
-        $this->resetAfterTest(true);;
+        $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
         $categoryone = $generator->create_category();
@@ -59,71 +55,32 @@ class block_evasys_sync_notify_testcase extends advanced_testcase
             'category' => $categorytwo->id));
 
         // Test default user.
-        $this->courseid = $courseone->id;
-        $userto = $this->notify_evaluation_responsible_person();
+        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone->id);
         self::assertEquals($userto, $defaultuser);
 
         // Test subcategory user without parent user.
-        $this->courseid = $coursesubsubone->id;
-        self::assertEquals($defaultuser, $this->notify_evaluation_responsible_person());
+        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone->id));
 
         // Insert new record.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($categoryone->id, $userone->id));
 
         // Test custom user.
-        $this->courseid = $courseone->id;
-        $userto = $this->notify_evaluation_responsible_person();
+        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone->id);
         self::assertEquals($userto, $userone);
 
-        $this->courseid = $coursetwo->id;
-        self::assertEquals($defaultuser, $this->notify_evaluation_responsible_person());
+        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursetwo->id));
 
         // Test subcategory user with parent user.
-        $this->courseid = $coursesubsubone->id;
-        self::assertEquals($userone, $this->notify_evaluation_responsible_person());
+        self::assertEquals($userone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone->id));
 
         // Insert new record for subcategory.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subcategoryone->id, $usersubone->id));
 
-        self::assertEquals($usersubone, $this->notify_evaluation_responsible_person());
+        self::assertEquals($usersubone, $this->notify_evaluation_responsible_person($coursesubsubone->id));
 
         // Insert new record for subsubcategory.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subsubcategoryone->id, $usersubsubone->id));
 
-        self::assertEquals($usersubsubone, $this->notify_evaluation_responsible_person());
-    }
-
-    /**
-     * Part of evasys_synchronizer function
-     * @throws \Exception when e-mail request fails
-     */
-    private function notify_evaluation_responsible_person()
-    {
-        global $DB;
-        $course = get_course($this->courseid);
-
-        $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
-        if (!$user) {
-            // Loop through parents.
-            $parents = \coursecat::get($course->category)->get_parents();
-            for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                if ($user) {
-                    $userto = \core_user::get_user($user->userid);
-                    break;
-                }
-            }
-            if (!$user) {
-                $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
-            }
-        } else {
-            $userto = \core_user::get_user($user->userid);
-        }
-
-        if (!$userto) {
-            throw new \Exception('Could not find the specified user to send an email to.');
-        }
-
-        return $userto;
+        self::assertEquals($usersubsubone, $this->notify_evaluation_responsible_person($coursesubsubone->id));
     }
 }
