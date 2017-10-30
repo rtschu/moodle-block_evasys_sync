@@ -38,7 +38,7 @@ $string['surveystatusclosed'] = 'closed';
 $string['evasys_sync:mayevaluate'] = 'Evaluate a course using EvaSys';
 $string['evasys_sync:synchronize'] = 'Export participants to EvaSys';
 
-// Settings
+// Settings.
 $string['settings'] = 'EvaSys Sync Block Settings';
 $string['settings_username'] = 'EvaSys Username';
 $string['settings_password'] = 'EvaSys Password';
@@ -52,7 +52,7 @@ $string['submit'] = 'Save changes';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 
-// Settings - category table
+// Settings - category table.
 $string['category_name'] = 'Course Category';
 $string['responsible_user'] = 'Moodle user';
 $string['tablecaption'] = 'Custom mail recipients after sync';

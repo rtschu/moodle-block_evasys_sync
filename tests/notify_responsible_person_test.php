@@ -29,13 +29,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 T Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_evasys_sync_notify_testcase extends advanced_testcase {
+class block_evasys_sync_notify_testcase extends advanced_testcase
+{
     protected $courseid;
 
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person() {
+    public function test_notify_person()
+    {
         global $DB;
         $this->resetAfterTest(true);;
 
@@ -95,23 +97,23 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
      * Part of evasys_synchronizer function
      * @throws \Exception when e-mail request fails
      */
-    private function notify_evaluation_responsible_person() {
-        global $USER, $DB;
+    private function notify_evaluation_responsible_person()
+    {
+        global $DB;
         $course = get_course($this->courseid);
 
         $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $course->category));
         if (!$user) {
             // Loop through parents.
             $parents = \coursecat::get($course->category)->get_parents();
-            for($i = count($parents) - 1; $i >= 0; $i--)
-            {
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                if($user) {
+                if ($user) {
                     $userto = \core_user::get_user($user->userid);
                     break;
                 }
             }
-            if(!$user) {
+            if (!$user) {
                 $userto = \core_user::get_user(get_config('block_evasys_sync', 'default_evasys_moodleuser'));
             }
         } else {

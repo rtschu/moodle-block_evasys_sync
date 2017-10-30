@@ -31,8 +31,10 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
 
-class admin_form extends moodleform {
-    protected function definition() {
+class admin_form extends moodleform
+{
+    protected function definition()
+    {
         $mform = $this->_form;
 
         // Username.
@@ -90,7 +92,8 @@ class admin_form extends moodleform {
      * Prints the table head (e.g. column names).
      * @return string
      */
-    public function tablehead() {
+    public function tablehead()
+    {
         $attributes['class'] = 'generaltable';
         $attributes['id'] = 'course_category_table';
         $output = html_writer::start_tag('table', $attributes);
@@ -121,7 +124,8 @@ class admin_form extends moodleform {
      * Prints course categories and assigned moodle users.
      * @return string
      */
-    private function table_body() {
+    private function table_body()
+    {
         $mform = $this->_form;
 
         $mform->addElement('html', '<tbody>');
@@ -147,7 +151,8 @@ class admin_form extends moodleform {
      * Returns all course categories to which a custom user is assigned.
      * @return array
      */
-    private function getcategories() {
+    private function getcategories()
+    {
         global $DB;
         $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category, {block_evasys_sync_categories}.userid, {course_categories}.name 
                                                 FROM {block_evasys_sync_categories} 
@@ -159,7 +164,8 @@ class admin_form extends moodleform {
      * Returns all course categories to which no custom user is assigend.
      * @return array
      */
-    private function getunassignedcats() {
+    private function getunassignedcats()
+    {
         global $DB;
         $categories = $DB->get_records_sql('SELECT {course_categories}.id, {course_categories}.name
                                                 FROM {course_categories}
@@ -177,20 +183,20 @@ class admin_form extends moodleform {
      * Returns the hierachie of a category as string.
      * @return string
      */
-    private function getcategoryhierachie($cat) {
+    private function getcategoryhierachie($cat)
+    {
         $text = '';
         $spaces = '';
         $parents = \coursecat::get($cat->course_category)->get_parents();
-        foreach($parents as $pcat) {
+        foreach ($parents as $pcat) {
             $name = \coursecat::get($pcat)->name;
-            $text .= $spaces.' '.$name.'<br/>';
+            $text .= $spaces . ' ' . $name . '<br/>';
             $spaces .= '-';
         }
-        if(empty($parents)) {
+        if (empty($parents)) {
             $text = $cat->name;
-        }
-        else {
-            $text .= $spaces.' '.$cat->name;
+        } else {
+            $text .= $spaces . ' ' . $cat->name;
         }
         return $text;
     }
