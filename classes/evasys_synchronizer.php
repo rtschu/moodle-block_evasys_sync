@@ -187,7 +187,7 @@ class evasys_synchronizer {
      * @throws \Exception when e-mail request fails
      */
     public function notify_evaluation_responsible_person() {
-        global $USER, $DB;
+        global $USER;
         $course = get_course($this->courseid);
 
         $userto = $this->get_assigned_user($course);
