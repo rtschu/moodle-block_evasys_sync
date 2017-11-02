@@ -35,7 +35,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     admin_externalpage_setup('block_evasys_sync');
 
     if (!empty($delcat) && !empty($confirm)) {
-        // Course category user is deleted
+        // Course category user is deleted.
         $DB->delete_records('block_evasys_sync_categories', array('course_category' => $delcat));
         redirect($PAGE->url);
         exit();
@@ -45,18 +45,17 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
     if (!empty($delcat)) {
         // Deletion has to be confirmed.
-
         // Print a confirmation message.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
-        echo $OUTPUT->confirm(get_string("delete_confirm", "block_evasys_sync"),
+        echo $OUTPUT->confirm(get_string("delete_confirm", 'block_evasys_sync'),
             "adminsettings.php?d=$delcat&c=$delcat",
             'adminsettings.php');
         echo $OUTPUT->footer();
         exit();
-    } // Form is submitted.
-    else if ($data = $mform->get_data()) {
-        // Added course category
+    } else if ($data = $mform->get_data()) {
+        // Form is submitted.
+        // Added course category.
         if (isset($data->addcatbutton)) {
             $category = $data->evasys_cc_select;
             $user = $data->evasys_cc_user;
@@ -65,8 +64,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($category, $user));
             redirect($PAGE->url);
             exit();
-        } // Form is submitted.
-        else if (isset($data->submitbutton)) {
+        } else if (isset($data->submitbutton)) {
             if (isset($data->evasys_wsdl_url)) {
                 set_config('evasys_wsdl_url', $data->evasys_wsdl_url, 'block_evasys_sync');
             }
@@ -90,7 +88,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue) {
-                    $DB->execute('UPDATE {block_evasys_sync_categories} SET userid=' . $data->$newvalue . ' WHERE course_category=' . $category->course_category);
+                    $DB->execute('UPDATE {block_evasys_sync_categories}
+                                    SET userid=' . $data->$newvalue . '
+                                    WHERE course_category=' . $category->course_category);
                 }
             }
         }

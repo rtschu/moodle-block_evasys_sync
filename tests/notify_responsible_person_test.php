@@ -50,7 +50,8 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
 
         $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course',
             'category' => $categoryone->id));
-        $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course', 'category' => $subsubcategoryone->id));
+        $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course',
+                                                                        'category' => $subsubcategoryone->id));
         $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'Second course',
             'category' => $categorytwo->id));
 

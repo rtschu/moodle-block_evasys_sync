@@ -65,7 +65,7 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
 
-        // Course category select
+        // Course category select.
         $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
         $mform->addElement('select', $name, $title, $this->getunassignedcats());
@@ -75,10 +75,10 @@ class admin_form extends moodleform {
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
 
-        // Add Button
+        // Add Button.
         $mform->addElement('submit', 'addcatbutton', get_string('addcat', 'block_evasys_sync'));
 
-        // Add Table
+        // Add Table.
         $mform->addElement('html', $this->tablehead());
         $this->table_body();
 
@@ -149,9 +149,12 @@ class admin_form extends moodleform {
      */
     private function getcategories() {
         global $DB;
-        $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category, {block_evasys_sync_categories}.userid, {course_categories}.name 
-                                                FROM {block_evasys_sync_categories} 
-                                                JOIN {course_categories}  ON {block_evasys_sync_categories}.course_category = {course_categories}.id');
+        $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category,
+                                                {block_evasys_sync_categories}.userid,
+                                                {course_categories}.name
+                                                FROM {block_evasys_sync_categories}
+                                                JOIN {course_categories}
+                                                ON {block_evasys_sync_categories}.course_category = {course_categories}.id');
         return $categories;
     }
 
@@ -163,7 +166,8 @@ class admin_form extends moodleform {
         global $DB;
         $categories = $DB->get_records_sql('SELECT {course_categories}.id, {course_categories}.name
                                                 FROM {course_categories}
-                                                LEFT JOIN {block_evasys_sync_categories} ON {block_evasys_sync_categories}.course_category = {course_categories}.id
+                                                LEFT JOIN {block_evasys_sync_categories}
+                                                ON {block_evasys_sync_categories}.course_category = {course_categories}.id
                                                 WHERE {block_evasys_sync_categories}.course_category IS NULL');
 
         $cat = array();
