@@ -1,7 +1,9 @@
 .block_evasys_sync .emphasize {
     font-weight: bold;
 }
-.block_evasys_sync .singlebutton input[type="submit"], .block_evasys_sync .singlebutton div {
+
+.block_evasys_sync .singlebutton input[type="submit"],
+.block_evasys_sync .singlebutton div {
     margin-bottom: 0;
     margin-left: 0;
 }
@@ -10,6 +12,6 @@
     width: 0;
 }
 
-#page-admin-blocks-evasys_sync-adminsettings  #course_category_table .felement {
+#page-admin-blocks-evasys_sync-adminsettings #course_category_table .felement {
     margin-left: 0;
 }
