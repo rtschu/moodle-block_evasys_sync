@@ -56,32 +56,32 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
             'category' => $categorytwo->id));
 
         // Test default user.
-        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone->id);
+        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
         self::assertEquals($userto, $defaultuser);
 
         // Test subcategory user without parent user.
-        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone->id));
+        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($categoryone->id, $userone->id));
 
         // Test custom user.
-        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone->id);
+        $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
         self::assertEquals($userto, $userone);
 
-        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursetwo->id));
+        self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursetwo));
 
         // Test subcategory user with parent user.
-        self::assertEquals($userone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone->id));
+        self::assertEquals($userone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record for subcategory.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subcategoryone->id, $usersubone->id));
 
-        self::assertEquals($usersubone, $this->notify_evaluation_responsible_person($coursesubsubone->id));
+        self::assertEquals($usersubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record for subsubcategory.
         $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subsubcategoryone->id, $usersubsubone->id));
 
-        self::assertEquals($usersubsubone, $this->notify_evaluation_responsible_person($coursesubsubone->id));
+        self::assertEquals($usersubsubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
     }
 }
