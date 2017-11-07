@@ -45,14 +45,14 @@ jobs:
       php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
       script:
-      - moodle-plugin-ci phplint block_evasys_sync
-      - moodle-plugin-ci phpcpd block_evasys_sync
-      - moodle-plugin-ci phpmd block_evasys_sync
-      - moodle-plugin-ci codechecker block_evasys_sync
-      - moodle-plugin-ci savepoints block_evasys_sync
-      - moodle-plugin-ci mustache block_evasys_sync
-      - moodle-plugin-ci grunt block_evasys_sync
-      - moodle-plugin-ci validate block_evasys_sync
+      - moodle-plugin-ci phplint evasys_sync
+      - moodle-plugin-ci phpcpd evasys_sync
+      - moodle-plugin-ci phpmd evasys_sync
+      - moodle-plugin-ci codechecker evasys_sync
+      - moodle-plugin-ci savepoints evasys_sync
+      - moodle-plugin-ci mustache evasys_sync
+      - moodle-plugin-ci grunt evasys_sync
+      - moodle-plugin-ci validate evasys_sync
 
     # Smaller build matrix for development builds
     - stage: develop
