@@ -35,8 +35,8 @@ before_install:
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
-  - moodle-plugin-ci install
   - moodle-plugin-ci add-plugin --branch master learnweb/his_unification
+  - moodle-plugin-ci install
 
 jobs:
   include:
@@ -45,14 +45,14 @@ jobs:
       php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
       script:
-      - moodle-plugin-ci phplint ./blocks/evasys_sync
-      - moodle-plugin-ci phpcpd ./blocks/evasys_sync
-      - moodle-plugin-ci phpmd ./blocks/evasys_sync
-      - moodle-plugin-ci codechecker ./blocks/evasys_sync
-      - moodle-plugin-ci savepoints ./blocks/evasys_sync
-      - moodle-plugin-ci mustache ./blocks/evasys_sync
-      - moodle-plugin-ci grunt ./blocks/evasys_sync
-      - moodle-plugin-ci validate ./blocks/evasys_sync
+      - moodle-plugin-ci phplint
+      - moodle-plugin-ci phpcpd
+      - moodle-plugin-ci phpmd
+      - moodle-plugin-ci codechecker
+      - moodle-plugin-ci savepoints
+      - moodle-plugin-ci mustache
+      - moodle-plugin-ci grunt
+      - moodle-plugin-ci validate 
 
     # Smaller build matrix for development builds
     - stage: develop
