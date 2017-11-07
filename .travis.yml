@@ -36,7 +36,7 @@ before_install:
 
 install:
   - moodle-plugin-ci install
-  - moodle-plugin-ci add-plugin --branch master pssl16/his_unification
+  - moodle-plugin-ci add-plugin --branch master learnweb/his_unification
 
 jobs:
   include:
