@@ -35,7 +35,7 @@ before_install:
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
-  - moodle-plugin-ci add-plugin --branch master learnweb/his_unification
+  - moodle-plugin-ci add-plugin --branch master TamaraGunkel/his_unification
   - moodle-plugin-ci install
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
       - moodle-plugin-ci savepoints
       - moodle-plugin-ci mustache
       - moodle-plugin-ci grunt
-      - moodle-plugin-ci validate 
+      - moodle-plugin-ci validate
 
     # Smaller build matrix for development builds
     - stage: develop
