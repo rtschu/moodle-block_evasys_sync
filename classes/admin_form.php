@@ -147,6 +147,7 @@ class admin_form extends moodleform {
             $mform->setType($name, PARAM_TEXT);
             $mform->setDefault($name, $record->get('userid'));
 
+
             $mform->addElement('html', '</td><td class="cell c2 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $record->get('id')));
@@ -205,5 +206,36 @@ class admin_form extends moodleform {
             $text .= $spaces . ' ' . $cat->name;
         }
         return $text;
+    }
+
+    /**
+     * Validates the user ids.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    function validation($data, $files) {
+        return parent::validation($data, $files);
+        var_dump("hallo");
+
+        // Validate user ids
+        $records = \block_evasys_sync\user_cat_allocation::get_records();
+        foreach ($records as $allocation) {
+
+            $newvalue = 'category_' . $allocation->get('id');
+
+            if (!\core_user::is_real_user($data->$newvalue, true)) {
+                $errors[$newvalue] = get_string('invaliduserid', 'error');
+            }
+        }
+
+        if(!empty($data->evasys_cc_user)) {
+            if (!\core_user::is_real_user($data->evasys_cc_user, true)) {
+                $errors['evasys_cc_user'] = get_string('invaliduserid', 'error');
+            }
+        }
+
+        return $errors;
     }
 }
