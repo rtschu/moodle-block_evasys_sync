@@ -47,8 +47,9 @@ $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_cc_select'] = 'Select course category';
-$string['settings_cc_user'] = 'Recipient (moodle user) for selected course category';
+$string['settings_cc_user'] = 'Recipient (moodle user id) for selected course category';
 $string['submit'] = 'Save changes';
+$string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 
@@ -59,3 +60,6 @@ $string['tablecaption'] = 'Custom mail recipients after sync';
 $string['default'] = 'Default';
 $string['delete_category_user'] = 'Delete user';
 $string['delete'] = 'Delete';
+
+// Persistance class
+$string['invalidcoursecat'] = 'Invalid course category';

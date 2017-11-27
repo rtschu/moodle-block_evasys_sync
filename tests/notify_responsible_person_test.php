@@ -63,7 +63,11 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record.
-        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($categoryone->id, $userone->id));
+        $data = new \stdClass();
+        $data->course_category = $categoryone->id;
+        $data->userid = $userone->id;
+        $record = new \block_evasys_sync\user_cat_allocation(0, $data);
+        $record->create();
 
         // Test custom user.
         $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
@@ -75,12 +79,20 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         self::assertEquals($userone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record for subcategory.
-        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subcategoryone->id, $usersubone->id));
+        $data = new \stdClass();
+        $data->course_category = $subcategoryone->id;
+        $data->userid = $usersubone->id;
+        $record = new \block_evasys_sync\user_cat_allocation(0, $data);
+        $record->create();
 
         self::assertEquals($usersubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
 
         // Insert new record for subsubcategory.
-        $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($subsubcategoryone->id, $usersubsubone->id));
+        $data = new \stdClass();
+        $data->course_category = $subsubcategoryone->id;
+        $data->userid = $usersubsubone->id;
+        $record = new \block_evasys_sync\user_cat_allocation(0, $data);
+        $record->create();
 
         self::assertEquals($usersubsubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
     }

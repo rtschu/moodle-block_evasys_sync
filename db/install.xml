@@ -6,12 +6,18 @@
     <TABLES>
         <TABLE NAME="block_evasys_sync_categories" COMMENT="Responsible moodle users for course categories">
             <FIELDS>
+                <FIELD NAME="id" SEQUENCE="true" TYPE="int" NOTNULL="false" LENGTH="10"/>
                 <FIELD NAME="course_category" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" SEQUENCE="false" TYPE="int" NOTNULL="false" LENGTH="10"/>
+                <FIELD NAME="timecreated" SEQUENCE="false" TYPE="int" NOTNULL="false" LENGTH="10"/>
+                <FIELD NAME="timemodified" SEQUENCE="false" TYPE="int" NOTNULL="false" LENGTH="10"/>
             </FIELDS>
             <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="course_category"/>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
                 <KEY NAME="course_category" TYPE="foreign" FIELDS="course_category" REFTABLE="course_categories" REFFIELDS="id"/>
+                <KEY NAME="category_uniq" TYPE="unique" FIELDS="course_category" />
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
     </TABLES>

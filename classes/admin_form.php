@@ -18,6 +18,7 @@
  * Evasys sync block admin form.
  *
  * @package block_evasys_sync
+ * @copyright 2017 Tamara Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,6 +35,8 @@ require_once($CFG->libdir . '/formslib.php');
 class admin_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
+
+        $mform->addElement('html', '<div id="adminsettings">');
 
         // Username.
         $name = 'evasys_username';
@@ -65,6 +68,9 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
 
+        // Heading Add Category
+        $mform->addElement('html', '<h3>'.get_string('hd_user_cat', 'block_evasys_sync').'</h3>');
+
         // Course category select.
         $name = 'evasys_cc_select';
         $title = get_string('settings_cc_select', 'block_evasys_sync');
@@ -83,6 +89,8 @@ class admin_form extends moodleform {
         $this->table_body();
 
         $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_evasys_sync'));
+
+        $mform->addElement('html', '</div>');
     }
 
 
@@ -125,17 +133,21 @@ class admin_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('html', '<tbody>');
-        $categories = $this->getcategories();
-        foreach ($categories as $category) {
+        $records = $this->getrecords();
+        foreach ($records as $record) {
             $mform->addElement('html', '<tr>');
-            $mform->addElement('html', '<td class="cell c0"><div>' . $this->getcategoryhierachie($category) . '</div></td>');
+            $mform->addElement('html', '<td class="cell c0"><div>' . $this->getcategoryhierachie($record->get('course_category')) . '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
-            $mform->addElement('text', 'category_' . $category->course_category, null);
-            $mform->setType('category_' . $category->course_category, PARAM_TEXT);
-            $mform->setDefault('category_' . $category->course_category, $category->userid);
+
+            // Input field
+            $name = 'category_'.$record->get('id');
+            $mform->addElement('text', $name, null);
+            $mform->setType($name, PARAM_TEXT);
+            $mform->setDefault($name, $record->get('userid'));
+
             $mform->addElement('html', '</td><td class="cell c2 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
-            $editurl = new \moodle_url($link, array('d' => $category->course_category));
+            $editurl = new \moodle_url($link, array('d' => $record->get('id')));
             $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
         }
@@ -147,15 +159,9 @@ class admin_form extends moodleform {
      * Returns all course categories to which a custom user is assigned.
      * @return array
      */
-    private function getcategories() {
-        global $DB;
-        $categories = $DB->get_records_sql('SELECT {block_evasys_sync_categories}.course_category,
-                                                {block_evasys_sync_categories}.userid,
-                                                {course_categories}.name
-                                                FROM {block_evasys_sync_categories}
-                                                JOIN {course_categories}
-                                                ON {block_evasys_sync_categories}.course_category = {course_categories}.id');
-        return $categories;
+    private function getrecords() {
+        $records = \block_evasys_sync\user_cat_allocation::get_records();
+      return $records;
     }
 
     /**
@@ -181,10 +187,11 @@ class admin_form extends moodleform {
      * Returns the hierachie of a category as string.
      * @return string
      */
-    private function getcategoryhierachie($cat) {
+    private function getcategoryhierachie($catid) {
         $text = '';
         $spaces = '';
-        $parents = \coursecat::get($cat->course_category)->get_parents();
+        $cat = \coursecat::get($catid);
+        $parents = $cat->get_parents();
         foreach ($parents as $pcat) {
             $name = \coursecat::get($pcat)->name;
             $text .= $spaces . ' ' . $name . '<br/>';

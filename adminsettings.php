@@ -24,7 +24,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
-$delcat = optional_param('d', 0, PARAM_INT);
+$delid = optional_param('d', 0, PARAM_INT);
 $confirm = optional_param('c', 0, PARAM_INT);
 require_login();
 
@@ -34,22 +34,24 @@ $PAGE->set_url('/blocks/evasys_sync/adminsettings');
 if (has_capability('moodle/site:config', context_system::instance())) {
     admin_externalpage_setup('block_evasys_sync');
 
-    if (!empty($delcat) && !empty($confirm)) {
+    if (!empty($delid) && !empty($confirm)) {
         // Course category user is deleted.
-        $DB->delete_records('block_evasys_sync_categories', array('course_category' => $delcat));
+        $persistent = new \block_evasys_sync\user_cat_allocation($delid);
+        $persistent->delete();
+
         redirect($PAGE->url);
         exit();
     }
 
     $mform = new block_evasys_sync\admin_form();
 
-    if (!empty($delcat)) {
+    if (!empty($delid)) {
         // Deletion has to be confirmed.
         // Print a confirmation message.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('settings', 'block_evasys_sync'));
         echo $OUTPUT->confirm(get_string("delete_confirm", 'block_evasys_sync'),
-            "adminsettings.php?d=$delcat&c=$delcat",
+            "adminsettings.php?d=$delid&c=$delid",
             'adminsettings.php');
         echo $OUTPUT->footer();
         exit();
@@ -57,11 +59,13 @@ if (has_capability('moodle/site:config', context_system::instance())) {
         // Form is submitted.
         // Added course category.
         if (isset($data->addcatbutton)) {
-            $category = $data->evasys_cc_select;
-            $user = $data->evasys_cc_user;
-
             // Insert new record.
-            $DB->execute('INSERT INTO {block_evasys_sync_categories} VALUES (?,?)', array($category, $user));
+            $record = new stdClass();
+            $record->userid = $data->evasys_cc_user;
+            $record->course_category = $data->evasys_cc_select;
+            $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
+            $persistent->create();
+
             redirect($PAGE->url);
             exit();
         } else if (isset($data->submitbutton)) {
@@ -81,16 +85,15 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
             }
 
-            $categories = $DB->get_records_sql('SELECT course_category, userid FROM {block_evasys_sync_categories}');
-            foreach ($categories as $category) {
-                $newvalue = 'category_' . $category->course_category;
-                $oldvalue = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category->course_category));
+            $records = \block_evasys_sync\user_cat_allocation::get_records();
+            foreach ($records as $allocation) {
+                $newvalue = 'category_' . $allocation->get('id');
+                $oldvalue = $allocation->get('id');
 
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue) {
-                    $DB->execute('UPDATE {block_evasys_sync_categories}
-                                    SET userid=' . $data->$newvalue . '
-                                    WHERE course_category=' . $category->course_category);
+                    $allocation->set('userid', $data->$newvalue);
+                    $allocation->update();
                 }
             }
         }

@@ -49,6 +49,7 @@ $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
 $string['submit'] = 'Speichern';
+$string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 
@@ -60,3 +61,6 @@ $string['tablecaption'] = 'Benutzerdefinierter Mail-Empfänger nach Synchronisat
 $string['default'] = 'Standard';
 $string['delete_category_user'] = 'Nutzer löschen';
 $string['delete'] = 'Löschen';
+
+// Persistance class
+$string['invalidcoursecat'] = 'Ungültige Kurskategorie';

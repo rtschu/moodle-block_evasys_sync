@@ -45,11 +45,12 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         $table = new xmldb_table('block_evasys_sync_categories');
 
         // Adding fields to table evasys_sync_categories.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, null, null, null, XMLDB_SEQUENCE, null);
         $table->add_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table evasys_sync_categories.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('course_category'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('course_category', XMLDB_KEY_FOREIGN, array('course_category'), 'course_categories', array('id'));
 
         // Conditionally launch create table for evasys_sync_categories.
@@ -60,5 +61,30 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2017100404, 'evasys_sync');
     }
+
+    if ($oldversion < 2017100411) {
+
+        // Define table block_evasys_sync_categories to be created.
+        $table = new xmldb_table('block_evasys_sync_categories');
+
+        // Adding fields to table block_evasys_sync_categories.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, null, null, null, XMLDB_SEQUENCE, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, null, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, null, null, null, null, null);
+
+        // Adding keys to table block_evasys_sync_categories.
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('category_uniq', XMLDB_KEY_UNIQUE, array('course_category'));
+
+        // Conditionally launch create table for block_evasys_sync_categories.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2017100411, 'evasys_sync');
+    }
+
     return true;
 }
