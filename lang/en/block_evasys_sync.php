@@ -61,5 +61,5 @@ $string['default'] = 'Default';
 $string['delete_category_user'] = 'Delete user';
 $string['delete'] = 'Delete';
 
-// Persistance class
+// Persistance class.
 $string['invalidcoursecat'] = 'Invalid course category';

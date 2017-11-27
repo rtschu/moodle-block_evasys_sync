@@ -68,8 +68,8 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
 
-        // Heading Add Category
-        $mform->addElement('html', '<h3>'.get_string('hd_user_cat', 'block_evasys_sync').'</h3>');
+        // Heading Add Category.
+        $mform->addElement('html', '<h3>' . get_string('hd_user_cat', 'block_evasys_sync') . '</h3>');
 
         // Course category select.
         $name = 'evasys_cc_select';
@@ -136,11 +136,13 @@ class admin_form extends moodleform {
         $records = $this->getrecords();
         foreach ($records as $record) {
             $mform->addElement('html', '<tr>');
-            $mform->addElement('html', '<td class="cell c0"><div>' . $this->getcategoryhierachie($record->get('course_category')) . '</div></td>');
+            $mform->addElement('html', '<td class="cell c0"><div>' .
+                $this->getcategoryhierachie($record->get('course_category')) .
+                '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
 
-            // Input field
-            $name = 'category_'.$record->get('id');
+            // Input field.
+            $name = 'category_' . $record->get('id');
             $mform->addElement('text', $name, null);
             $mform->setType($name, PARAM_TEXT);
             $mform->setDefault($name, $record->get('userid'));
@@ -161,7 +163,7 @@ class admin_form extends moodleform {
      */
     private function getrecords() {
         $records = \block_evasys_sync\user_cat_allocation::get_records();
-      return $records;
+        return $records;
     }
 
     /**

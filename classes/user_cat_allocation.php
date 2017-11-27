@@ -34,7 +34,7 @@ use core\persistent;
  * @copyright 2017 Tamara Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_cat_allocation extends  persistent {
+class user_cat_allocation extends persistent {
 
     const TABLE = 'block_evasys_sync_categories';
 
@@ -63,7 +63,7 @@ class user_cat_allocation extends  persistent {
      * @return bool|\lang_string
      */
     protected function validate_userid($value) {
-        if(!\core_user::is_real_user($value, true)) {
+        if (!\core_user::is_real_user($value, true)) {
             return new \lang_string('invaliduserid', 'error');
         }
         return true;

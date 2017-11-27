@@ -62,5 +62,5 @@ $string['default'] = 'Standard';
 $string['delete_category_user'] = 'Nutzer löschen';
 $string['delete'] = 'Löschen';
 
-// Persistance class
+// Persistance class.
 $string['invalidcoursecat'] = 'Ungültige Kurskategorie';
