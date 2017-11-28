@@ -215,9 +215,8 @@ class admin_form extends moodleform {
      * @param array $files
      * @return array
      */
-    function validation($data, $files) {
-        return parent::validation($data, $files);
-        var_dump("hallo");
+    public function validation($data, $files) {
+        $errors =  parent::validation($data, $files);
 
         // Validate user ids
         $records = \block_evasys_sync\user_cat_allocation::get_records();
@@ -225,7 +224,7 @@ class admin_form extends moodleform {
 
             $newvalue = 'category_' . $allocation->get('id');
 
-            if (!\core_user::is_real_user($data->$newvalue, true)) {
+            if (!\core_user::is_real_user($data[$newvalue], true)) {
                 $errors[$newvalue] = get_string('invaliduserid', 'error');
             }
         }
