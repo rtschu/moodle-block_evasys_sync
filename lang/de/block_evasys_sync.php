@@ -56,10 +56,10 @@ $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskat
 
 // Settings - category table.
 $string['category_name'] = 'Kurskategorie';
-$string['responsible_user'] = 'Moodle-Benutzer';
+$string['responsible_user'] = 'Moodle-Benutzer ID';
 $string['tablecaption'] = 'Benutzerdefinierter Mail-Empfänger nach Synchronisation';
 $string['default'] = 'Standard';
-$string['delete_category_user'] = 'Nutzer löschen';
+$string['delete_category_user'] = 'Eintrag löschen';
 $string['delete'] = 'Löschen';
 
 // Persistance class.

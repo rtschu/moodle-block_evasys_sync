@@ -55,10 +55,10 @@ $string['delete_confirm'] = 'Are you sure you want to delete the user for this c
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
-$string['responsible_user'] = 'Moodle user';
+$string['responsible_user'] = 'Moodle User ID';
 $string['tablecaption'] = 'Custom mail recipients after sync';
 $string['default'] = 'Default';
-$string['delete_category_user'] = 'Delete user';
+$string['delete_category_user'] = 'Delete Entry';
 $string['delete'] = 'Delete';
 
 // Persistance class.

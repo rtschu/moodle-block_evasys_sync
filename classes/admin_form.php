@@ -228,8 +228,8 @@ class admin_form extends moodleform {
             }
         }
 
-        if (!empty($data->evasys_cc_user)) {
-            if (!\core_user::is_real_user($data->evasys_cc_user, true)) {
+        if (!empty($data['evasys_cc_user'])) {
+            if (!\core_user::is_real_user($data['evasys_cc_user'], true)) {
                 $errors['evasys_cc_user'] = get_string('invaliduserid', 'error');
             }
         }
