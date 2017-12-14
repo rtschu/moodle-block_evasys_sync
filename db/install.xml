@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/evasys_sync/db" VERSION="2017121403" COMMENT="XMLDB file for Moodle blocks/evasys_sync" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="blocks/evasys_sync/db" VERSION="2017121403" COMMENT="XMLDB file for Moodle blocks/evasys_sync"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
         <TABLE NAME="block_evasys_sync_categories" COMMENT="Responsible moodle users for course categories">
             <FIELDS>
