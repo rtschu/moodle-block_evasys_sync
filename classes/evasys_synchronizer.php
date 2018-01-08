@@ -19,6 +19,7 @@ namespace block_evasys_sync;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+require_once($CFG->libdir . '/coursecatlib.php');
 
 class evasys_synchronizer {
     private $courseid;

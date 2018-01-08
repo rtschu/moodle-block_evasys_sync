@@ -31,6 +31,7 @@ use html_table_cell;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/coursecatlib.php');
 
 class admin_form extends moodleform {
     protected function definition() {
