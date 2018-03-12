@@ -70,12 +70,12 @@ class block_evasys_sync extends block_base{
                 }
                 $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
 
-                $this->content->text .= html_writer::div(html_writer::span(
-                    get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                    format_string($evasyssynchronizer->get_amount_participants()));
-                $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
-                $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post' );
             }
+            $this->content->text .= html_writer::div(html_writer::span(
+                get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
+                format_string($evasyssynchronizer->get_amount_participants()));
+            $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
+            $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post' );
 
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
