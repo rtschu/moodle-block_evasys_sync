@@ -64,3 +64,7 @@ $string['delete'] = 'Löschen';
 
 // Persistance class.
 $string['invalidcoursecat'] = 'Ungültige Kurskategorie';
+
+// Privacy API.
+$string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';
+$string['privacy:metadata:username'] = 'Benutzernamen von Studierenden, welche in einem Kurs eingeschrieben sind (as E-Mail-Adresse dargestellt, um EvaSys-Erfordernisse zu erfüllen).';
