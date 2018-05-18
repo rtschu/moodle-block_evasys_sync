@@ -145,7 +145,7 @@ class evasys_synchronizer {
      * Gets all email addresses of enrolled students.
      * @return array of e-mail addresses of all enrolled students
      */
-    private function get_enrolled_student_email_adresses() {
+    private function get_enrolled_student_email_adresses_from_usernames() {
         $emailadresses = array();
 
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
@@ -165,7 +165,7 @@ class evasys_synchronizer {
             throw new \Exception('Cannot sync: Course not known to EvaSys');
         }
 
-        $emailadresses = $this->get_enrolled_student_email_adresses();
+        $emailadresses = $this->get_enrolled_student_email_adresses_from_usernames();
         $evasyscourseid = $this->get_evasys_courseid();
         $students = array();
 
