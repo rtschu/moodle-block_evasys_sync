@@ -52,6 +52,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             ],
             'privacy:metadata'
         );
+        return $collection;
     }
 
     /**
