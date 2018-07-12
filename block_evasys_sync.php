@@ -53,11 +53,7 @@ class block_evasys_sync extends block_base{
             try {
                 $evasyscourseid = $evasyssynchronizer->get_evasys_courseid();
             } catch (Exception $exception) {
-                $this->page->requires->js_amd_inline("require(['core/notification'], function(notification) {
-     notification.addNotification({
-       message: \"".get_string('syncnotpossible', 'block_evasys_sync')."\",
-       type: \"warning\",
-     });});");
+                \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
                 $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
                 return $this->content;
             }
