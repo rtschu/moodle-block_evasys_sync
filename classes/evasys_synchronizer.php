@@ -47,6 +47,9 @@ class evasys_synchronizer {
         $lsfentry = get_course_by_veranstid(intval($course->idnumber));
         close_secondary_DB_connection();
 
+        if (!is_object($lsfentry)) {
+            throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
+        }
         $this->evasyscourseid = trim($lsfentry->veranstnr) . ' ' . trim($lsfentry->semestertxt);
         return $this->evasyscourseid;
     }

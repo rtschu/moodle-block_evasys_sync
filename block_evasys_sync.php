@@ -50,9 +50,19 @@ class block_evasys_sync extends block_base{
 
         if ($evasyssynccheck === 1) {
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
-
+            try {
+                $evasyscourseid = $evasyssynchronizer->get_evasys_courseid();
+            } catch (Exception $exception) {
+                $this->page->requires->js_amd_inline("require(['core/notification'], function(notification) {
+     notification.addNotification({
+       message: \"".get_string('syncnotpossible', 'block_evasys_sync')."\",
+       type: \"warning\",
+     });});");
+                $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
+                return $this->content;
+            }
             $this->content->text .= html_writer::div(html_writer::span(
-                get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyssynchronizer->get_evasys_courseid());
+                get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
             $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
             $outputsurveys = array();
             $surveys = $evasyssynchronizer->get_surveys();
