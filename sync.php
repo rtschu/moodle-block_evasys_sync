@@ -30,7 +30,7 @@ $returnurl = $CFG->wwwroot . '/course/view.php?id=' . $courseid . '&evasyssyncch
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
+    if ($evasyssynchronizer->sync_students() || true) {
         $evasyssynchronizer->notify_evaluation_responsible_person();
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
     } else {

@@ -16,6 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 class block_evasys_sync extends block_base{
 
     /**
@@ -31,8 +32,8 @@ class block_evasys_sync extends block_base{
      * @return object
      */
     public function get_content() {
-        global $OUTPUT;
-
+        global $OUTPUT, $PAGE;
+        $PAGE->requires->js_call_amd('block_evasys_sync/hello_world.js', 'init');
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
 
         if ($this->content !== null) {
@@ -44,7 +45,7 @@ class block_evasys_sync extends block_base{
 
         $access = has_capability('block/evasys_sync:synchronize', context_course::instance($this->page->course->id));
         $inlsf = !empty($this->page->course->idnumber);
-        if (!$access || !$inlsf) {
+        if (!$access || !$inlsf) { // Thats why i dont get a button.
             return $this->content;
         }
 

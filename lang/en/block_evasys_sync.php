@@ -17,7 +17,7 @@
 $string['pluginname'] = 'EvaSys Sync Block';
 $string['evasys_sync'] = 'EvaSys Sync';
 $string['evasys_sync:addinstance'] = 'Add a new EvaSys Sync Block';
-$string['invitestudents'] = 'Invite students to surveys';
+$string['invitestudents'] = 'Evaluation beauftragen';
 $string['checkstatus'] = 'Show status of surveys';
 $string['countparticipants'] = 'Number of participants: ';
 $string['surveystatus'] = 'Survey status:';
@@ -27,7 +27,7 @@ $string['surveys'] = 'Surveys: ';
 $string['nocourse'] = 'Problem finding course, please try again later.';
 $string['nosurveys'] = 'Currently there are no surveys available.';
 $string['syncnotpossible'] = 'Course participants could not be synchronized to EvaSys due to a technical problem.';
-$string['syncsucessful'] = 'Sync to EvaSys was successful';
+$string['syncsucessful'] = "sync successfull";
 $string['syncalreadyuptodate'] = 'Users were already up to date';
 
 // Survey status.
