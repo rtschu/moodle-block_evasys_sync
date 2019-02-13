@@ -32,21 +32,30 @@ class block_evasys_sync extends block_base{
      * @return object
      */
     public function get_content() {
-        global $OUTPUT, $PAGE;
-        $PAGE->requires->js_call_amd('block_evasys_sync/hello_world.js', 'init');
+        global $OUTPUT;
+        $this->page->requires->js_call_amd('block_evasys_sync/hello_world', 'init');
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
+        $success = optional_param('success', 0, PARAM_INT);
 
         if ($this->content !== null) {
             return $this->content;
         }
 
         $this->content = new stdClass();
-        $this->content->text = '';
+        $this->content->text = 'block_evasys_sync/hello_world';
 
         $access = has_capability('block/evasys_sync:synchronize', context_course::instance($this->page->course->id));
         $inlsf = !empty($this->page->course->idnumber);
         if (!$access || !$inlsf) { // Thats why i dont get a button.
             return $this->content;
+        }
+
+        if ($success === 1) {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
+        } else if ($success === 2) {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
+        } else if ($success === -1) {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
         }
 
         if ($evasyssynccheck === 1) {
