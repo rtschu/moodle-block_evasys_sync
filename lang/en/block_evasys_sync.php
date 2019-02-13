@@ -17,7 +17,7 @@
 $string['pluginname'] = 'EvaSys Sync Block';
 $string['evasys_sync'] = 'EvaSys Sync';
 $string['evasys_sync:addinstance'] = 'Add a new EvaSys Sync Block';
-$string['invitestudents'] = 'Evaluation beauftragen';
+$string['invitestudents'] = 'Request evaluation';
 $string['checkstatus'] = 'Show status of surveys';
 $string['countparticipants'] = 'Number of participants: ';
 $string['surveystatus'] = 'Survey status:';
