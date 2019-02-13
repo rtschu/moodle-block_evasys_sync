@@ -30,6 +30,25 @@ $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die T
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
 
+// Information box strings.
+
+$string['title_success']  = "Evaluation erfolgreich beauftragt";
+$string['title_uptodate'] = "Evaluation bereits beauftragt";
+$string['title_failure']  = "Evaluation nicht beauftragt";
+
+$string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
+                             "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
+                             "Sie müssen nichts weiter tun, ".
+                             "Ihr Evaluationsbeauftragter wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+
+$string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
+
+$string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
+                             "Bitte wenden sie sich an den Support.";
+
+$string['confirm_box'] = "Verstanden";
+
 // Survey status.
 $string['surveystatusopen'] = 'offen';
 $string['surveystatusclosed'] = 'geschlossen';

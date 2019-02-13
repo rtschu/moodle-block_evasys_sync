@@ -30,6 +30,25 @@ $string['syncnotpossible'] = 'Course participants could not be synchronized to E
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
 
+// Information box strings.
+
+$string['title_success']  = "Successfully requested the evaluation";
+$string['title_uptodate'] = "The evaluation has already been requested";
+$string['title_failure']  = "The evaluation could not be requested";
+
+$string['content_success'] = "Your evaluation coordinator has been instructed to start the evaluation.<br />" .
+    "!!!THE EVALUATION HAS NOT STARTED YET!!! <br />" .
+    "However you have done your part,".
+    " your evaluation coordinator will process your request in compliance with the regulations enforced by your organization.";
+
+$string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
+    "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
+
+$string['content_failure'] = "Unfortunately we weren't able to request the start of the evaluation. <br />" .
+    "For help please contact your local support team";
+
+$string['confirm_box'] = "OK";
+
 // Survey status.
 $string['surveystatusopen'] = 'open';
 $string['surveystatusclosed'] = 'closed';
