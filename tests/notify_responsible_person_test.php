@@ -21,7 +21,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-
 /**
  * PHPUnit evasys testcase
  * @package block_evasys_sync
@@ -29,14 +28,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 T Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_evasys_sync_notify_testcase extends advanced_testcase {
+class block_evasys_sync_notify_testcase extends advanced_testcase
+{
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person() {
-        global $DB;
+    public function test_notify_person()
+    {
         $this->resetAfterTest(true);
-
         $generator = $this->getDataGenerator();
         $categoryone = $generator->create_category();
         $categorytwo = $generator->create_category();
@@ -47,53 +46,42 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         $usersubone = $this->getDataGenerator()->create_user();
         $usersubsubone = $this->getDataGenerator()->create_user();
         set_config('default_evasys_moodleuser', $defaultuser->id, 'block_evasys_sync');
-
         $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course',
             'category' => $categoryone->id));
         $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course',
-                                                                        'category' => $subsubcategoryone->id));
+            'category' => $subsubcategoryone->id));
         $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'Second course',
             'category' => $categorytwo->id));
-
         // Test default user.
         $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
         self::assertEquals($userto, $defaultuser);
-
         // Test subcategory user without parent user.
         self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
-
         // Insert new record.
         $data = new \stdClass();
         $data->course_category = $categoryone->id;
         $data->userid = $userone->id;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
-
         // Test custom user.
         $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
         self::assertEquals($userto, $userone);
-
         self::assertEquals($defaultuser, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursetwo));
-
         // Test subcategory user with parent user.
         self::assertEquals($userone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
-
         // Insert new record for subcategory.
         $data = new \stdClass();
         $data->course_category = $subcategoryone->id;
         $data->userid = $usersubone->id;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
-
         self::assertEquals($usersubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
-
         // Insert new record for subsubcategory.
         $data = new \stdClass();
         $data->course_category = $subsubcategoryone->id;
         $data->userid = $usersubsubone->id;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
-
         self::assertEquals($usersubsubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
     }
 }
