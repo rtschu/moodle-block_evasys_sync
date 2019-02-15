@@ -20,9 +20,7 @@ env:
  global:
   - IGNORE_PATHS=amd/build
  matrix:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=master
 
 before_install:
