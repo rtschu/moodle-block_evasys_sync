@@ -19,7 +19,6 @@ namespace block_evasys_sync;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
-require_once($CFG->libdir . '/coursecatlib.php');
 
 class evasys_synchronizer {
     private $courseid;
@@ -239,7 +238,7 @@ class evasys_synchronizer {
         // Custom user has not been set.
         if (!$user) {
             // Loop through parents.
-            $parents = \coursecat::get($course->category)->get_parents();
+            $parents = \core_course_category::get($course->category)->get_parents();
             // Start with direct parent.
             for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $user = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
