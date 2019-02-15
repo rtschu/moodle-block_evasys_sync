@@ -41,7 +41,7 @@ jobs:
     # Prechecks against latest Moodle stable only.
     - stage: static
       php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
       script:
       - moodle-plugin-ci phplint
       - moodle-plugin-ci phpcpd
@@ -55,7 +55,7 @@ jobs:
     # Smaller build matrix for development builds
     - stage: develop
       php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
