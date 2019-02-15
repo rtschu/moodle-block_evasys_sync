@@ -33,8 +33,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person()
-    {
+    public function test_notify_person() {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
         $categoryone = $generator->create_category();
