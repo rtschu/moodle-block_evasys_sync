@@ -219,7 +219,7 @@ class evasys_synchronizer {
         $notiftext .= "Mit freundlichen Grüßen\r\n";
         $notiftext .= "Learnweb-Support";
 
-        $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext,'', '' , '',
+        $mailresult = email_to_user($userto, $userfrom, $notifsubject, $notiftext, '', '' , '',
             true, $userfrom->email, $userfrom->firstname . " " . $userfrom->lastname);
         if (!$mailresult) {
             throw new \Exception('Could not send e-mail to person responsible for evaluation');
