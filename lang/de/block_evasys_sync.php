@@ -17,7 +17,7 @@
 $string['pluginname'] = 'EvaSys-Export-Block';
 $string['evasys_sync'] = 'EvaSys-Export';
 $string['evasys_sync:addinstance'] = 'EvaSys-Export-Block hinzufügen';
-$string['invitestudents'] = 'Teilnehmer zu Evaluationen einladen';
+$string['invitestudents'] = 'Evaluation beauftragen';
 $string['checkstatus'] = 'Status der Evaluationen anzeigen';
 $string['countparticipants'] = 'Anzahl Teilnehmer: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
