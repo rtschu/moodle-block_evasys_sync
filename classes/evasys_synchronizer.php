@@ -34,6 +34,7 @@ class evasys_synchronizer {
         $this->init_soap_client();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
+        $this->checkTanNumberAmount();
     }
 
     public function get_evasys_courseid() {
@@ -158,6 +159,21 @@ class evasys_synchronizer {
         }
 
         return $emailadresses;
+    }
+
+    private function checkTanNumberAmount(){
+        global $CFG;
+        $usernum = count(get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');)
+        foreach ($this->courseinformation->m_oSurveyHolder as $Holder){
+            foreach($Holder->m_aSurveys as $survey){
+                if($survey->m_nPswdCount < $usernum){
+                    $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
+                    $returnurl->param('id', $this->courseid);
+                    $returnurl->param('numoftans', 'insufficient');
+                    redirect($returnurl);
+                }
+            }
+        }
     }
 
     /**
