@@ -32,8 +32,8 @@ class block_evasys_sync extends block_base{
      */
     public function get_content() {
         global $OUTPUT;
-
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
+        $status = optional_param('status', "", PARAM_TEXT);
 
         if ($this->content !== null) {
             return $this->content;
@@ -46,6 +46,14 @@ class block_evasys_sync extends block_base{
         $inlsf = !empty($this->page->course->idnumber);
         if (!$access || !$inlsf) {
             return $this->content;
+        }
+
+        if ($status === 'success') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
+        } else if ($status === 'uptodate') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
+        } else if ($status === 'failure') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
         }
 
         if ($evasyssynccheck === 1) {

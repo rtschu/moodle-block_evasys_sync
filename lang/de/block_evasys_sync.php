@@ -17,7 +17,7 @@
 $string['pluginname'] = 'EvaSys-Export-Block';
 $string['evasys_sync'] = 'EvaSys-Export';
 $string['evasys_sync:addinstance'] = 'EvaSys-Export-Block hinzufügen';
-$string['invitestudents'] = 'Teilnehmer zu Evaluationen einladen';
+$string['invitestudents'] = 'Evaluation beauftragen';
 $string['checkstatus'] = 'Status der Evaluationen anzeigen';
 $string['countparticipants'] = 'Anzahl Teilnehmer: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
@@ -29,6 +29,25 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
+
+// Information box strings.
+
+$string['title_success']  = "Evaluation erfolgreich beauftragt";
+$string['title_uptodate'] = "Evaluation bereits beauftragt";
+$string['title_failure']  = "Evaluation nicht beauftragt";
+
+$string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
+                             "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
+                             "Sie müssen nichts weiter tun, ".
+                             "Ihr Evaluationsbeauftragter wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+
+$string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
+
+$string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
+                             "Bitte wenden sie sich an den Support.";
+
+$string['confirm_box'] = "Verstanden";
 
 // Survey status.
 $string['surveystatusopen'] = 'offen';

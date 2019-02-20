@@ -26,18 +26,23 @@ $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
 $PAGE->set_context(context_course::instance($courseid));
 require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
 
-$returnurl = $CFG->wwwroot . '/course/view.php?id=' . $courseid . '&evasyssynccheck=1';
+$returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
+$returnurl->param('id', $courseid);
+$returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
     if ($evasyssynchronizer->sync_students()) {
         $evasyssynchronizer->notify_evaluation_responsible_person();
+        $returnurl->param('status', 'success');
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
     } else {
+        $returnurl->param('status', 'uptodate');
         redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 1);
     }
 } catch (Exception $exception) {
     debugging($exception);
+    $returnurl->param('status', 'failure');
     notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
     exit();
 }
