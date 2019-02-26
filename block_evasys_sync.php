@@ -34,6 +34,7 @@ class block_evasys_sync extends block_base{
         global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
+        $invitedirect = optional_param('invite_confirm', 0, PARAM_BOOL);
 
         if ($this->content !== null) {
             return $this->content;
@@ -46,6 +47,11 @@ class block_evasys_sync extends block_base{
         $inlsf = !empty($this->page->course->idnumber);
         if (!$access || !$inlsf) {
             return $this->content;
+        }
+
+        if ($invitedirect) {
+            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'ajax',
+                array($this->page->course->id));
         }
 
         if ($status === 'success') {
@@ -90,7 +96,9 @@ class block_evasys_sync extends block_base{
                 format_string($evasyssynchronizer->get_amount_participants()));
             $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
             $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post' );
-
+            $href = new moodle_url('/course/view.php',
+                array('id' => $this->page->course->id , "evasyssynccheck" => true, "invite_confirm" => true));
+            $this->content->text .= $OUTPUT->single_button($href, get_string('direct_invite', 'block_evasys_sync'), 'get');
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');

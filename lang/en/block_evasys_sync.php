@@ -30,6 +30,16 @@ $string['syncnotpossible'] = 'Course participants could not be synchronized to E
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
 
+// Direct invite strings.
+
+$string['direct_invite'] = "Invite participants directly";
+$string['content_confirm'] = "This will stat the evaluations immediately!<br />" .
+    "Are you sure You want to send invites/reminders to all participants?";
+$string['title_send_success'] = "Evaluation started";
+$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send';
+$string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
+
+
 // Information box strings.
 
 $string['title_success']  = "Successfully requested the evaluation";

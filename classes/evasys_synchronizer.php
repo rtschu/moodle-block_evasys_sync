@@ -68,6 +68,12 @@ class evasys_synchronizer {
         $this->soapclient->__setSoapHeaders($header);
     }
 
+    public function invite_all() {
+        $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+        $soap = $this->soapclient->sendInvitationToParticipants($id);
+        return $soap;
+    }
+
     private function get_course_information() {
         $soapresult = $this->soapclient->GetCourse($this->get_evasys_courseid(), 'PUBLIC', true, true);
         if (is_soap_fault($soapresult)) {

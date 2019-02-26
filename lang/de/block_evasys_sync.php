@@ -30,6 +30,16 @@ $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die T
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
 
+// Direct invite strings.
+
+$string['direct_invite'] = "Teilnehmer direkt einladen";
+$string['content_confirm'] = "Diese Funktion wird die Evaluation direkt starten!<br />" .
+                             "Sind Sie sicher, dass sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
+$string['title_send_success'] = "Evaluation erfolgreich gestartet";
+$string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} E-mails versendet';
+$string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen sie den manuellen Versand von EvaSys";
+
+
 // Information box strings.
 
 $string['title_success']  = "Evaluation erfolgreich beauftragt";
