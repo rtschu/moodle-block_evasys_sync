@@ -108,9 +108,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     $newvaluemode = 0;
                 }
                 try {
-                    $oldvaluemode = $allocation->get('mode');
+                    $oldvaluemode = $allocation->get('category_mode');
                 } catch (coding_exception $e) {
-                    $oldvaluemode = false;
+                    $oldvaluemode = $newvaluemode + 1; // Make the below if statement execute.
                 }
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue || $newvaluemode != $oldvaluemode) {
