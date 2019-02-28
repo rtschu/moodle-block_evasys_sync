@@ -66,6 +66,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         $data = new \stdClass();
         $data->course_category = $categoryone->id;
         $data->userid = $userone->id;
+        $data->category_mode = 0;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
 
@@ -82,6 +83,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         $data = new \stdClass();
         $data->course_category = $subcategoryone->id;
         $data->userid = $usersubone->id;
+        $data->category_mode = 0;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
 
@@ -91,6 +93,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         $data = new \stdClass();
         $data->course_category = $subsubcategoryone->id;
         $data->userid = $usersubsubone->id;
+        $data->category_mode = 0;
         $record = new \block_evasys_sync\user_cat_allocation(0, $data);
         $record->create();
 
