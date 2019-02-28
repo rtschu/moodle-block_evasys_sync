@@ -74,6 +74,7 @@ $string['settings_password'] = 'EvaSys Password';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
+$string['settings_mode'] = 'Default mode for categories';
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_cc_select'] = 'Select course category';
 $string['settings_cc_user'] = 'Recipient (moodle user id) for selected course category';

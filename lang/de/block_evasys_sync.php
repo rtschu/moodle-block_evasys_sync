@@ -74,6 +74,7 @@ $string['settings_password'] = 'EvaSys-API-Password';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
+$string['settings_mode'] = 'Standardmodus für Kategorien';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
@@ -93,6 +94,7 @@ $string['delete'] = 'Löschen';
 
 // Persistance class.
 $string['invalidcoursecat'] = 'Ungültige Kurskategorie';
+$string['invalidmode'] = "Ungültiger Modus";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

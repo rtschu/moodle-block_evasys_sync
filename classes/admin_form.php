@@ -69,6 +69,13 @@ class admin_form extends moodleform {
         $mform->setType($name, PARAM_INT);
         $mform->setDefault($name, 25989);
 
+        // Default Mode.
+        $name = 'default_evasys_mode';
+        $title = get_string('settings_mode', 'block_evasys_sync');
+        $mform->addElement('checkbox', $name, $title);
+        $mform->setType($name, PARAM_BOOL);
+        $mform->setDefault($name, get_config('block_evasys_sync', 'default_evasys_mode'));
+
         // Heading Add Category.
         $mform->addElement('html', '<h3>' . get_string('hd_user_cat', 'block_evasys_sync') . '</h3>');
 
@@ -81,6 +88,11 @@ class admin_form extends moodleform {
         $title = get_string('settings_cc_user', 'block_evasys_sync');
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
+
+        $name = 'evasys_cc_mode';
+        $title = "Automatischer Modus";
+        $mform->addElement('checkbox', $name, $title);
+        $mform->setType($name, PARAM_BOOL);
 
         // Add Button.
         $mform->addElement('submit', 'addcatbutton', get_string('addcat', 'block_evasys_sync'));
@@ -116,10 +128,13 @@ class admin_form extends moodleform {
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('responsible_user', 'block_evasys_sync'), $attributes);
         $attributes = array();
-        $attributes['class'] = 'header c2 lastcol';
+        $attributes['class'] = 'header c2';
+        $attributes['scope'] = 'col';
+        $output .= html_writer::tag('th', "Automatischer Modus", $attributes);
+        $attributes = array();
+        $attributes['class'] = 'header c3 lastcol';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('delete_category_user', 'block_evasys_sync'), $attributes);
-
         $output .= html_writer::end_tag('tr');
         $output .= html_writer::end_tag('thead');
 
@@ -148,7 +163,20 @@ class admin_form extends moodleform {
             $mform->setType($name, PARAM_TEXT);
             $mform->setDefault($name, $record->get('userid'));
 
-            $mform->addElement('html', '</td><td class="cell c2 lastcol">');
+            $mform->addElement('html', '</td><td class="cell c2">');
+            // Auto mode checkbox.
+            try {
+                $mode = $record->get('category_mode');
+            } catch (\coding_exception $e) {
+                // Backwards compatibility.
+                $mode = false;
+            }
+            $name = 'category_mode_' . $record->get('id');
+            $mform->addElement('checkbox', $name);
+            $mform->setType($name, PARAM_BOOL);
+            $mform->setDefault($name, $mode);
+
+            $mform->addElement('html', '</td><td class="cell c3 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $record->get('id')));
             $text = get_string('delete', 'block_evasys_sync');

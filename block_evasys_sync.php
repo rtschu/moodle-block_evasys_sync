@@ -94,11 +94,14 @@ class block_evasys_sync extends block_base{
             $this->content->text .= html_writer::div(html_writer::span(
                 get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
                 format_string($evasyssynchronizer->get_amount_participants()));
-            $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
-            $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post' );
-            $href = new moodle_url('/course/view.php',
-                array('id' => $this->page->course->id , "evasyssynccheck" => true, "invite_confirm" => true));
-            $this->content->text .= $OUTPUT->single_button($href, get_string('direct_invite', 'block_evasys_sync'), 'get');
+            if (!$this->getmode($this->page->course->category)) {
+                $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
+                $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post');
+            } else {
+                $href = new moodle_url('/course/view.php',
+                    array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
+                $this->content->text .= $OUTPUT->single_button($href, get_string('direct_invite', 'block_evasys_sync'), 'get');
+            }
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
@@ -123,6 +126,24 @@ class block_evasys_sync extends block_base{
      */
     public function has_config() {
         return true;
+    }
+
+    private function getmode($category) {
+        global $DB;
+        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
+        if ($mode) {
+            return (bool) $mode->category_mode;
+        } else {
+            $parents = \core_course_category::get($category)->get_parents();
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                if ($mode) {
+                    return (bool) $mode->category_mode;
+                }
+            }
+        }
+        $defaukt = get_config('block_evasys_sync', 'default_evasys_mode');
+        return $defaukt;
     }
 }
 

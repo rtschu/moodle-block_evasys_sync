@@ -52,6 +52,10 @@ class user_cat_allocation extends persistent {
             'course_category' => array(
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalidcoursecat', 'block_evasys_sync')
+            ),
+            'category_mode' => array(
+                'type' => PARAM_INT,
+                'message' => new \lang_string('invalidmode', 'block_evasys_sync')
             )
         );
     }

@@ -63,6 +63,11 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             $record = new stdClass();
             $record->userid = $data->evasys_cc_user;
             $record->course_category = $data->evasys_cc_select;
+            if (isset($data->evasys_cc_mode) && $data->evasys_cc_mode == 1) {
+                $record->category_mode = 1;
+            } else {
+                $record->category_mode = 0;
+            }
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();
 
@@ -84,15 +89,33 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             if (isset($data->default_evasys_moodleuser)) {
                 set_config('default_evasys_moodleuser', $data->default_evasys_moodleuser, 'block_evasys_sync');
             }
+            // Checkboxes will only get submitted if they're checked...
+            if (isset($data->default_evasys_mode)) {
+                set_config('default_evasys_mode', $data->default_evasys_mode, 'block_evasys_sync');
+            } else {
+                set_config('default_evasys_mode', 0, 'block_evasys_sync');
+            }
 
             $records = \block_evasys_sync\user_cat_allocation::get_records();
             foreach ($records as $allocation) {
                 $newvalue = 'category_' . $allocation->get('id');
                 $oldvalue = $allocation->get('id');
-
+                $newvaluemodename = 'category_mode_' . $allocation->get('id');
+                // Checkboxex only get submitted if they're checked.
+                if (isset($data->$newvaluemodename) && $data->$newvaluemodename) {
+                    $newvaluemode = 1;
+                } else {
+                    $newvaluemode = 0;
+                }
+                try {
+                    $oldvaluemode = $allocation->get('mode');
+                } catch (coding_exception $e) {
+                    $oldvaluemode = false;
+                }
                 // Update db entry.
-                if ($data->$newvalue != $oldvalue) {
+                if ($data->$newvalue != $oldvalue || $newvaluemode != $oldvaluemode) {
                     $allocation->set('userid', $data->$newvalue);
+                    $allocation->set('category_mode', $newvaluemode);
                     $allocation->update();
                 }
             }

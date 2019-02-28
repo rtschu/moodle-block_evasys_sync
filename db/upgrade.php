@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_block_evasys_sync_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-    if ($oldversion < 2017121403) {
+    if ($oldversion < 2019280219) {
 
         // Define table block_evasys_sync_categories to be created.
         $table = new xmldb_table('block_evasys_sync_categories');
@@ -47,6 +47,7 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         // Adding fields to table block_evasys_sync_categories.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('category_mode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -63,7 +64,7 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
         }
 
         // Evasys_sync savepoint reached.
-        upgrade_block_savepoint(true, 2017121403, 'evasys_sync');
+        upgrade_block_savepoint(true, 2019280219, 'evasys_sync');
     }
 
     return true;

@@ -1,4 +1,3 @@
-
 define(['jquery', 'core/notification', 'core/str'], function($, notification, str) {
     var show_dialog_success = function() {
         str.get_strings([
