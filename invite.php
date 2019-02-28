@@ -34,11 +34,14 @@ $returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    $result = $evasyssynchronizer->invite_all();
-    echo($result);
-
+    if ($evasyssynchronizer->sync_students()) {
+        $result = $evasyssynchronizer->invite_all();
+        echo($result);
+    } else {
+        echo(get_string('content_uptodate', 'block_evasys_sync'));
+    }
 } catch (Exception $exception) {
     debugging($exception);
-    echo("Emails konnten nicht versendet werden");
+    echo(get_string('content_failure', 'block_evasys_sync'));
     exit();
 }
