@@ -17,7 +17,7 @@
 $string['pluginname'] = 'EvaSys Sync Block';
 $string['evasys_sync'] = 'EvaSys Sync';
 $string['evasys_sync:addinstance'] = 'Add a new EvaSys Sync Block';
-$string['invitestudents'] = 'Invite students to surveys';
+$string['invitestudents'] = 'Request evaluation';
 $string['checkstatus'] = 'Show status of surveys';
 $string['countparticipants'] = 'Number of participants: ';
 $string['surveystatus'] = 'Survey status:';
@@ -26,9 +26,25 @@ $string['evacourseid'] = 'EvaSys course ID:';
 $string['surveys'] = 'Surveys: ';
 $string['nocourse'] = 'Problem finding course, please try again later.';
 $string['nosurveys'] = 'Currently there are no surveys available.';
-$string['syncnotpossible'] = 'Course participants could not be synchronized to EvaSys due to a technical problem.';
+$string['syncnotpossible'] = 'Unfortunately, course participants could not be synchronized to EvaSys due to a technical problem. Please get in touch with the support contact.';
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
+
+// Information box strings.
+
+$string['title_success']  = "Successfully requested the evaluation";
+$string['title_uptodate'] = "The evaluation has already been requested";
+$string['title_failure']  = "The evaluation could not be requested";
+
+$string['content_success'] = "Your evaluation coordinator has been instructed to start the evaluation.<br />" .
+    "!!!THE EVALUATION HAS NOT STARTED YET!!! <br />" .
+    "However, you have done your part.".
+    "The coordinator will process your request in accordance with the regulations of your organization.";
+
+$string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
+    "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
+
+$string['confirm_box'] = "OK";
 
 // Survey status.
 $string['surveystatusopen'] = 'open';
