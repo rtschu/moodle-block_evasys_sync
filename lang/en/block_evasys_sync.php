@@ -38,8 +38,8 @@ $string['title_failure']  = "The evaluation could not be requested";
 
 $string['content_success'] = "Your evaluation coordinator has been instructed to start the evaluation.<br />" .
     "!!!THE EVALUATION HAS NOT STARTED YET!!! <br />" .
-    "However you have done your part,".
-    " your evaluation coordinator will process your request in compliance with the regulations enforced by your organization.";
+    "However, you have done your part.".
+    "The coordinator will process your request in accordance with the regulations of your organization.";
 
 $string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";

@@ -39,10 +39,10 @@ $string['title_failure']  = "Evaluation nicht beauftragt";
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
                              "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
                              "Sie müssen nichts weiter tun, ".
-                             "Ihr Evaluationsbeauftragter wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+                             "Ihr/e Evaluationsbeauftragte/r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
-$string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
-                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
+$string['content_uptodate'] = "Ihr/e Evaluationsbeauftragte/r hat bereits einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre/n Evaluationsbeauftragte/n.";
 
 $string['confirm_box'] = "Verstanden";
 
