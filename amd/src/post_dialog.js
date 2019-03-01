@@ -22,19 +22,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
         ).fail(notification.exception);
     };
 
-    var show_dialog_failure = function() {
-        str.get_strings([
-            {'key' : 'title_failure', component: 'block_evasys_sync'},
-            {'key' : 'content_failure', component: 'block_evasys_sync'},
-            {'key' : 'confirm_box', component: 'block_evasys_sync'},
-        ]).done(function(s) {
-                notification.alert(s[0], s[1], s[2]);
-            }
-        ).fail(notification.exception);
-    };
-
     return {
-        show_dialog_failure: show_dialog_failure,
         show_dialog_success: show_dialog_success,
         show_dialog_up_to_date: show_dialog_up_to_date
     };

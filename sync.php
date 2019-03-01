@@ -42,7 +42,6 @@ try {
     }
 } catch (Exception $exception) {
     debugging($exception);
-    $returnurl->param('status', 'failure');
     notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
     exit();
 }

@@ -26,7 +26,7 @@ $string['evacourseid'] = 'EvaSys-Kurs-ID:';
 $string['surveys'] = 'Evaluationen: ';
 $string['nocourse'] = 'Kurs konnte zur Zeit nicht gefunden werden, bitte versuchen Sie es später erneut.';
 $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
-$string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden.';
+$string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
 
@@ -43,9 +43,6 @@ $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br
 
 $string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
                               "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
-
-$string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
-                             "Bitte wenden sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
 

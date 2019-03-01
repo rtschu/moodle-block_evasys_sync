@@ -52,8 +52,6 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
         } else if ($status === 'uptodate') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
-        } else if ($status === 'failure') {
-            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
         }
 
         if ($evasyssynccheck === 1) {
