@@ -33,7 +33,6 @@ class evasys_synchronizer {
         $this->init_soap_client();
         $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
         $this->courseinformation = $this->get_course_information();
-        $this->check_tan_number_amount();
     }
 
     public function get_evasys_courseid() {
