@@ -74,6 +74,10 @@ $string['content_uptodate'] = "Your evaluation coordinator has already been inst
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
 $string['confirm_box'] = "OK";
+$string['direct_already'] = "You have already sent invitations to all students.".
+                            "No new invitations have been send";
+
+$string['direct_title_info'] = "Invitation already complete";
 
 // Survey status.
 $string['surveystatusopen'] = 'open';
