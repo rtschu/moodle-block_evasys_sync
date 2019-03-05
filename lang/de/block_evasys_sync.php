@@ -59,6 +59,11 @@ $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werd
 
 $string['confirm_box'] = "Verstanden";
 
+$string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
+                            "Es wurden keine neuen Einladungen versendet";
+
+$string['direct_title_info'] = "Einladungen bereits versandt";
+
 // Survey status.
 $string['surveystatusopen'] = 'offen';
 $string['surveystatusclosed'] = 'geschlossen';

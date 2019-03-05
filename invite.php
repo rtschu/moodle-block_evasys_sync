@@ -38,7 +38,7 @@ try {
         $result = $evasyssynchronizer->invite_all();
         echo($result);
     } else {
-        echo(get_string('content_uptodate', 'block_evasys_sync'));
+        echo("-1");
     }
 } catch (Exception $exception) {
     debugging($exception);

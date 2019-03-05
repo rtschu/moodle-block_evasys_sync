@@ -59,6 +59,11 @@ $string['content_failure'] = "Unfortunately we weren't able to request the start
 
 $string['confirm_box'] = "OK";
 
+$string['direct_already'] = "You have already sent invitations to all students.".
+                            "No new invitations have been send";
+
+$string['direct_title_info'] = "Invitation already complete";
+
 // Survey status.
 $string['surveystatusopen'] = 'open';
 $string['surveystatusclosed'] = 'closed';

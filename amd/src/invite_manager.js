@@ -4,17 +4,27 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if(this.readyState === 4 && this.status === 200){
-                number = this.responseText.replace(" emails sent successful.", "");
-                sent1 = number.split("/")[0];
-                total1 = number.split("/")[1];
-                params = {"sent" : sent1, "total" : total1};
-                str.get_strings([
-                    {'key' : 'title_send_success', component: 'block_evasys_sync'},
-                    {'key' : 'content_send_success', component: 'block_evasys_sync', param: params},
-                    {'key' : 'ok'}
-                ]).done(function (s) {
-                    notification.alert(s[0], s[1], s[2]);
-                })
+                if(this.responseText.includes(" emails sent successfull")) {
+                    number = this.responseText.replace(" emails sent successful.", "");
+                    sent1 = number.split("/")[0];
+                    total1 = number.split("/")[1];
+                    params = {"sent": sent1, "total": total1};
+                    str.get_strings([
+                        {'key': 'title_send_success', component: 'block_evasys_sync'},
+                        {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    })
+                }else if(this.responseText === "-1"){
+                    str.get_strings([
+                        {'key': 'direct_title_info', component: 'block_evasys_sync'},
+                        {'key': 'direct_already', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    })
+                }
             }else if(this.readyState === 4){
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                     notification.alert("Error", s, "OK");
