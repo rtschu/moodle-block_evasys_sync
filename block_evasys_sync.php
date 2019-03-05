@@ -62,6 +62,12 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
         }
 
+        if ($status === 'success') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
+        } else if ($status === 'uptodate') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
+        }
+
         if ($evasyssynccheck === 1) {
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
             try {

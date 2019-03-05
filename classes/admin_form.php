@@ -31,7 +31,6 @@ use html_table_cell;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->libdir . '/coursecatlib.php');
 
 class admin_form extends moodleform {
     protected function definition() {
@@ -221,10 +220,10 @@ class admin_form extends moodleform {
     private function getcategoryhierachie($catid) {
         $text = '';
         $spaces = '';
-        $cat = \coursecat::get($catid);
+        $cat = \core_course_category::get($catid);
         $parents = $cat->get_parents();
         foreach ($parents as $pcat) {
-            $name = \coursecat::get($pcat)->name;
+            $name = \core_course_category::get($pcat)->name;
             $text .= $spaces . ' ' . $name . '<br/>';
             $spaces .= '-';
         }
