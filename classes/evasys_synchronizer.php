@@ -68,9 +68,23 @@ class evasys_synchronizer {
         $this->soapclient->__setSoapHeaders($header);
     }
 
-    public function invite_all() {
-        $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-        $soap = $this->soapclient->sendInvitationToParticipants($id);
+    public function invite_all($dates) {
+        $suveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys;
+        if (!$suveys instanceof \stdClass) {
+            $sent = 0;
+            $total = 0;
+            for ($i = 0; $i < count($dates); $i++) {
+                $survey = $suveys[$i];
+                $id = $survey->m_nSurveyId;
+                $soap = $this->soapclient->sendInvitationToParticipants($id);
+                $soap = str_replace(" emails sent successfull", "", $soap);
+                $sent += intval(explode("/", $soap)[0]);
+                $total += intval(explode("/", $soap)[1]);
+            }
+        } else {
+            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+            $soap = $this->soapclient->sendInvitationToParticipants($id);
+        }
         return $soap;
     }
 
