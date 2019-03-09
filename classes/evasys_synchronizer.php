@@ -222,6 +222,12 @@ class evasys_synchronizer {
             $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
             array_push($students, $student);
         }
+        $usernum = count(get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate'));
+        $newusers = count($usernum) - count($students);
+        if ($newusers > 0) {
+            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+            $this->soapclient->GetPswdsBySurvey($id, $newusers, 1, true, false); // Create $newuser new TAN's.
+        }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
         $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourseid, 'PUBLIC', false);
         if (is_soap_fault($soapresult)) {
