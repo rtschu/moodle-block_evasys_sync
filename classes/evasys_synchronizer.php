@@ -222,14 +222,18 @@ class evasys_synchronizer {
             $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
             array_push($students, $student);
         }
-        $usernum = count(get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate'));
-        $newusers = count($usernum) - count($students);
-        if ($newusers > 0) {
-            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            $this->soapclient->GetPswdsBySurvey($id, $newusers, 1, true, false); // Create $newuser new TAN's.
-        }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
         $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourseid, 'PUBLIC', false);
+        $usercountnow = $this->get_course_information()->m_nCountStud;
+        if (is_array($this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys)) {
+            foreach ($this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
+                $id = $survey->m_nSurveyId;
+                $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false);
+            }
+        } else {
+            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+            $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create $newuser new TAN's.
+        }
         if (is_soap_fault($soapresult)) {
             throw new \Exception('Sending list of participants to evasys server failed.');
         }
