@@ -21,6 +21,14 @@ require_once('../../config.php');
 require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
+$count = required_param('count', PARAM_INT);
+$dates = array();
+for ($i = 0; $i < $count; $i++) {
+    $start = required_param('start' . $i, PARAM_TEXT);
+    $end = required_param('end' . $i, PARAM_TEXT);
+    $dates[] = array("start" => $start,
+        "end" => $end);
+}
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
@@ -34,8 +42,8 @@ $returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
-        $result = $evasyssynchronizer->invite_all();
+    if ($evasyssynchronizer->sync_students()||true) {
+        $result = $evasyssynchronizer->invite_all($dates);
         echo($result);
     } else {
         echo("-1");

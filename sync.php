@@ -19,6 +19,18 @@ require_once('../../config.php');
 require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
+$count = required_param('count', PARAM_INT);
+$dates = array();
+for ($i = 0; $i < $count; $i++) {
+    $start = required_param('startDate' . $i, PARAM_TEXT);
+    $end = required_param('endDate' . $i, PARAM_TEXT);
+    $start = explode("-", $start);
+    $end = explode("-", $end);
+    $start = $start[2] . "." . $start[1] . "." . $start[0];
+    $end = $end[2] . "." . $end[1] . "." . $end[0];
+    $dates[] = array("start" => $start,
+                     "end" => $end);
+}
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
@@ -32,8 +44,8 @@ $returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
-        $evasyssynchronizer->notify_evaluation_responsible_person();
+    if ($evasyssynchronizer->sync_students() || true) { // TODO ändern.
+        $evasyssynchronizer->notify_evaluation_responsible_person($dates);
         $returnurl->param('status', 'success');
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
     } else {

@@ -1,10 +1,11 @@
 define(['core/str', 'core/notification', 'core/url'], function ajax(str, notification, url) {
 
-    var call = function (id) {
+    var call = function (id, dates) {
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if(this.readyState === 4 && this.status === 200){
-                if(this.responseText.includes(" emails sent successfull")) {
+                console.log("hi");
+                if(this.responseText.includes(" emails sent successful")) {
                     number = this.responseText.replace(" emails sent successful.", "");
                     sent1 = number.split("/")[0];
                     total1 = number.split("/")[1];
@@ -24,21 +25,26 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     })
+                }else{
+                    notification.alert("Erfolg", this.responseText, "ok");
                 }
             }else if(this.readyState === 4){
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                     notification.alert("Error", s, "OK");
                 });
                 console.log(this.responseText);
+                notification.alert("Erfolg", this.responseText, "ok");
             }
         };
-        s = url.relativeUrl("/blocks/evasys_sync/invite.php", {"courseid": id}, true);
+        dates["courseid"] = id;
+        s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
         console.log("URL: " + s);
+        console.log(dates.toSource());
         xhttp.open("GET", s);
         xhttp.send();
     };
 
-    var ajax = function (id) {
+    var ajax = function (id, dates) {
         str.get_strings([
             {'key' : 'direct_invite', component: 'block_evasys_sync'},
             {'key' : 'content_confirm', component: 'block_evasys_sync'},
@@ -46,7 +52,7 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
             {'key' : 'no'},
         ]).done(function (s) {
             notification.confirm(s[0], s[1], s[2], s[3], function () {
-                call(id);
+                call(id, dates);
             });
         })
     };

@@ -8,6 +8,11 @@
     margin-left: 0;
 }
 
+.custom1 {
+    display: inline-block;
+}
+
+
 #page-admin-blocks-evasys_sync-adminsettings #course_category_table .fitemtitle {
     width: 0;
 }

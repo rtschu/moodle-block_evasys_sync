@@ -16,6 +16,9 @@
 
 namespace block_evasys_sync;
 
+use http\Exception\InvalidArgumentException;
+use mysql_xdevapi\Exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
@@ -29,10 +32,13 @@ class evasys_synchronizer {
     private $evasyscourseid;
 
     public function __construct($courseid) {
-        $this->courseid = $courseid;
-        $this->init_soap_client();
-        $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
-        $this->courseinformation = $this->get_course_information();
+        // For testing purposes.
+        if ($courseid > 0) {
+            $this->courseid = $courseid;
+            $this->init_soap_client();
+            $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
+            $this->courseinformation = $this->get_course_information();
+        }
     }
 
     public function get_evasys_courseid() {
@@ -68,9 +74,38 @@ class evasys_synchronizer {
         $this->soapclient->__setSoapHeaders($header);
     }
 
-    public function invite_all() {
-        $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-        $soap = $this->soapclient->sendInvitationToParticipants($id);
+    public function invite_all($dates) {
+        $suveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys;
+        if (!$suveys instanceof \stdClass) {
+            $sent = 0;
+            $total = 0;
+            $reminders = 0;
+            $today = date("Ymd");
+            for ($i = 0; $i < count($dates); $i++) {
+                $survey = $suveys[$i];
+                if (intval(str_replace("-", "", $dates[$i]["start"])) <= $today) {
+                    $id = $survey->m_nSurveyId;
+                    $soap = $this->soapclient->sendInvitationToParticipants($id);
+                    $soap = str_replace(" emails sent successfull", "", $soap);
+                    $sent += intval(explode("/", $soap)[0]);
+                    $total += intval(explode("/", $soap)[1]);
+                    $start = null;
+                } else {
+                    $start = $dates[$i]["start"];
+                    $reminders++;
+                }
+                $this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"]);
+            }
+            $soap = "success/$sent/$total/$reminders";
+        } else {
+            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+            if (strtotime($dates[0]["start"]) <= time()) {
+                $soap = $this->soapclient->sendInvitationToParticipants($id);
+            } else {
+                $this->setstartandend($id, $dates[0]["start"], $dates[0]["end"]);
+                $soap = "success/0/0/1";
+            }
+        }
         return $soap;
     }
 
@@ -118,6 +153,10 @@ class evasys_synchronizer {
         $enrichedsurvey->formName = $this->get_form_name($rawsurvey->m_nFrmid);
         $enrichedsurvey->formIdPub = $this->get_public_formid($rawsurvey->m_nFrmid);
         $enrichedsurvey->formId = $rawsurvey->m_nFrmid;
+        $start = $rawsurvey->m_oPeriod->m_sStartDate;
+        $end = $rawsurvey->m_oPeriod->m_sEndDate;
+        $enrichedsurvey->startDate = $start;
+        $enrichedsurvey->endDate = $end;
         return $enrichedsurvey;
     }
 
@@ -191,11 +230,73 @@ class evasys_synchronizer {
         return $soapresult;
     }
 
+    public function setstartandendcourse ($dates) {
+        $surveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys;
+        if (count($dates) != count($surveys)) {
+            die("not the correct amount of dates supplied");
+        }
+        for ($i = 0; $i < count($dates); $i++) {
+            $id = $this->m_oSurveyHolder->m_aSurveys->Surveys[$i];
+            $this->setstartandend($id, $dates[$i]["start"], $dates[$i]["end"]);
+        }
+    }
+
+    public function setstartandend ($id, $start, $end) {
+        if (time() > strtotime($start)) {
+            throw new \InvalidArgumentException("Start is in the past");
+        }
+        if (time() >= strtotime($end)) {
+            throw new \InvalidArgumentException("End is in the past");
+        }
+        if (strtotime($start) > strtotime($end)) {
+            throw new \InvalidArgumentException("Start date is after end date");
+        }
+        $tasks = $this->soapclient->ListTasks(null, null, array($id), null, null);
+        if (isset($tasks->InvitationTask)) {
+            $starttask = $tasks->InvitationTask;
+        } else {
+            $starttask = new \stdClass();
+            $starttask->SurveyID = strval($id);
+        }
+        if ($start == null) {
+            $starttask->StartTime = null;
+        } else {
+            $starttask->StartTime = $start . "T" . "00:00:00";
+            $starttask->Status = "3";
+        }
+        if (isset($tasks->CloseTask)) {
+            $endtask = $tasks->CloseTask;
+        } else {
+            $endtask = new \stdClass();
+            $endtask->SurveyID = strval($id);
+        }
+
+        if ($end == null) {
+            $endtask->StartTime = null;
+        } else {
+            $endtask->StartTime = $end . "T" . "23:59:00";
+            $endtask->Status = "3";
+        }
+
+        if (isset($starttask->TaskID)) {
+            $startstat = $this->soapclient->UpdateInvitationTask($starttask);
+        } else {
+            $startstat = $this->soapclient->InsertInvitationTask($starttask);
+        }
+        if (isset($endtask->TaskID)) {
+            $endstat = $this->soapclient->UpdateCloseTask($endtask);
+        } else {
+            $endstat = $this->soapclient->InsertCloseTask($endtask);
+        }
+        $success = !($startstat instanceof \SoapFault || $endstat instanceof \SoapFault);
+        return $success;
+    }
+
     /**
      * Sends an e-mail with the request to start a Evaluation for a course.
      * @throws \Exception when e-mail request fails
      */
-    public function notify_evaluation_responsible_person() {
+    public function notify_evaluation_responsible_person($dates) {
         global $USER;
         $course = get_course($this->courseid);
 
@@ -210,16 +311,21 @@ class evasys_synchronizer {
 
         $notiftext = "Sehr geehrte/r Evaluationskoordinator/in,\r\n\r\n";
         $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein Dozent die Evaluation " .
-            "der nachfolgenden Veranstaltung aktiviert hat. Bitte versenden Sie schnellstmöglich die TANs im EvaSys-Menü " .
+            "der nachfolgenden Veranstaltung aktiviert hat. \r\n".
+            "Bitte passen Sie die Evaluationszeiträume gemäß der Wünsche des Dozenten an. \r\n".
+            "Bitte versenden Sie schnellstmöglich die TANs im EvaSys-Menü " .
             "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltung.\r\n\r\n";
         $notiftext .= "Name: " . $course->fullname . "\r\n";
         $notiftext .= "EvaSys-ID: " . $this->get_evasys_courseid() . "\r\n\r\n";
         $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
 
         $surveys = $this->get_surveys();
+        $i = 0;
         foreach ($surveys as &$survey) {
             $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
-            $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n\r\n";
+            $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
+            $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates[$i]["start"] . " - " . $dates[$i]["end"] . "\r\n\r\n";
+            $i++;
         }
 
         $notiftext .= "Mit freundlichen Grüßen\r\n";

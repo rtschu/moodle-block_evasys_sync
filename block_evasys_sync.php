@@ -50,8 +50,18 @@ class block_evasys_sync extends block_base{
         }
 
         if ($invitedirect) {
+            $count = required_param('count', PARAM_INT);
+            $dates = array();
+            $i=0;
+            for (; $i < $count; $i++) {
+                $start = required_param('startDate' . $i, PARAM_TEXT);
+                $end = required_param('endDate' . $i, PARAM_TEXT);
+                $dates["start$i"] = $start;
+                $dates["end$i"] = $end;
+            }
+            $dates["count"] = $i;
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'ajax',
-                array($this->page->course->id));
+                array($this->page->course->id, $dates));
         }
 
         if ($status === 'success') {
@@ -60,12 +70,6 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
         } else if ($status === 'failure') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
-        }
-
-        if ($status === 'success') {
-            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
-        } else if ($status === 'uptodate') {
-            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
         }
 
         if ($evasyssynccheck === 1) {
@@ -86,27 +90,52 @@ class block_evasys_sync extends block_base{
             if (empty($surveys)) {
                 $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
             } else {
+                if(!$this->getmode($this->page->course->category)){
+                    $href = new moodle_url('/blocks/evasys_sync/sync.php');
+                    $this->content->text .= "<form action='$href'>";
+                    $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
+                    $this->content->text .= "<input type='hidden' name='courseid' value='".$this->page->course->id."'>";
+                }else {
+                    $href = new moodle_url('/course/view.php',
+                        array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
+                    $this->content->text .= "<form action='$href' method='post'>";
+                    $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
+                    $this->content->text .= "<input type='hidden' name='id' value='".$this->page->course->id."'>";
+                    $this->content->text .= "<input type='hidden' name='evasyssynccheck' value='1'>";
+                    $this->content->text .= "<input type='hidden' name='invite_confirm' value='1'>";
+                }
+                
+                $i = 0;
                 foreach ($surveys as &$survey) {
-                    $outputsurveys[] = html_writer::div(format_string($survey->formName), 'emphasize') .
-                        html_writer::div(html_writer::span(get_string('surveystatus', 'block_evasys_sync'), 'emphasize') . ' ' .
-                            // Either "open" or "closed" in the applicable localisation.
-                            get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync')) .
-                        html_writer::div(html_writer::span(get_string('finishedforms', 'block_evasys_sync'), 'emphasize') .' ' .
-                            format_string($survey->amountOfCompletedForms));
+                    $outputsurveys[] =
+                        '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
+                        '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
+                        get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
+                        '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>' .
+                        "<fieldset>" .
+                        "<div class='custom1'>" .
+                        "<label for='startDate'>Beginn</label>" .
+                        '<input type="date" name="startDate'.$i.'" id="startDate" value="'.$survey->startDate.'"/>' .
+                        "</div>" .
+                        "<div class='custom1'>" .
+                        "<label for='endDate'>Ende</label>" .
+                        '<input type="date" name="endDate'.$i.'" id="endDate" value="'.$survey->endDate.'"/>' .
+                        "</div>" .
+                        '</fieldset>';
+                    $i++;
                 }
                 $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-
+                $this->content->text .= "<input type='hidden' name='count' value='$i'>";
             }
             $this->content->text .= html_writer::div(html_writer::span(
                 get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
                 format_string($evasyssynchronizer->get_amount_participants()));
             if (!$this->getmode($this->page->course->category)) {
-                $href = new moodle_url('/blocks/evasys_sync/sync.php', array('courseid' => $this->page->course->id));
-                $this->content->text .= $OUTPUT->single_button($href, get_string('invitestudents', 'block_evasys_sync'), 'post');
+                $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
+                                      . "</form>";
             } else {
-                $href = new moodle_url('/course/view.php',
-                    array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
-                $this->content->text .= $OUTPUT->single_button($href, get_string('direct_invite', 'block_evasys_sync'), 'get');
+                $this->content->text .= "<input type='submit' value='".get_string('direct_invite', 'block_evasys_sync')."'> \n"
+                                       . "</form>";
             }
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
