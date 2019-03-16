@@ -19,7 +19,7 @@
                 <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="block_evasys_sync_surveys">
+        <TABLE NAME="block_evasys_sync_surveys" COMMENT="Survey start and end dates">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
