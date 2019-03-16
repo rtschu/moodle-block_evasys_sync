@@ -26,6 +26,9 @@ $dates = array();
 for ($i = 0; $i < $count; $i++) {
     $start = required_param('start' . $i, PARAM_TEXT);
     $end = required_param('end' . $i, PARAM_TEXT);
+    if ($start == "" or $end == "") {
+        die("-2");
+    }
     $dates[] = array("start" => $start,
         "end" => $end);
 }
@@ -46,7 +49,7 @@ try {
         $result = $evasyssynchronizer->invite_all($dates);
         echo($result);
     } else {
-        echo("-1");
+        die("-1");
     }
 } catch (Exception $exception) {
     debugging($exception);

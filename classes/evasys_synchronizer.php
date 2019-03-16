@@ -88,7 +88,7 @@ class evasys_synchronizer {
                 if (intval(str_replace("-", "", $dates[$i]["start"])) <= $today) {
                     $id = $survey->m_nSurveyId;
                     $soap = $this->soapclient->sendInvitationToParticipants($id);
-                    $soap = str_replace(" emails sent successfull", "", $soap);
+                    $soap = str_replace(" emails sent successful", "", $soap);
                     $sent += intval(explode("/", $soap)[0]);
                     $total += intval(explode("/", $soap)[1]);
                     $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
@@ -103,6 +103,10 @@ class evasys_synchronizer {
             $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
             if (strtotime($dates[0]["start"]) <= time()) {
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
+                $this->setstartandend($id, $dates[0]["start"], $dates[0]["end"]);
+                $soap = str_replace(" emails sent successful", "", $soap);
+                $soap = explode("/", $soap);
+                $soap = "success/$soap[0]/$soap[1]/1";
             } else {
                 $this->setstartandend($id, $dates[0]["start"], $dates[0]["end"]);
                 $soap = "success/0/0/1";
@@ -150,6 +154,7 @@ class evasys_synchronizer {
      */
     private function enrich_survey($rawsurvey) {
         $enrichedsurvey = new \stdClass();
+        $enrichedsurvey->id = $rawsurvey->m_nSurveyId;
         $enrichedsurvey->amountOfCompletedForms = $rawsurvey->m_nFormCount;
         $enrichedsurvey->surveyStatus = $this->get_survey_status($rawsurvey->m_nOpenState);
         $enrichedsurvey->formName = $this->get_form_name($rawsurvey->m_nFrmid);

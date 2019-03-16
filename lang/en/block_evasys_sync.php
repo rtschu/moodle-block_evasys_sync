@@ -40,6 +40,11 @@ $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send';
 $string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
 
+// Form strings.
+
+$string['startplaceholder'] = "Pick a startdate";
+$string['endplaceholder'] = "Pick an enddate";
+
 
 // Information box strings.
 
@@ -55,12 +60,14 @@ $string['content_success'] = "Your evaluation coordinator has been instructed to
 $string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
+$string['not_enough_dates'] = "Please provide dates for ALL Surveys!";
+$string['title_send_failure'] = "Error while sending";
+
 $string['content_failure'] = "Unfortunately we weren't able to request the start of the evaluation. <br />" .
     "For help please contact your local support team";
 
-$string['confirm_box'] = "OK";
 
-// Information box strings.
+$string['confirm_box'] = "OK";
 
 $string['title_success']  = "Successfully requested the evaluation";
 $string['title_uptodate'] = "The evaluation has already been requested";

@@ -52,7 +52,7 @@ class block_evasys_sync extends block_base{
         if ($invitedirect) {
             $count = required_param('count', PARAM_INT);
             $dates = array();
-            $i=0;
+            $i = 0;
             for (; $i < $count; $i++) {
                 $start = required_param('startDate' . $i, PARAM_TEXT);
                 $end = required_param('endDate' . $i, PARAM_TEXT);
@@ -90,23 +90,31 @@ class block_evasys_sync extends block_base{
             if (empty($surveys)) {
                 $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
             } else {
-                if(!$this->getmode($this->page->course->category)){
+                if (!$this->getmode($this->page->course->category)) {
                     $href = new moodle_url('/blocks/evasys_sync/sync.php');
                     $this->content->text .= "<form action='$href'>";
                     $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
                     $this->content->text .= "<input type='hidden' name='courseid' value='".$this->page->course->id."'>";
-                }else {
+                } else {
                     $href = new moodle_url('/course/view.php',
                         array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
-                    $this->content->text .= "<form action='$href' method='post'>";
+                    $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
                     $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
                     $this->content->text .= "<input type='hidden' name='id' value='".$this->page->course->id."'>";
                     $this->content->text .= "<input type='hidden' name='evasyssynccheck' value='1'>";
                     $this->content->text .= "<input type='hidden' name='invite_confirm' value='1'>";
                 }
-                
+
                 $i = 0;
                 foreach ($surveys as &$survey) {
+                    $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
+                    if (!$prefills) {
+                        $begin = "";
+                        $stop = "";
+                    } else {
+                        $begin = date("Y-m-d", $prefills->get("startdate"));
+                        $stop = date("Y-m-d", $prefills->get("enddate"));
+                    }
                     $outputsurveys[] =
                         '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
                         '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
@@ -114,12 +122,12 @@ class block_evasys_sync extends block_base{
                         '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>' .
                         "<fieldset>" .
                         "<div class='custom1'>" .
-                        "<label for='startDate'>Beginn</label>" .
-                        '<input type="date" name="startDate'.$i.'" id="startDate" value="'.$survey->startDate.'"/>' .
+                        "<label for='startDate$i'>Beginn</label>" .
+                        '<input type="date" name="startDate'.$i.'" min="'.date("Y-m-d") .'" value="'. $begin .'"/>' .
                         "</div>" .
                         "<div class='custom1'>" .
-                        "<label for='endDate'>Ende</label>" .
-                        '<input type="date" name="endDate'.$i.'" id="endDate" value="'.$survey->endDate.'"/>' .
+                        "<label for='endDate$i'>Ende</label>" .
+                        '<input type="date" name="endDate'.$i.'" min="'.date("Y-m-d") .'" value="' . $stop . '"/>' .
                         "</div>" .
                         '</fieldset>';
                     $i++;
