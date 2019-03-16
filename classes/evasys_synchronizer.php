@@ -22,10 +22,12 @@ use mysql_xdevapi\Exception;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 class evasys_synchronizer {
     private $courseid;
-    private $soapclient;
+    protected $soapclient;
     private $blockcontext;
     private $courseinformation;
 
@@ -89,7 +91,7 @@ class evasys_synchronizer {
                     $soap = str_replace(" emails sent successfull", "", $soap);
                     $sent += intval(explode("/", $soap)[0]);
                     $total += intval(explode("/", $soap)[1]);
-                    $start = null;
+                    $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
                 } else {
                     $start = $dates[$i]["start"];
                     $reminders++;
@@ -252,54 +254,27 @@ class evasys_synchronizer {
     }
 
     public function setstartandend ($id, $start, $end) {
-        if (time() > strtotime($start)) {
-            throw new \InvalidArgumentException("Start is in the past");
-        }
-        if (time() >= strtotime($end)) {
-            throw new \InvalidArgumentException("End is in the past");
-        }
-        if (strtotime($start) > strtotime($end)) {
+        global $DB;
+        if (strtotime($start) > strtotime($end) && $start != null && $end != null) {
             throw new \InvalidArgumentException("Start date is after end date");
         }
-        $tasks = $this->soapclient->ListTasks(null, null, array($id), null, null);
-        if (isset($tasks->InvitationTask)) {
-            $starttask = $tasks->InvitationTask;
-        } else {
-            $starttask = new \stdClass();
-            $starttask->SurveyID = strval($id);
-        }
-        if ($start == null) {
-            $starttask->StartTime = null;
-        } else {
-            $starttask->StartTime = $start . "T" . "00:00:00";
-            $starttask->Status = "3";
-        }
-        if (isset($tasks->CloseTask)) {
-            $endtask = $tasks->CloseTask;
-        } else {
-            $endtask = new \stdClass();
-            $endtask->SurveyID = strval($id);
-        }
 
-        if ($end == null) {
-            $endtask->StartTime = null;
+        $data = new \stdClass();
+        $data->course = $this->courseid;
+        $data->survey = $id;
+        $data->startdate = strtotime($start);
+        $data->enddate = strtotime($end);
+        $recordid = $DB->get_record("block_evasys_sync_surveys", array('survey' => $id), 'id', IGNORE_MISSING);
+        if (!$recordid) {
+            $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
+            $record->create();
         } else {
-            $endtask->StartTime = $end . "T" . "23:59:00";
-            $endtask->Status = "3";
+            $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
+            foreach ($data as $key => $value) {
+                $record->set($key, $value);
+            }
+            $record->update();
         }
-
-        if (isset($starttask->TaskID)) {
-            $startstat = $this->soapclient->UpdateInvitationTask($starttask);
-        } else {
-            $startstat = $this->soapclient->InsertInvitationTask($starttask);
-        }
-        if (isset($endtask->TaskID)) {
-            $endstat = $this->soapclient->UpdateCloseTask($endtask);
-        } else {
-            $endstat = $this->soapclient->InsertCloseTask($endtask);
-        }
-        $success = !($startstat instanceof \SoapFault || $endstat instanceof \SoapFault);
-        return $success;
     }
 
     /**

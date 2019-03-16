@@ -29,6 +29,7 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
+$string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 
 // Direct invite strings.
 
@@ -116,6 +117,9 @@ $string['delete'] = 'Löschen';
 // Persistance class.
 $string['invalidcoursecat'] = 'Ungültige Kurskategorie';
 $string['invalidmode'] = "Ungültiger Modus";
+$string['invalidcourse'] = 'Ungültiger Kurs';
+$string['invalidsurvey'] = "Ungültige Umfrage";
+$string['invaliddate'] = "Ungültiges Datum";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

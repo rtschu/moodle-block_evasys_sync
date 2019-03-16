@@ -29,6 +29,7 @@ $string['nosurveys'] = 'Currently there are no surveys available.';
 $string['syncnotpossible'] = 'Unfortunately, course participants could not be synchronized to EvaSys due to a technical problem. Please get in touch with the support contact.';
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
+$string['taskname'] = 'Open and close Evasys surveys';
 
 // Direct invite strings.
 
@@ -114,6 +115,10 @@ $string['delete'] = 'Delete';
 // Persistance class.
 $string['invalidcoursecat'] = 'Invalid course category';
 $string['invalidmode'] = 'Invalid category mode';
+$string['invalidcourse'] = "Invalid course";
+$string['invalidsurvey'] = "Invalid survey";
+$string['invaliddate'] = "Invalid date";
+
 
 // Privacy API.
 $string['privacy:metadata'] = 'Invite students to participate in course quality evaluations performed using an EvaSys installation.';
