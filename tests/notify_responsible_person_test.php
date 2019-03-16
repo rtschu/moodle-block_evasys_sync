@@ -100,18 +100,4 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
 
         self::assertEquals($usersubsubone, \block_evasys_sync\evasys_synchronizer::get_assigned_user($coursesubsubone));
     }
-
-    public function test_setstartandend_start() {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Start is in the past");
-        $syncer = new \block_evasys_sync\evasys_synchronizer(-1);
-        $syncer->setstartandend(0, "2012-12-31", "9999-12-31");
-    }
-
-    public function test_setstartandend_end() {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("End is in the past");
-        $syncer = new \block_evasys_sync\evasys_synchronizer(-1);
-        $syncer->setstartandend(0, "9999-12-31", "2012-12-31");
-    }
 }
