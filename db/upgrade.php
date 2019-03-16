@@ -36,8 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion
  * @return bool
  */
-function xmldb_block_evasys_sync_upgrade ($oldversion)
-{
+function xmldb_block_evasys_sync_upgrade ($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
     if ($oldversion < 2019130332) {

@@ -21,7 +21,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-//require($CFG->dirroot . '/blocks/evasys_sync/classes/evasys_synchronizer.php');
 
 /**
  * PHPUnit evasys testcase
