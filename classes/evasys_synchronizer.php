@@ -85,7 +85,7 @@ class evasys_synchronizer {
             $today = date("Ymd");
             for ($i = 0; $i < count($dates); $i++) {
                 $survey = $suveys[$i];
-                if (intval(str_replace("-", "", $dates[$i]["start"])) <= $today) {
+                if (intval(str_replace("-", "", $dates[$i]["start"])) == $today) {
                     $id = $survey->m_nSurveyId;
                     $soap = $this->soapclient->sendInvitationToParticipants($id);
                     $soap = str_replace(" emails sent successful", "", $soap);
@@ -94,22 +94,29 @@ class evasys_synchronizer {
                     $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
                 } else {
                     $start = $dates[$i]["start"];
+                }
+                if ($this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"])) {
                     $reminders++;
                 }
-                $this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"]);
             }
             $soap = "success/$sent/$total/$reminders";
         } else {
             $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            if (strtotime($dates[0]["start"]) <= time()) {
+            if (strtotime($dates[0]["start"]) == time()) {
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
-                $this->setstartandend($id, $dates[0]["start"], $dates[0]["end"]);
                 $soap = str_replace(" emails sent successful", "", $soap);
                 $soap = explode("/", $soap);
-                $soap = "success/$soap[0]/$soap[1]/1";
+                if ($this->setstartandend($id, $dates[0]["start"], $dates[0]["end"])) {
+                    $soap = "success/$soap[0]/$soap[1]/1";
+                } else {
+                    $soap = "success/$soap[0]/$soap[1]/0";
+                }
             } else {
-                $this->setstartandend($id, $dates[0]["start"], $dates[0]["end"]);
-                $soap = "success/0/0/1";
+                if ($this->setstartandend($id, $dates[0]["start"], $dates[0]["end"])) {
+                    $soap = "success/0/0/1";
+                } else {
+                    $soap = "success/0/0/0";
+                }
             }
         }
         return $soap;
@@ -273,12 +280,18 @@ class evasys_synchronizer {
         if (!$recordid) {
             $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
             $record->create();
+            return true;
         } else {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
+            $return = false;
             foreach ($data as $key => $value) {
-                $record->set($key, $value);
+                if ($record->get($key) != $value) {
+                    $record->set($key, $value);
+                    $return = true;
+                }
             }
             $record->update();
+            return $return;
         }
     }
 

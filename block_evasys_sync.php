@@ -111,9 +111,25 @@ class block_evasys_sync extends block_base{
                     if (!$prefills) {
                         $begin = "";
                         $stop = "";
+                        $beginmin = date("Y-m-d");
+                        $endmin = date("Y-m-d");
                     } else {
                         $begin = date("Y-m-d", $prefills->get("startdate"));
                         $stop = date("Y-m-d", $prefills->get("enddate"));
+                        if ($begin < date("Y-m-d")) {
+                            $beginmin = $begin;
+                        } else {
+                            $beginmin = date("Y-m-d");
+                        }
+                        if ($stop < date("Y-m-d")) {
+                            $endmin = $end;
+                        } else {
+                            $endmin = date("Y-m-d");
+                        }
+                    }
+                    $readonly = "";
+                    if ($survey->surveyStatus == 'closed') {
+                        $readonly = "readonly";
                     }
                     $outputsurveys[] =
                         '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
@@ -123,11 +139,11 @@ class block_evasys_sync extends block_base{
                         "<fieldset>" .
                         "<div class='custom1'>" .
                         "<label for='startDate$i'>Beginn</label>" .
-                        '<input type="date" name="startDate'.$i.'" min="'.date("Y-m-d") .'" value="'. $begin .'"/>' .
+                        '<input type="date" name="startDate'.$i.'" min="'. $beginmin .'" value="'. $begin . '"' . $readonly . ' />'.
                         "</div>" .
                         "<div class='custom1'>" .
                         "<label for='endDate$i'>Ende</label>" .
-                        '<input type="date" name="endDate'.$i.'" min="'.date("Y-m-d") .'" value="' . $stop . '"/>' .
+                        '<input type="date" name="endDate'.$i.'" min="'. $endmin .'" value="' . $stop . '"'.$readonly.'/>' .
                         "</div>" .
                         '</fieldset>';
                     $i++;
