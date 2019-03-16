@@ -34,7 +34,7 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
     /**
      * @runInSeparateProcess
      */
-    public function test_notify_person() {
+    public function test_notify_person () {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -50,11 +50,11 @@ class block_evasys_sync_notify_testcase extends advanced_testcase {
         set_config('default_evasys_moodleuser', $defaultuser->id, 'block_evasys_sync');
 
         $courseone = $this->getDataGenerator()->create_course(array('name' => 'First course',
-            'category' => $categoryone->id));
+                                                                  'category' => $categoryone->id));
         $coursesubsubone = $this->getDataGenerator()->create_course(array('name' => 'Sub course',
                                                                         'category' => $subsubcategoryone->id));
         $coursetwo = $this->getDataGenerator()->create_course(array('name' => 'Second course',
-            'category' => $categorytwo->id));
+                                                                  'category' => $categorytwo->id));
 
         // Test default user.
         $userto = \block_evasys_sync\evasys_synchronizer::get_assigned_user($courseone);
