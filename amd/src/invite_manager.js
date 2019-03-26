@@ -75,6 +75,9 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 // Aconsole.log(this.responseText);
                 // Anotification.alert("Erfolg", this.responseText, "ok");.
             }
+            if(this.readyState === 4) {
+                $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
+            }
         };
         s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
         xhttp.open("GET", s);
@@ -114,6 +117,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
     var init = function () {
         $('#evasys_block_form').submit(function (e) {
             e.preventDefault();
+            $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
             let data = {};
                 $('#evasys_block_form').serializeArray().forEach(function (param) {
                     data[param['name']] = param['value'];
