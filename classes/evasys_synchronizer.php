@@ -16,9 +16,6 @@
 
 namespace block_evasys_sync;
 
-use http\Exception\InvalidArgumentException;
-use mysql_xdevapi\Exception;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
