@@ -254,17 +254,6 @@ class evasys_synchronizer {
         return $soapresult;
     }
 
-    public function setstartandendcourse ($dates) {
-        $surveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys;
-        if (count($dates) != count($surveys)) {
-            die("not the correct amount of dates supplied");
-        }
-        for ($i = 0; $i < count($dates); $i++) {
-            $id = $this->m_oSurveyHolder->m_aSurveys->Surveys[$i];
-            $this->setstartandend($id, $dates[$i]["start"], $dates[$i]["end"]);
-        }
-    }
-
     public function setstartandend ($id, $start, $end) {
         global $DB;
         if (strtotime($start) > strtotime($end) && $start != null && $end != null) {
