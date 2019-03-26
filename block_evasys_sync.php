@@ -50,18 +50,7 @@ class block_evasys_sync extends block_base{
         }
 
         if ($mode) {
-            $count = required_param('count', PARAM_INT);
-            $dates = array();
-            $i = 0;
-            for (; $i < $count; $i++) {
-                $start = required_param('startDate' . $i, PARAM_TEXT);
-                $end = required_param('endDate' . $i, PARAM_TEXT);
-                $dates["start$i"] = $start;
-                $dates["end$i"] = $end;
-            }
-            $dates["count"] = $i;
-            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init',
-                array());
+            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         }
 
         if ($status === 'success') {
