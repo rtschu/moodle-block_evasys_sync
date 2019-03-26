@@ -34,7 +34,6 @@ class block_evasys_sync extends block_base{
         global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
-        $invitedirect = optional_param('invite_confirm', 0, PARAM_BOOL);
         $mode = (bool) $this->getmode($this->page->course->category);
 
         if ($this->content !== null) {
