@@ -1,14 +1,14 @@
-define(['core/str', 'core/notification', 'core/url'], function ajax(str, notification, url) {
+define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
 
     var updateForm = function (dates) {
         let form = document.getElementById('evasys_block_form');
         for (let i = 0; i < dates.count; i++) {
-            form.elements['startDate' + i].value = dates["start" + i];
-            form.elements['endDate' + i].value = dates["end" + i];
+            form.elements['startDate' + i].value = dates["startDate" + i];
+            form.elements['endDate' + i].value = dates["endDate" + i];
         }
     };
 
-    var call = function (id, dates) {
+    var call = function (dates) {
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if(this.readyState === 4 && this.status === 200){
@@ -46,7 +46,9 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
                         notification.alert(s[0], s[1], s[2]);
                     })
                 }else{
-                    notification.alert("Fehler", this.responseText, "ok");
+                    str.get_string('send_error', 'block_evasys_sync').done(function (s) {
+                        notification.alert("Error", s, "OK");
+                    });
                 }
             }else if(this.readyState === 4){
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
@@ -56,13 +58,12 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
                 // Anotification.alert("Erfolg", this.responseText, "ok");.
             }
         };
-        dates["courseid"] = id;
         s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
         xhttp.open("GET", s);
         xhttp.send();
     };
 
-    var ajax = function (id, dates) {
+    var ajax = function (dates) {
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
@@ -84,14 +85,27 @@ define(['core/str', 'core/notification', 'core/url'], function ajax(str, notific
                 {'key': 'no'},
             ]).done(function (s) {
                 notification.confirm(s[0], s[1], s[2], s[3], function () {
-                    call(id, dates);
+                    call(dates);
                 });
             })
         } else {
-            call(id, dates);
+            call(dates);
         }
     };
+
+    var init = function () {
+        $('#evasys_block_form').submit(function (e) {
+            e.preventDefault();
+            let data = {};
+                $('#evasys_block_form').serializeArray().forEach(function (param) {
+                    data[param['name']] = param['value'];
+                });
+            ajax(data);
+        });
+    };
+
     return{
         ajax: ajax,
+        init: init,
     };
 });

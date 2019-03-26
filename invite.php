@@ -24,8 +24,8 @@ $courseid = required_param('courseid', PARAM_INT);
 $count = required_param('count', PARAM_INT);
 $dates = array();
 for ($i = 0; $i < $count; $i++) {
-    $start = required_param('start' . $i, PARAM_TEXT);
-    $end = required_param('end' . $i, PARAM_TEXT);
+    $start = required_param('startDate' . $i, PARAM_TEXT);
+    $end = required_param('endDate' . $i, PARAM_TEXT);
     if ($start == "" or $end == "") {
         die("-2");
     }
@@ -39,13 +39,9 @@ $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
 $PAGE->set_context(context_course::instance($courseid));
 require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
 
-$returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
-$returnurl->param('id', $courseid);
-$returnurl->param('evasyssynccheck', 1);
-
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()||true) {
+    if ($evasyssynchronizer->sync_students()||true) { // TODO.
         $result = $evasyssynchronizer->invite_all($dates);
         echo($result);
     } else {

@@ -35,6 +35,7 @@ class block_evasys_sync extends block_base{
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
         $invitedirect = optional_param('invite_confirm', 0, PARAM_BOOL);
+        $mode = (bool) $this->getmode($this->page->course->category);
 
         if ($this->content !== null) {
             return $this->content;
@@ -49,7 +50,7 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
-        if ($invitedirect) {
+        if ($mode) {
             $count = required_param('count', PARAM_INT);
             $dates = array();
             $i = 0;
@@ -60,8 +61,8 @@ class block_evasys_sync extends block_base{
                 $dates["end$i"] = $end;
             }
             $dates["count"] = $i;
-            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'ajax',
-                array($this->page->course->id, $dates));
+            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init',
+                array());
         }
 
         if ($status === 'success') {
@@ -100,9 +101,7 @@ class block_evasys_sync extends block_base{
                         array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
                     $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
                     $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
-                    $this->content->text .= "<input type='hidden' name='id' value='".$this->page->course->id."'>";
-                    $this->content->text .= "<input type='hidden' name='evasyssynccheck' value='1'>";
-                    $this->content->text .= "<input type='hidden' name='invite_confirm' value='1'>";
+                    $this->content->text .= "<input type='hidden' name='courseid' value='".$this->page->course->id."'>";
                 }
 
                 $i = 0;
@@ -122,7 +121,7 @@ class block_evasys_sync extends block_base{
                             $beginmin = date("Y-m-d");
                         }
                         if ($stop < date("Y-m-d")) {
-                            $endmin = $end;
+                            $endmin = $stop;
                         } else {
                             $endmin = date("Y-m-d");
                         }
@@ -139,11 +138,11 @@ class block_evasys_sync extends block_base{
                         "<fieldset>" .
                         "<div class='custom1'>" .
                         "<label for='startDate$i'>Beginn</label>" .
-                        '<input type="date" name="startDate'.$i.'" min="'. $beginmin .'" value="'. $begin . '"' . $readonly . ' />'.
+                        '<input type="date" name="startDate'.$i.'" min="'. $beginmin .'" value="'. $begin . '" ' . $readonly . '/>'.
                         "</div>" .
                         "<div class='custom1'>" .
                         "<label for='endDate$i'>Ende</label>" .
-                        '<input type="date" name="endDate'.$i.'" min="'. $endmin .'" value="' . $stop . '"'.$readonly.'/>' .
+                        '<input type="date" name="endDate'.$i.'" min="'. $endmin .'" value="' . $stop . '" '.$readonly.'/>' .
                         "</div>" .
                         '</fieldset>';
                     $i++;
@@ -154,7 +153,7 @@ class block_evasys_sync extends block_base{
             $this->content->text .= html_writer::div(html_writer::span(
                 get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
                 format_string($evasyssynchronizer->get_amount_participants()));
-            if (!$this->getmode($this->page->course->category)) {
+            if (!$mode) {
                 $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
                                       . "</form>";
             } else {
