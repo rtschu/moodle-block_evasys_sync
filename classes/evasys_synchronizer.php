@@ -108,7 +108,7 @@ class evasys_synchronizer {
             $soap = "$status/$sent/$total/$reminders";
         } else {
             $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            if (strtotime($dates[0]["start"]) == time()) {
+            if (strtotime($dates[0]["start"]) == strtotime(date("Y-m-d"))) {
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
                 $soap = str_replace(" emails sent successful", "", $soap);
                 $soap = explode("/", $soap);

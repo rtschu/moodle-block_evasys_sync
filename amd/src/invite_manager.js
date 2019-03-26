@@ -93,7 +93,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         today = yyyy + '-' + mm + '-' + dd;
         let confirm = false;
         for (let i = 0; i < dates.count; i++) {
-            if(dates['start' + i] === today){
+            if(dates['startDate' + i] === today){
                 confirm = true;
                 break;
             }
@@ -107,6 +107,8 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             ]).done(function (s) {
                 notification.confirm(s[0], s[1], s[2], s[3], function () {
                     call(dates);
+                }, function () {
+                    $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
                 });
             })
         } else {

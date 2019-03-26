@@ -34,7 +34,7 @@ $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 // Direct invite strings.
 
 $string['direct_invite'] = "Teilnehmer direkt einladen";
-$string['content_confirm'] = "Diese Funktion wird die Evaluation direkt starten!<br />" .
+$string['content_confirm'] = "Eine Umfrage soll heute beginnen, diese Funktion versendet daher JETZT Einladungen!<br />" .
                              "Sind Sie sicher, dass sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
