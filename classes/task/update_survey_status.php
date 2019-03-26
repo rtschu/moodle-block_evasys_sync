@@ -32,7 +32,7 @@ class update_survey_status extends \core\task\scheduled_task {
     /**
      * This will start and close surveys.
      */
-    // It's important to note that this might use alot of space and computational time,
+    // It's important to note that this might use alot of space and computational time
     // ...if the Plugin data is never deleted. There would be multiple solutions for this.
     // At the moment manual removal is advised. However since you're here I assume you have some problems...
     // My personal advice is to either move records that are in the past to another table, so you can still display the dates,
@@ -50,7 +50,7 @@ class update_survey_status extends \core\task\scheduled_task {
             if (strtotime(date("Y-m-d", $record->get("startdate"))) == strtotime(date("Y-m-d"))) {
                 $soap->sendInvitationToParticipants($record->get("survey"));
             }
-            if (strtotime(date("Y-m-d", $record->get("enddate"))) == strtotime(date("Y-m-d"))) {
+            if (strtotime(date("Y-m-d", $record->get("enddate"))) == strtotime('-1 day', date("Y-m-d"))) {
                 $soap->CloseSurvey($record->get("survey"));
             }
         }
