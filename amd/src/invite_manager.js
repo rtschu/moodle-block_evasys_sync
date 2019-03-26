@@ -24,12 +24,22 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                             notification.alert(s[0], s[1], s[2]);
                             updateForm(dates);
                         })
+                    } else if (status[0] === "warning") {
+                        params = {"sent": status[1], "total": status[2], "queued": status[3]};
+                        str.get_strings([
+                            {'key': 'title_send_invalid', component: 'block_evasys_sync'},
+                            {'key': 'content_send_invalid', component: 'block_evasys_sync'},
+                            {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
+                            {'key': 'ok'}
+                        ]).done(function (s) {
+                            notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
+                        })
                     } else {
                         str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                             notification.alert("Error", s, "OK");
                         });
                     }
-                }else if(this.responseText === "-1") {
+                }else if(this.responseText === "up_to_date") {
                     str.get_strings([
                         {'key': 'direct_title_info', component: 'block_evasys_sync'},
                         {'key': 'direct_already', component: 'block_evasys_sync'},
@@ -37,10 +47,18 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     })
-                }else if(this.responseText === "-2") {
+                }else if(this.responseText === "not_enough_dates") {
                     str.get_strings([
                         {'key': 'title_send_failure', component: 'block_evasys_sync'},
                         {'key': 'not_enough_dates', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    })
+                }else if(this.responseText === "date_in_the_past"){
+                    str.get_strings([
+                        {'key': 'title_send_rejected', component: 'block_evasys_sync'},
+                        {'key': 'content_send_rejected', component: 'block_evasys_sync'},
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);

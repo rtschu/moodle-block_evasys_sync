@@ -66,6 +66,10 @@ $string['title_send_failure'] = "Error while sending";
 $string['content_failure'] = "Unfortunately we weren't able to request the start of the evaluation. <br />" .
     "For help please contact your local support team";
 
+$string['title_send_invalid'] = "Invalid time period";
+$string['content_send_invalid'] = "An evaluationperiod is set to start after it ends. <br />" .
+    "All other evlautionperiods have been changed normally.";
+
 
 $string['confirm_box'] = "OK";
 
@@ -86,6 +90,9 @@ $string['direct_already'] = "You have already sent invitations to all students."
                             "No new invitations have been send";
 
 $string['direct_title_info'] = "Invitation already complete";
+$string['title_send_rejected'] = "Invalid Date";
+$string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
+    "This is not allowed. Some evaluationperiods may have been altered.<br />";
 
 // Survey status.
 $string['surveystatusopen'] = 'open';

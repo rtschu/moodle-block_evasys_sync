@@ -27,7 +27,7 @@ for ($i = 0; $i < $count; $i++) {
     $start = required_param('startDate' . $i, PARAM_TEXT);
     $end = required_param('endDate' . $i, PARAM_TEXT);
     if ($start == "" or $end == "") {
-        die("-2");
+        die("not_enough_dates");
     }
     $dates[] = array("start" => $start,
         "end" => $end);
@@ -42,10 +42,14 @@ require_capability('block/evasys_sync:synchronize', context_course::instance($co
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
     if ($evasyssynchronizer->sync_students()||true) { // TODO.
-        $result = $evasyssynchronizer->invite_all($dates);
+        try {
+            $result = $evasyssynchronizer->invite_all($dates);
+        } catch (\InvalidArgumentException $e) {
+            die('date_in_the_past');
+        }
         echo($result);
     } else {
-        die("-1");
+        die("up_to_date");
     }
 } catch (Exception $exception) {
     debugging($exception);

@@ -82,6 +82,7 @@ class evasys_synchronizer {
             $sent = 0;
             $total = 0;
             $reminders = 0;
+            $status = "success";
             $today = date("Ymd");
             for ($i = 0; $i < count($dates); $i++) {
                 $survey = $suveys[$i];
@@ -95,27 +96,39 @@ class evasys_synchronizer {
                 } else {
                     $start = $dates[$i]["start"];
                 }
-                if ($this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"])) {
-                    $reminders++;
+                try {
+                    if ($this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"])) {
+                        $reminders++;
+                    }
+                } catch (\InvalidArgumentException $e) {
+                    if ($e->getMessage() == "Start date is after end date") {
+                        $status = "warning";
+                    } else {
+                        throw $e;
+                    }
                 }
             }
-            $soap = "success/$sent/$total/$reminders";
+            $soap = "$status/$sent/$total/$reminders";
         } else {
             $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
             if (strtotime($dates[0]["start"]) == time()) {
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
                 $soap = str_replace(" emails sent successful", "", $soap);
                 $soap = explode("/", $soap);
+            } else {
+                $soap = array(0, 0);
+            }
+            try {
                 if ($this->setstartandend($id, $dates[0]["start"], $dates[0]["end"])) {
                     $soap = "success/$soap[0]/$soap[1]/1";
                 } else {
                     $soap = "success/$soap[0]/$soap[1]/0";
                 }
-            } else {
-                if ($this->setstartandend($id, $dates[0]["start"], $dates[0]["end"])) {
-                    $soap = "success/0/0/1";
+            } catch (\InvalidArgumentException $e) {
+                if ($e->getMessage() == "Start date is after end date") {
+                    $soap = "warning/0/0/0";
                 } else {
-                    $soap = "success/0/0/0";
+                    throw $e;
                 }
             }
         }
@@ -246,7 +259,7 @@ class evasys_synchronizer {
             }
         } else {
             $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create $newuser new TAN's.
+            $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
         }
         if (is_soap_fault($soapresult)) {
             throw new \Exception('Sending list of participants to evasys server failed.');
@@ -267,6 +280,9 @@ class evasys_synchronizer {
         $data->enddate = strtotime($end);
         $recordid = $DB->get_record("block_evasys_sync_surveys", array('survey' => $id), 'id', IGNORE_MISSING);
         if (!$recordid) {
+            if ($data->startdate < strtotime('Y-m-d') or $data->enddate < strtotime('Y-m-d')) {
+                throw new \InvalidArgumentException('Date is in the past');
+            }
             $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
             $record->create();
             return true;
@@ -274,6 +290,10 @@ class evasys_synchronizer {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
             $return = false;
             foreach ($data as $key => $value) {
+                if (($key == 'startdate' or $key == 'enddate')
+                    and $value < strtotime(date('Y-m-d')) and $record->get($key) != $value) {
+                    throw new \InvalidArgumentException('Date is in the past');
+                }
                 if ($record->get($key) != $value) {
                     $record->set($key, $value);
                     $return = true;

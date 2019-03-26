@@ -42,11 +42,15 @@ $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladun
 $string['title_send_failure'] = "Fehler beim Versand";
 $string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen sie den manuellen Versand von EvaSys";
 $string['not_enough_dates'] = "Bitte geben sie Daten für ALLE Umfragen an!";
-
 $string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
     "Es wurden keine neuen Einladungen versendet";
-
 $string['direct_title_info'] = "Einladungen bereits versandt";
+$string['title_send_rejected'] = "Unzulässiges Datum";
+$string['content_send_rejected'] = "Ein Datum wurde in die Vergangenheit geändert. <br />" .
+    "Dies ist nicht zulässig! Es können einzelne Evaluationsperioden geändert worden sein.<br />";
+$string['title_send_invalid'] = "Fehlerhafter Zeitraum";
+$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie endet! <br />" .
+    "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
 
 // Form strings.
 
