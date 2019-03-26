@@ -50,7 +50,9 @@ class update_survey_status extends \core\task\scheduled_task {
             if (strtotime(date("Y-m-d", $record->get("startdate"))) == strtotime(date("Y-m-d"))) {
                 $soap->sendInvitationToParticipants($record->get("survey"));
             }
-            if (strtotime(date("Y-m-d", $record->get("enddate"))) == strtotime('-1 day', date("Y-m-d"))) {
+            $end = strtotime(date("Y-m-d", $record->get("enddate")));
+            $yesterday = strtotime('-1 day', strtotime('00:00:00'));
+            if ($end == $yesterday) {
                 $soap->CloseSurvey($record->get("survey"));
             }
         }
