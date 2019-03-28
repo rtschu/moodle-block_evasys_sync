@@ -14,28 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class for loading/storing user-category pairs in the DB.
- *
- * @package block_evasys_sync
- * @copyright 2019 Robin Tschudi
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die;
 
 use core\persistent;
 
+
 /**
- * Class for loading/storing user-category pairs in the DB.
- *
- * @copyright 2017 Tamara Gunkel
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @property mixed course
+ * @property string evasyscourses
  */
-class evaluationperiod_survey_allocation extends persistent {
-    const TABLE = 'block_evasys_sync_surveys';
+class course_evasys_courses_allocation  extends persistent {
+    const TABLE = 'block_evasys_sync_courses';
     /**
      * Return the definition of the properties of this model.
      *
@@ -47,17 +38,9 @@ class evaluationperiod_survey_allocation extends persistent {
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
             ),
-            'survey' => array(
-                'type' => PARAM_INT,
-                'message' => new \lang_string('invalidsurvey', 'block_evasys_sync')
-            ),
-            'startdate' => array(
-                'type' => PARAM_INT,
-                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
-            ),
-            'enddate' => array(
-                'type' => PARAM_INT,
-                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
+            'evasyscourses' => array(
+                'type' => PARAM_TEXT,
+                'message' => new \lang_string('invalidcsourse', 'block_evasys_sync')
             ),
         );
     }

@@ -26,7 +26,6 @@ namespace block_evasys_sync;
 
 use moodleform;
 use html_writer;
-use html_table_cell;
 
 defined('MOODLE_INTERNAL') || die;
 
