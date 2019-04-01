@@ -25,11 +25,11 @@ $mform = new \block_evasys_sync\add_course_form();
 $mform->addid($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
+$prefill = new stdClass();
 if (!$pid) {
-    $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0, $data);
+    $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-    $prefill = new stdClass();
     $pre = explode('#', $persistent->get('evasyscourses'));
     array_pop($pre);
     foreach ($pre as $value) {
@@ -49,7 +49,7 @@ if ($mform->is_validated()) {
     $persistent->set('course',  $id);
     $persistent->set('evasyscourses', $magicstring);
     $persistent->save();
-    $redirecturl = new moodle_url('/course/view.php', array('id' => $id));
+    $redirecturl = new moodle_url('/course/view.php', array('id' => $id, 'evasyssynccheck' => 1));
     redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
 }
 

@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync;
 
+use Horde\Socket\Client\Exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
@@ -28,7 +30,7 @@ class evasys_synchronizer {
     private $blockcontext;
     private $courseinformation;
 
-    private $evasyscourseid;
+    private $evasyscourseids;
 
     public function __construct($courseid) {
         // For testing purposes.
@@ -41,8 +43,9 @@ class evasys_synchronizer {
     }
 
     public function get_evasys_courseid() {
-        if ($this->evasyscourseid !== null) {
-            return $this->evasyscourseid;
+        global $DB;
+        if ($this->evasyscourseids !== null) {
+            return $this->evasyscourseids;
         }
         $course = get_course($this->courseid);
 
@@ -54,8 +57,26 @@ class evasys_synchronizer {
         if (!is_object($lsfentry)) {
             throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
         }
-        $this->evasyscourseid = trim($lsfentry->veranstnr) . ' ' . trim($lsfentry->semestertxt);
-        return $this->evasyscourseid;
+        $maincourse = trim($lsfentry->veranstid);
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+        if (!$pid === false) {
+            $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+            $extras = explode('#', $extras->get('evasyscourses'));
+        } else {
+            $extras = [];
+        }
+        if (!in_array($maincourse, $extras)) {
+            array_unshift($extras, $maincourse);
+        }
+        $extras = array_filter($extras);
+        establish_secondary_DB_connection();
+        foreach ($extras as &$course) {
+            $courseinfo = get_course_by_veranstid(intval($course));
+            $course = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
+        }
+        close_secondary_DB_connection();
+        $this->evasyscourseids = $extras;
+        return $this->evasyscourseids;
     }
 
     private function init_soap_client() {
@@ -133,23 +154,28 @@ class evasys_synchronizer {
     }
 
     private function get_course_information() {
-        $soapresult = $this->soapclient->GetCourse($this->get_evasys_courseid(), 'PUBLIC', true, true);
-        if (is_soap_fault($soapresult)) {
-            // This happens e.g. if there is no corresponding course in EvaSys.
-            return null;
+        $result = [];
+        foreach ($this->get_evasys_courseid() as $courseid) {
+            $soapresult = $this->soapclient->GetCourse($courseid, 'PUBLIC', true, true);
+            if (is_soap_fault($soapresult)) {
+                // This happens e.g. if there is no corresponding course in EvaSys.
+                return null;
+            }
+            $result[$courseid] = $soapresult;
         }
-        return $soapresult;
+        return $result;
     }
 
     /**
      * Builds array with all surveys and additional information to surveys
      * @return array of surveys with additional information
      */
-    public function get_surveys() {
+    public function get_surveys($courseid) {
         if ($this->courseinformation === null) {
             return array();
         }
-        $rawsurveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys;
+
+        $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
 
         if (is_object($rawsurveys)) {
             // Course only has one associated survey.
@@ -204,12 +230,12 @@ class evasys_synchronizer {
         return $formname;
     }
 
-    public function get_amount_participants() {
-        if ($this->courseinformation === null || !property_exists($this->courseinformation->m_aoParticipants, "Persons")) {
+    public function get_amount_participants($courseid) {
+        if ($this->courseinformation[$courseid] === null || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
             return 0;
         }
 
-        return count($this->courseinformation->m_aoParticipants->Persons);
+        return count($this->courseinformation[$courseid]->m_aoParticipants->Persons);
     }
 
     /**

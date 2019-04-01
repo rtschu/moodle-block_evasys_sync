@@ -64,83 +64,87 @@ class block_evasys_sync extends block_base{
         if ($evasyssynccheck === 1) {
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
             try {
-                $evasyscourseid = $evasyssynchronizer->get_evasys_courseid();
+                $evasyscourseids = $evasyssynchronizer->get_evasys_courseid();
             } catch (Exception $exception) {
                 \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
                 $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
                 return $this->content;
             }
-            $this->content->text .= html_writer::div(html_writer::span(
-                get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
-            $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
-            $outputsurveys = array();
-            $surveys = $evasyssynchronizer->get_surveys();
 
-            if (empty($surveys)) {
-                $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
+            if (!$this->getmode($this->page->course->category)) {
+                $href = new moodle_url('/blocks/evasys_sync/sync.php');
+                $this->content->text .= "<form action='$href'>";
+                $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
+                $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
             } else {
-                if (!$this->getmode($this->page->course->category)) {
-                    $href = new moodle_url('/blocks/evasys_sync/sync.php');
-                    $this->content->text .= "<form action='$href'>";
-                    $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
-                    $this->content->text .= "<input type='hidden' name='courseid' value='".$this->page->course->id."'>";
-                } else {
-                    $href = new moodle_url('/course/view.php',
-                        array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
-                    $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
-                    $this->content->text .= "<input type='hidden' name='sesskey' value='".sesskey()."'>";
-                    $this->content->text .= "<input type='hidden' name='courseid' value='".$this->page->course->id."'>";
-                }
-
-                $i = 0;
-                foreach ($surveys as &$survey) {
-                    $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
-                    if (!$prefills) {
-                        $begin = "";
-                        $stop = "";
-                        $beginmin = date("Y-m-d");
-                        $endmin = date("Y-m-d");
-                    } else {
-                        $begin = date("Y-m-d", $prefills->get("startdate"));
-                        $stop = date("Y-m-d", $prefills->get("enddate"));
-                        if ($begin < date("Y-m-d")) {
-                            $beginmin = $begin;
-                        } else {
-                            $beginmin = date("Y-m-d");
-                        }
-                        if ($stop < date("Y-m-d")) {
-                            $endmin = $stop;
-                        } else {
-                            $endmin = date("Y-m-d");
-                        }
-                    }
-                    $readonly = "";
-                    if ($survey->surveyStatus == 'closed') {
-                        $readonly = "readonly";
-                    }
-                    $outputsurveys[] =
-                        '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
-                        '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
-                        get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
-                        '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>' .
-                        "<fieldset>" .
-                        "<div class='custom1'>" .
-                        "<label for='startDate$i'>Beginn</label>" .
-                        '<input type="date" name="startDate'.$i.'" min="'. $beginmin .'" value="'. $begin . '" ' . $readonly . '/>'.
-                        "</div>" .
-                        "<div class='custom1'>" .
-                        "<label for='endDate$i'>Ende</label>" .
-                        '<input type="date" name="endDate'.$i.'" min="'. $endmin .'" value="' . $stop . '" '.$readonly.'/>' .
-                        "</div>" .
-                        '</fieldset>';
-                    $i++;
-                }
-                $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-                $this->content->text .= "<input type='hidden' name='count' value='$i'>";
+                $href = new moodle_url('/course/view.php',
+                                       array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
+                $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
+                $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
+                $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
             }
-            $this->content->text .= html_writer::div(html_writer::span(
-                get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                format_string($evasyssynchronizer->get_amount_participants()));
+
+            foreach ($evasyscourseids as $evasyscourseid) {
+                $this->content->text .= html_writer::div(html_writer::span(
+                                                             get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
+                $this->content->text .= html_writer::div(html_writer::span(
+                                                             get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
+                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid)));
+                $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
+                $outputsurveys = array();
+                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid);
+
+                if (empty($surveys)) {
+                    $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
+                } else {
+
+                    $i = 0;
+                    foreach ($surveys as &$survey) {
+                        $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
+                        if (!$prefills) {
+                            $begin = "";
+                            $stop = "";
+                            $beginmin = date("Y-m-d");
+                            $endmin = date("Y-m-d");
+                        } else {
+                            $begin = date("Y-m-d", $prefills->get("startdate"));
+                            $stop = date("Y-m-d", $prefills->get("enddate"));
+                            if ($begin < date("Y-m-d")) {
+                                $beginmin = $begin;
+                            } else {
+                                $beginmin = date("Y-m-d");
+                            }
+                            if ($stop < date("Y-m-d")) {
+                                $endmin = $stop;
+                            } else {
+                                $endmin = date("Y-m-d");
+                            }
+                        }
+                        $readonly = "";
+                        if ($survey->surveyStatus == 'closed') {
+                            $readonly = "readonly";
+                        }
+                        $outputsurveys[] =
+                            '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
+                            '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
+                            get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
+                            '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>' .
+                            "<fieldset>" .
+                            "<div class='custom1'>" .
+                            "<label for='startDate$i'>Beginn</label>" .
+                            '<input type="date" name="startDate' . $i . '" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                            "</div>" .
+                            "<div class='custom1'>" .
+                            "<label for='endDate$i'>Ende</label>" .
+                            '<input type="date" name="endDate' . $i . '" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                            "</div>" .
+                            '</fieldset>';
+                        $i++;
+                    }
+                    $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
+                    $this->content->text .= "<input type='hidden' name='count' value='$i'>";
+                }
+            }
             if (!$mode) {
                 $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
                                       . "</form>";
@@ -148,6 +152,8 @@ class block_evasys_sync extends block_base{
                 $this->content->text .= "<input type='submit' value='".get_string('direct_invite', 'block_evasys_sync')."'> \n"
                                        . "</form>";
             }
+            $addurl = new moodle_url('/blocks/evasys_sync/addcourse.php?', array('id' => $this->page->course->id));
+            $this->content->text .= $OUTPUT->single_button($addurl, 'Zuordnung ändern', 'get');
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
