@@ -23,9 +23,9 @@ require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 $count = required_param('count', PARAM_INT);
 $dates = array();
+$start = required_param('startDate', PARAM_TEXT);
+$end = required_param('endDate', PARAM_TEXT);
 for ($i = 0; $i < $count; $i++) {
-    $start = required_param('startDate' . $i, PARAM_TEXT);
-    $end = required_param('endDate' . $i, PARAM_TEXT);
     if ($start == "" or $end == "") {
         die("not_enough_dates");
     }

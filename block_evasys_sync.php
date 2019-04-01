@@ -98,6 +98,7 @@ class block_evasys_sync extends block_base{
                 if (empty($surveys)) {
                     $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
                 } else {
+                    $readonly = "readonly";
                     foreach ($surveys as &$survey) {
                         $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
                         if (!$prefills) {
@@ -119,37 +120,30 @@ class block_evasys_sync extends block_base{
                                 $endmin = date("Y-m-d");
                             }
                         }
-                        $readonly = "";
-                        if ($survey->surveyStatus == 'closed') {
-                            $readonly = "readonly";
-                            if ($begin == "") {
-                                $begin = "2000-01-01";
-                            }
-                            if ($stop == "") {
-                                $stop = "2000-01-01";
-                            }
+                        if (!($survey->surveyStatus == "closed")) {
+                            $readonly = "";
                         }
                         $outputsurveys[] =
                             '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
                             '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
                             get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
-                            '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>' .
-                            "<fieldset>" .
-                            "<div class='custom1'>" .
-                            "<label for='startDate$i'>Beginn</label>" .
-                            '<input type="date" name="startDate' . $i . '" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
-                            "</div>" .
-                            "<div class='custom1'>" .
-                            "<label for='endDate$i'>Ende</label>" .
-                            '<input type="date" name="endDate' . $i . '" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
-                            "</div>" .
-                            '</fieldset>';
+                            '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>';
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
                 }
                 $this->content->text .= "<input type='hidden' name='count' value='$i'>";
             }
+            $this->content->text .= "<fieldset>" .
+                "<div class='custom1'>" .
+                "<label for='startDate'>Beginn</label>" .
+                '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                "</div>" .
+                "<div class='custom1'>" .
+                "<label for='endDate'>Ende</label>" .
+                '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                "</div>" .
+                '</fieldset>';
             if (!$mode) {
                 $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
                                       . "</form>";

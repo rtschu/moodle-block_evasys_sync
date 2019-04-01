@@ -21,13 +21,13 @@ require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 $count = required_param('count', PARAM_INT);
 $dates = array();
+$start = required_param('startDate', PARAM_TEXT);
+$end = required_param('endDate', PARAM_TEXT);
+$start = explode("-", $start);
+$end = explode("-", $end);
+$start = $start[2] . "." . $start[1] . "." . $start[0];
+$end = $end[2] . "." . $end[1] . "." . $end[0];
 for ($i = 0; $i < $count; $i++) {
-    $start = required_param('startDate' . $i, PARAM_TEXT);
-    $end = required_param('endDate' . $i, PARAM_TEXT);
-    $start = explode("-", $start);
-    $end = explode("-", $end);
-    $start = $start[2] . "." . $start[1] . "." . $start[0];
-    $end = $end[2] . "." . $end[1] . "." . $end[0];
     $dates[] = array("start" => $start,
                      "end" => $end);
 }
