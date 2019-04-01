@@ -31,6 +31,10 @@ $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 
+// Multi allocation strings.
+
+$string['selection_success'] = "Auswahl erfolgreich übermittelt";
+
 // Direct invite strings.
 
 $string['direct_invite'] = "Teilnehmer direkt einladen";

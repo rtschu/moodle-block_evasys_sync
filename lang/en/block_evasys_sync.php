@@ -31,6 +31,10 @@ $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
 $string['taskname'] = 'Open and close Evasys surveys';
 
+// Multi allocation strings.
+
+$string['selection_success'] = "Selection successful";
+
 // Direct invite strings.
 
 $string['direct_invite'] = "Invite participants directly";

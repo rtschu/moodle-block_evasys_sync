@@ -50,7 +50,7 @@ if ($mform->is_validated()) {
     $persistent->set('evasyscourses', $magicstring);
     $persistent->save();
     $redirecturl = new moodle_url('/course/view.php', array('id' => $id));
-    redirect($redirecturl);
+    redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
 }
 
 echo $OUTPUT->header();
