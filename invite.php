@@ -41,16 +41,12 @@ require_capability('block/evasys_sync:synchronize', context_course::instance($co
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()||true) { // TODO.
-        try {
-            $result = $evasyssynchronizer->invite_all($dates);
-        } catch (\InvalidArgumentException $e) {
-            die('date_in_the_past');
-        }
-        echo($result);
-    } else {
-        die("up_to_date");
+    try {
+        $result = $evasyssynchronizer->invite_all($dates);
+    } catch (\InvalidArgumentException $e) {
+        die('date_in_the_past');
     }
+        echo($result);
 } catch (Exception $exception) {
     debugging($exception);
     echo(get_string('content_failure', 'block_evasys_sync'));
