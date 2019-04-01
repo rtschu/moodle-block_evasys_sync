@@ -16,7 +16,7 @@
 
 namespace block_evasys_sync;
 
-use Horde\Socket\Client\Exception;
+use core_availability\result;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -95,61 +95,39 @@ class evasys_synchronizer {
     }
 
     public function invite_all($dates) {
-        $suveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys;
-        if (!$suveys instanceof \stdClass) {
-            $sent = 0;
-            $total = 0;
-            $reminders = 0;
-            $status = "success";
-            $today = date("Ymd");
-            for ($i = 0; $i < count($dates); $i++) {
-                $survey = $suveys[$i];
-                if (intval(str_replace("-", "", $dates[$i]["start"])) == $today) {
-                    $id = $survey->m_nSurveyId;
-                    $soap = $this->soapclient->sendInvitationToParticipants($id);
-                    $soap = str_replace(" emails sent successful", "", $soap);
-                    $sent += intval(explode("/", $soap)[0]);
-                    $total += intval(explode("/", $soap)[1]);
-                    $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
-                } else {
-                    $start = $dates[$i]["start"];
-                }
-                try {
-                    if ($this->setstartandend($survey->m_nSurveyId, $start, $dates[$i]["end"])) {
-                        $reminders++;
-                    }
-                } catch (\InvalidArgumentException $e) {
-                    if ($e->getMessage() == "Start date is after end date") {
-                        $status = "warning";
-                    } else {
-                        throw $e;
-                    }
-                }
-            }
-            $soap = "$status/$sent/$total/$reminders";
-        } else {
-            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            if (strtotime($dates[0]["start"]) == strtotime(date("Y-m-d"))) {
+        $suveys = $this->get_all_surveys();
+        $sent = 0;
+        $total = 0;
+        $reminders = 0;
+        $status = "success";
+        $today = date("Ymd");
+        for ($i = 0; $i < count($dates); $i++) {
+            $survey = $suveys[$i];
+            if (intval(str_replace("-", "", $dates[$i]["start"])) == $today) {
+                $id = $survey->m_nSurveyId;
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
                 $soap = str_replace(" emails sent successful", "", $soap);
-                $soap = explode("/", $soap);
+                $sent += intval(explode("/", $soap)[0]);
+                $total += intval(explode("/", $soap)[1]);
+                $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
             } else {
-                $soap = array(0, 0);
+                $start = $dates[$i]["start"];
             }
             try {
-                if ($this->setstartandend($id, $dates[0]["start"], $dates[0]["end"])) {
-                    $soap = "success/$soap[0]/$soap[1]/1";
-                } else {
-                    $soap = "success/$soap[0]/$soap[1]/0";
+                if ($this->setstartandend($survey->id, $start, $dates[$i]["end"])) {
+                    $reminders++;
                 }
             } catch (\InvalidArgumentException $e) {
                 if ($e->getMessage() == "Start date is after end date") {
-                    $soap = "warning/0/0/0";
+                    $status = "warning";
+                } else if ($e->getMessage() == 'Date is in the past') {
+                    $status = "rejected";
                 } else {
                     throw $e;
                 }
             }
         }
+        $soap = "$status/$sent/$total/$reminders";
         return $soap;
     }
 
@@ -171,7 +149,7 @@ class evasys_synchronizer {
      * @return array of surveys with additional information
      */
     public function get_surveys($courseid) {
-        if ($this->courseinformation === null) {
+        if ($this->courseinformation[$courseid] === null) {
             return array();
         }
 
@@ -188,6 +166,14 @@ class evasys_synchronizer {
             array_push($enrichedsurveys, $this->enrich_survey($survey));
         }
         return $enrichedsurveys;
+    }
+
+    public function get_all_surveys() {
+        $surveys = [];
+        foreach ($this->evasyscourseids as $course) {
+            $surveys = array_merge($surveys, $this->get_surveys($course));
+        }
+        return $surveys;
     }
 
     /**
@@ -234,6 +220,9 @@ class evasys_synchronizer {
         if ($this->courseinformation[$courseid] === null || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
             return 0;
         }
+        if (is_object($this->courseinformation[$courseid]->m_aoParticipants->Persons)) {
+            return 1;
+        }
 
         return count($this->courseinformation[$courseid]->m_aoParticipants->Persons);
     }
@@ -273,19 +262,23 @@ class evasys_synchronizer {
             array_push($students, $student);
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
-        $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourseid, 'PUBLIC', false);
-        $usercountnow = $this->get_course_information()->m_nCountStud;
-        if (is_array($this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys)) {
-            foreach ($this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
-                $id = $survey->m_nSurveyId;
-                $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false);
+        $this->get_course_information();
+        foreach ($this->courseinformation as $course) {
+            $soapresult = $this->soapclient->InsertParticipants($personlist, $course->m_sPubCourseId, 'PUBLIC', false);
+            $usercountnow = $course->m_nCountStud;
+            if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
+                foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
+                    $id = $survey->m_nSurveyId;
+                    $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false);
+                }
+            } else {
+                $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+                $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
             }
-        } else {
-            $id = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-            $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
-        }
-        if (is_soap_fault($soapresult)) {
-            throw new \Exception('Sending list of participants to evasys server failed.');
+            // TODO.
+            if (is_soap_fault($soapresult)) {
+                throw new \Exception('Sending list of participants to evasys server failed.');
+            }
         }
         return $soapresult;
     }
@@ -303,7 +296,7 @@ class evasys_synchronizer {
         $data->enddate = strtotime($end);
         $recordid = $DB->get_record("block_evasys_sync_surveys", array('survey' => $id), 'id', IGNORE_MISSING);
         if (!$recordid) {
-            if ($data->startdate < strtotime('Y-m-d') or $data->enddate < strtotime('Y-m-d')) {
+            if ($data->startdate < strtotime(date('Y-m-d')) or $data->enddate < strtotime(date('Y-m-d'))) {
                 throw new \InvalidArgumentException('Date is in the past');
             }
             $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
@@ -348,19 +341,22 @@ class evasys_synchronizer {
         $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein Dozent die Evaluation " .
             "der nachfolgenden Veranstaltung aktiviert hat. \r\n".
             "Bitte passen Sie die Evaluationszeiträume gemäß der Wünsche des Dozenten an. \r\n".
-            "Bitte versenden Sie schnellstmöglich die TANs im EvaSys-Menü " .
-            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltung.\r\n\r\n";
-        $notiftext .= "Name: " . $course->fullname . "\r\n";
-        $notiftext .= "EvaSys-ID: " . $this->get_evasys_courseid() . "\r\n\r\n";
-        $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
+            "Bitte versenden Sie die TANs im EvaSys-Menü " .
+            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n\r\n";
 
-        $surveys = $this->get_surveys();
-        $i = 0;
-        foreach ($surveys as &$survey) {
-            $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
-            $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
-            $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates[$i]["start"] . " - " . $dates[$i]["end"] . "\r\n\r\n";
-            $i++;
+        foreach ($this->courseinformation as $course) {
+            $notiftext .= "Name: " . $course->m_sCourseTitle . "\r\n";
+            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId . "\r\n\r\n";
+            $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
+
+            $surveys = $this->get_surveys($course->m_sPubCourseId);
+            $i = 0;
+            foreach ($surveys as &$survey) {
+                $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
+                $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
+                $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates[$i]["start"] . " - " . $dates[$i]["end"] . "\r\n\r\n";
+                $i++;
+            }
         }
 
         $notiftext .= "Mit freundlichen Grüßen\r\n";

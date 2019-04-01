@@ -40,7 +40,7 @@ class course_evasys_courses_allocation  extends persistent {
             ),
             'evasyscourses' => array(
                 'type' => PARAM_TEXT,
-                'message' => new \lang_string('invalidcsourse', 'block_evasys_sync')
+                'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
             ),
         );
     }

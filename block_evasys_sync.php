@@ -84,6 +84,7 @@ class block_evasys_sync extends block_base{
                 $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
             }
 
+            $i = 0;
             foreach ($evasyscourseids as $evasyscourseid) {
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
@@ -97,8 +98,6 @@ class block_evasys_sync extends block_base{
                 if (empty($surveys)) {
                     $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
                 } else {
-
-                    $i = 0;
                     foreach ($surveys as &$survey) {
                         $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
                         if (!$prefills) {
@@ -123,6 +122,12 @@ class block_evasys_sync extends block_base{
                         $readonly = "";
                         if ($survey->surveyStatus == 'closed') {
                             $readonly = "readonly";
+                            if ($begin == "") {
+                                $begin = "2000-01-01";
+                            }
+                            if ($stop == "") {
+                                $stop = "2000-01-01";
+                            }
                         }
                         $outputsurveys[] =
                             '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
@@ -142,8 +147,8 @@ class block_evasys_sync extends block_base{
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-                    $this->content->text .= "<input type='hidden' name='count' value='$i'>";
                 }
+                $this->content->text .= "<input type='hidden' name='count' value='$i'>";
             }
             if (!$mode) {
                 $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
@@ -194,8 +199,8 @@ class block_evasys_sync extends block_base{
                 }
             }
         }
-        $defaukt = get_config('block_evasys_sync', 'default_evasys_mode');
-        return $defaukt;
+        $default = get_config('block_evasys_sync', 'default_evasys_mode');
+        return $default;
     }
 }
 

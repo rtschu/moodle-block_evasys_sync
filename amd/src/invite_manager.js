@@ -34,6 +34,16 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         ]).done(function (s) {
                             notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
                         })
+                    } else if (status[0] === "rejected") {
+                        params = {"sent": status[1], "total": status[2], "queued": status[3]};
+                        str.get_strings([
+                            {'key': 'title_send_rejected', component: 'block_evasys_sync'},
+                            {'key': 'content_send_rejected', component: 'block_evasys_sync'},
+                            {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
+                            {'key': 'ok'}
+                        ]).done(function (s) {
+                            notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
+                        })
                     } else {
                         str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                             notification.alert("Error", s, "OK");
@@ -55,14 +65,6 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     })
-                }else if(this.responseText === "date_in_the_past"){
-                    str.get_strings([
-                        {'key': 'title_send_rejected', component: 'block_evasys_sync'},
-                        {'key': 'content_send_rejected', component: 'block_evasys_sync'},
-                        {'key': 'ok'}
-                    ]).done(function (s) {
-                        notification.alert(s[0], s[1], s[2]);
-                    })
                 }else{
                     str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                         notification.alert("Error", s, "OK");
@@ -72,7 +74,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                     notification.alert("Error", s, "OK");
                 });
-                // Aconsole.log(this.responseText);
+                // Aconsole.log(this.responseText);.
                 // Anotification.alert("Erfolg", this.responseText, "ok");.
             }
             if(this.readyState === 4) {
