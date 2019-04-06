@@ -38,12 +38,14 @@ if (!$pid) {
 }
 
 if ($mform->is_validated()) {
-    global $DB;
+    global $DB, $USER;
     $data = $mform->get_data();
     $magicstring = ''; // HILFE?
     foreach ($data as $key => $value) {
         if ($value == 1) {
-            $magicstring .= $key . '#';
+            if (is_course_of_teacher($key, $USER->username)) {
+                $magicstring .= $key . '#';
+            }
         }
     }
     $persistent->set('course',  $id);

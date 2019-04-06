@@ -29,13 +29,13 @@ class add_course_form extends moodleform {
 
     protected function definition () {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
-        global $pgDB;
+        global $pgDB, $USER;
         $mform = $this->_form;
 
         $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite();
         $pgDB->connect();
-        $availablecourselist = get_teachers_course_list('herbert', false);
+        $availablecourselist = get_teachers_course_list($USER->username, false);
         // Add Table.
         $mform->addElement('html', $this->tablehead());
         $this->table_body($availablecourselist);
