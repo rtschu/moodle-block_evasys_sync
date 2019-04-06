@@ -77,11 +77,13 @@ class block_evasys_sync extends block_base{
                 $href = new moodle_url('/course/view.php',
                                        array('id' => $this->page->course->id, "evasyssynccheck" => true));
             }
+            // Begin form.
             $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
             $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
             $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
 
             $i = 0;
+            // Output for each Evasys-course mapped to this moodle course.
             foreach ($evasyscourseids as $evasyscourseid) {
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
@@ -97,7 +99,9 @@ class block_evasys_sync extends block_base{
                 } else {
                     $readonly = "readonly";
                     foreach ($surveys as &$survey) {
+                        // Output for each of those surveys :D.
                         $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
+                        // Find if dates have been defined before and should be prefilled.
                         if (!$prefills) {
                             $begin = "";
                             $stop = "";
@@ -176,6 +180,12 @@ class block_evasys_sync extends block_base{
         return true;
     }
 
+    /**
+     * @param $category
+     * @return bool wether the teacher may set dates for this survey himself.
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
     private function getmode($category) {
         global $DB;
         $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));

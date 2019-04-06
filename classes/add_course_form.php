@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/local/lsf_unification/class_pg_lite.php');
 class add_course_form extends moodleform {
 
     protected function definition () {
+        // Variable violates moodle codestyle but this is required by the lsf-plugin.
         global $pgDB;
         $mform = $this->_form;
 

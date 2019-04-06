@@ -1,3 +1,4 @@
+// Sorry Justus.
 define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
 
     var updateForm = function (dates) {
@@ -93,13 +94,8 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         var yyyy = today.getFullYear();
 
         today = yyyy + '-' + mm + '-' + dd;
-        let confirm = false;
-        for (let i = 0; i < dates.count; i++) {
-            if(dates['startDate' + i] === today){
-                confirm = true;
-                break;
-            }
-        }
+        let confirm = (dates['startDate'] === today);
+        // If the Evaluation would start today we directly invite students, therefore this action should be confirmed.
         if(confirm) {
             str.get_strings([
                 {'key': 'direct_invite', component: 'block_evasys_sync'},
@@ -110,6 +106,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 notification.confirm(s[0], s[1], s[2], s[3], function () {
                     call(dates);
                 }, function () {
+                    // If they choose to abort we need to enable the submit button again.
                     $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
                 });
             })
@@ -119,9 +116,13 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
     };
 
     var init = function () {
+        // Overwrite standard submit function.
         $('#evasys_block_form').submit(function (e) {
+            // We don't wanna get redirected.
             e.preventDefault();
+            // Also we don't want someone to send another ajax because the first one didn't complete yet.
             $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
+            // Call to invite.php with data being passed to it.
             let data = {};
                 $('#evasys_block_form').serializeArray().forEach(function (param) {
                     data[param['name']] = param['value'];
