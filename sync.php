@@ -27,7 +27,7 @@ $start = explode("-", $start);
 $end = explode("-", $end);
 $start = $start[2] . "." . $start[1] . "." . $start[0];
 $end = $end[2] . "." . $end[1] . "." . $end[0];
-$dates = [$start, $end];
+$dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
@@ -41,7 +41,7 @@ $returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
+    if ($evasyssynchronizer->sync_students() or true) {
         $evasyssynchronizer->notify_evaluation_responsible_person($dates);
         $returnurl->param('status', 'success');
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);

@@ -33,13 +33,10 @@ class evasys_synchronizer {
     private $evasyscourseids;
 
     public function __construct($courseid) {
-        // For testing purposes.
-        if ($courseid > 0) {
-            $this->courseid = $courseid;
-            $this->init_soap_client();
-            $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
-            $this->courseinformation = $this->get_course_information();
-        }
+        $this->courseid = $courseid;
+        $this->init_soap_client();
+        $this->blockcontext = \context_course::instance($courseid); // TODO Course context or block context? Check caps.
+        $this->courseinformation = $this->get_course_information();
     }
 
     public function get_evasys_courseid() {
@@ -58,18 +55,22 @@ class evasys_synchronizer {
             throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
         }
         $maincourse = trim($lsfentry->veranstid);
+        // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+        // Get all associated courses.
         if (!$pid === false) {
             $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
             $extras = explode('#', $extras->get('evasyscourses'));
         } else {
             $extras = [];
         }
+        // If noone has associated the course itself, we force that.
         if (!in_array($maincourse, $extras)) {
             array_unshift($extras, $maincourse);
         }
         $extras = array_filter($extras);
         establish_secondary_DB_connection();
+        // Fetch the Evasysids for the courses.
         foreach ($extras as &$course) {
             $courseinfo = get_course_by_veranstid(intval($course));
             $course = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
@@ -92,43 +93,6 @@ class evasys_synchronizer {
         ], SOAP_ENC_OBJECT);
         $header = new \SOAPHEADER('soap', 'Header', $headerbody);
         $this->soapclient->__setSoapHeaders($header);
-    }
-
-    public function invite_all($dates) {
-        $surveys = $this->get_all_surveys();
-        $sent = 0;
-        $total = 0;
-        $reminders = 0;
-        $status = "success";
-        $today = date("Ymd");
-        for ($i = 0; $i < count($surveys); $i++) {
-            $survey = $surveys[$i];
-            if (intval(str_replace("-", "", $dates["start"])) == $today) {
-                $id = $survey->m_nSurveyId;
-                $soap = $this->soapclient->sendInvitationToParticipants($id);
-                $soap = str_replace(" emails sent successful", "", $soap);
-                $sent += intval(explode("/", $soap)[0]);
-                $total += intval(explode("/", $soap)[1]);
-                $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
-            } else {
-                $start = $dates["start"];
-            }
-            try {
-                if ($this->setstartandend($survey->id, $start, $dates["end"])) {
-                    $reminders++;
-                }
-            } catch (\InvalidArgumentException $e) {
-                if ($e->getMessage() == "Start date is after end date") {
-                    $status = "warning";
-                } else if ($e->getMessage() == 'Date is in the past') {
-                    $status = "rejected";
-                } else {
-                    throw $e;
-                }
-            }
-        }
-        $soap = "$status/$sent/$total/$reminders";
-        return $soap;
     }
 
     private function get_course_information() {
@@ -169,6 +133,7 @@ class evasys_synchronizer {
     }
 
     public function get_all_surveys() {
+        // Gets all surveys from the associated evasys courses.
         $surveys = [];
         foreach ($this->evasyscourseids as $course) {
             $surveys = array_merge($surveys, $this->get_surveys($course));
@@ -265,6 +230,7 @@ class evasys_synchronizer {
         $this->get_course_information();
         foreach ($this->courseinformation as $course) {
             $soapresult = $this->soapclient->InsertParticipants($personlist, $course->m_sPubCourseId, 'PUBLIC', false);
+            $course = $this->soapclient->GetCourse($course->m_sPubCourseId, 'PUBLIC', true, true); // Update usercount.
             $usercountnow = $course->m_nCountStud;
             if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
                 foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
@@ -281,6 +247,46 @@ class evasys_synchronizer {
             }
         }
         return $soapresult;
+    }
+
+    public function invite_all($dates) {
+        // Get all surveys of this moodle course.
+        $surveys = $this->get_all_surveys();
+        $sent = 0;
+        $total = 0;
+        $reminders = 0;
+        $status = "success";
+        $today = date("Ymd");
+        for ($i = 0; $i < count($surveys); $i++) {
+            $survey = $surveys[$i];
+            if (intval(str_replace("-", "", $dates["start"])) == $today) {
+                // If the survey is set to start today we sent our the invites via evasys right away.
+                $id = $survey->m_nSurveyId;
+                $soap = $this->soapclient->sendInvitationToParticipants($id);
+                $soap = str_replace(" emails sent successful", "", $soap);
+                $sent += intval(explode("/", $soap)[0]);
+                $total += intval(explode("/", $soap)[1]);
+                $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
+            } else {
+                // If its's set to start on any other date we simply set them to start at that time.
+                $start = $dates["start"];
+            }
+            try {
+                if ($this->setstartandend($survey->id, $start, $dates["end"])) {
+                    $reminders++;
+                }
+            } catch (\InvalidArgumentException $e) {
+                if ($e->getMessage() == "Start date is after end date") {
+                    $status = "warning";
+                } else if ($e->getMessage() == 'Date is in the past') {
+                    $status = "rejected";
+                } else {
+                    throw $e;
+                }
+            }
+        }
+        $soap = "$status/$sent/$total/$reminders";
+        return $soap;
     }
 
     public function setstartandend ($id, $start, $end) {

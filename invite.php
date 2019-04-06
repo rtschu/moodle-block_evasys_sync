@@ -25,7 +25,7 @@ $count = required_param('count', PARAM_INT);
 $dates = array();
 $start = required_param('startDate', PARAM_TEXT);
 $end = required_param('endDate', PARAM_TEXT);
-$dates = [$start, $end];
+$dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);

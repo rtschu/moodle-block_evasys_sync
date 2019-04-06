@@ -49,6 +49,7 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
+        // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
         if ($mode) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         }
