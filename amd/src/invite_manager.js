@@ -2,21 +2,21 @@
 define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
 
     var updateForm = function (dates) {
-        let form = document.getElementById('evasys_block_form');
-        for (let i = 0; i < dates.count; i++) {
+        var form = document.getElementById('evasys_block_form');
+        for (var i = 0; i < dates.count; i++) {
             form.elements['startDate' + i].value = dates["startDate" + i];
             form.elements['endDate' + i].value = dates["endDate" + i];
         }
     };
 
     var call = function (dates) {
-        let xhttp = new XMLHttpRequest();
+        var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if(this.readyState === 4 && this.status === 200){
                 if(this.responseText.includes("/")) {
-                    let status = this.responseText.split("/");
+                    var status = this.responseText.split("/");
                     if (status[0] === "success") {
-                        params = {"sent": status[1], "total": status[2], "queued": status[3]};
+                        var params = {"sent": status[1], "total": status[2], "queued": status[3]};
                         str.get_strings([
                             {'key': 'title_send_success', component: 'block_evasys_sync'},
                             {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
@@ -24,7 +24,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         ]).done(function (s) {
                             notification.alert(s[0], s[1], s[2]);
                             updateForm(dates);
-                        })
+                        });
                     } else if (status[0] === "warning") {
                         params = {"sent": status[1], "total": status[2], "queued": status[3]};
                         str.get_strings([
@@ -34,7 +34,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                             {'key': 'ok'}
                         ]).done(function (s) {
                             notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
-                        })
+                        });
                     } else if (status[0] === "rejected") {
                         params = {"sent": status[1], "total": status[2], "queued": status[3]};
                         str.get_strings([
@@ -44,7 +44,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                             {'key': 'ok'}
                         ]).done(function (s) {
                             notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
-                        })
+                        });
                     } else {
                         str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                             notification.alert("Error", s, "OK");
@@ -57,7 +57,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
-                    })
+                    });
                 }else if(this.responseText === "not_enough_dates") {
                     str.get_strings([
                         {'key': 'title_send_failure', component: 'block_evasys_sync'},
@@ -65,7 +65,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
-                    })
+                    });
                 }else{
                     str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                         notification.alert("Error", s, "OK");
@@ -82,7 +82,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
             }
         };
-        s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
+        var s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
         xhttp.open("GET", s);
         xhttp.send();
     };
@@ -94,7 +94,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         var yyyy = today.getFullYear();
 
         today = yyyy + '-' + mm + '-' + dd;
-        let confirm = (dates['startDate'] === today);
+        var confirm = (dates['startDate'] === today);
         // If the Evaluation would start today we directly invite students, therefore this action should be confirmed.
         if(confirm) {
             str.get_strings([
@@ -109,7 +109,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     // If they choose to abort we need to enable the submit button again.
                     $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
                 });
-            })
+            });
         } else {
             call(dates);
         }
@@ -120,10 +120,10 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         $('#evasys_block_form').submit(function (e) {
             // We don't wanna get redirected.
             e.preventDefault();
-            // Also we don't want someone to send another ajax because the first one didn't complete yet.
+            // Also we don't want someone to send another ajax because the first one didn't compvare yet.
             $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
             // Call to invite.php with data being passed to it.
-            let data = {};
+            var data = {};
                 $('#evasys_block_form').serializeArray().forEach(function (param) {
                     data[param['name']] = param['value'];
                 });
@@ -131,7 +131,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         });
     };
 
-    return{
+    return {
         ajax: ajax,
         init: init,
     };
