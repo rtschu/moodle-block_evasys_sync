@@ -27,10 +27,7 @@ $start = explode("-", $start);
 $end = explode("-", $end);
 $start = $start[2] . "." . $start[1] . "." . $start[0];
 $end = $end[2] . "." . $end[1] . "." . $end[0];
-for ($i = 0; $i < $count; $i++) {
-    $dates[] = array("start" => $start,
-                     "end" => $end);
-}
+$dates = [$start, $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);

@@ -95,15 +95,15 @@ class evasys_synchronizer {
     }
 
     public function invite_all($dates) {
-        $suveys = $this->get_all_surveys();
+        $surveys = $this->get_all_surveys();
         $sent = 0;
         $total = 0;
         $reminders = 0;
         $status = "success";
         $today = date("Ymd");
-        for ($i = 0; $i < count($dates); $i++) {
-            $survey = $suveys[$i];
-            if (intval(str_replace("-", "", $dates[$i]["start"])) == $today) {
+        for ($i = 0; $i < count($surveys); $i++) {
+            $survey = $surveys[$i];
+            if (intval(str_replace("-", "", $dates["start"])) == $today) {
                 $id = $survey->m_nSurveyId;
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
                 $soap = str_replace(" emails sent successful", "", $soap);
@@ -111,10 +111,10 @@ class evasys_synchronizer {
                 $total += intval(explode("/", $soap)[1]);
                 $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
             } else {
-                $start = $dates[$i]["start"];
+                $start = $dates["start"];
             }
             try {
-                if ($this->setstartandend($survey->id, $start, $dates[$i]["end"])) {
+                if ($this->setstartandend($survey->id, $start, $dates["end"])) {
                     $reminders++;
                 }
             } catch (\InvalidArgumentException $e) {
@@ -354,7 +354,7 @@ class evasys_synchronizer {
             foreach ($surveys as &$survey) {
                 $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
                 $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
-                $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates[$i]["start"] . " - " . $dates[$i]["end"] . "\r\n\r\n";
+                $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . "\r\n\r\n";
                 $i++;
             }
         }

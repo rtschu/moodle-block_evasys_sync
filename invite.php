@@ -25,13 +25,7 @@ $count = required_param('count', PARAM_INT);
 $dates = array();
 $start = required_param('startDate', PARAM_TEXT);
 $end = required_param('endDate', PARAM_TEXT);
-for ($i = 0; $i < $count; $i++) {
-    if ($start == "" or $end == "") {
-        die("not_enough_dates");
-    }
-    $dates[] = array("start" => $start,
-        "end" => $end);
-}
+$dates = [$start, $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
@@ -41,6 +35,7 @@ require_capability('block/evasys_sync:synchronize', context_course::instance($co
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
+    $evasyssynchronizer->sync_students();
     try {
         $result = $evasyssynchronizer->invite_all($dates);
     } catch (\InvalidArgumentException $e) {
