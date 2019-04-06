@@ -34,6 +34,9 @@ $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 // Multi allocation strings.
 
 $string['selection_success'] = "Auswahl erfolgreich übermittelt";
+$string['add_course_header'] = "Wählen sie Kurse die dem aktuellen moodle Kurs zugeordnet werden sollen";
+$string['coursename'] = "Kursname";
+$string['associated'] = "zugeordnet";
 
 // Direct invite strings.
 

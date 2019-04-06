@@ -34,6 +34,9 @@ $string['taskname'] = 'Open and close Evasys surveys';
 // Multi allocation strings.
 
 $string['selection_success'] = "Selection successful";
+$string['add_course_header'] = "Choose courses, that should be synchronized with this moodle course";
+$string['coursename'] = "Coursename";
+$string['associated'] = "associated";
 
 // Direct invite strings.
 

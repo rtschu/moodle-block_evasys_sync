@@ -32,7 +32,7 @@ class add_course_form extends moodleform {
         global $pgDB;
         $mform = $this->_form;
 
-        $mform->addElement('html', '<h3> Wählen sie Kurse die dem aktuellen moodle Kurs zugeordnet werden sollen </h3>');
+        $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite();
         $pgDB->connect();
         $availablecourselist = get_teachers_course_list('herbert', false);
@@ -63,11 +63,11 @@ class add_course_form extends moodleform {
         $attributes = array();
         $attributes['class'] = 'header c0';
         $attributes['scope'] = 'col';
-        $output .= html_writer::tag('th', 'Kursname', $attributes);
+        $output .= html_writer::tag('th', get_string('coursename', 'block_evasys_sync'), $attributes);
         $attributes = array();
         $attributes['class'] = 'header c1 lastcol';
         $attributes['scope'] = 'col';
-        $output .= html_writer::tag('th', 'zugeordnet', $attributes);
+        $output .= html_writer::tag('th', get_string('associated', 'block_evasys_sync'), $attributes);
         $output .= html_writer::end_tag('tr');
         $output .= html_writer::end_tag('thead');
 
