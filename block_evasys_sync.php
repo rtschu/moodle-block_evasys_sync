@@ -73,16 +73,13 @@ class block_evasys_sync extends block_base{
 
             if (!$this->getmode($this->page->course->category)) {
                 $href = new moodle_url('/blocks/evasys_sync/sync.php');
-                $this->content->text .= "<form action='$href'>";
-                $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
-                $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
             } else {
                 $href = new moodle_url('/course/view.php',
-                                       array('id' => $this->page->course->id, "evasyssynccheck" => true, "invite_confirm" => true));
-                $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
-                $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
-                $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
+                                       array('id' => $this->page->course->id, "evasyssynccheck" => true));
             }
+            $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
+            $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
+            $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
 
             $i = 0;
             foreach ($evasyscourseids as $evasyscourseid) {
