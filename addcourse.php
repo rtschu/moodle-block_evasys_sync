@@ -19,8 +19,11 @@ require_once('classes/add_course_form.php');
 $id = required_param('id', PARAM_INT);
 
 require_login();
+require_capability('block/evasys_sync:modifymapping', context_course::instance($id));
 
 $PAGE->set_url('/blocks/evasys_sync/addcourse');
+$PAGE->set_context(context_course::instance($id));
+
 $mform = new \block_evasys_sync\add_course_form();
 $mform->addid($id);
 
@@ -42,6 +45,14 @@ if ($mform->is_validated()) {
     global $DB, $USER;
     $data = $mform->get_data();
     $magicstring = ''; // HILFE?
+    foreach ($pre as $key) {
+        if (!(array_key_exists($key, $data)) || $data[$key] != 0) {
+            // Disallow removing not owned courses.
+            if (!is_course_of_teacher($key, $USER->username)) {
+                $data[$key] = 1;
+            }
+        }
+    }
     foreach ($data as $key => $value) {
         if ($value == 1) {
             if (is_course_of_teacher($key, $USER->username)) {
