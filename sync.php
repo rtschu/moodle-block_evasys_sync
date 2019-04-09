@@ -41,7 +41,7 @@ $returnurl->param('evasyssynccheck', 1);
 
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students() or true) {
+    if ($evasyssynchronizer->sync_students()) {
         $evasyssynchronizer->notify_evaluation_responsible_person($dates);
         $returnurl->param('status', 'success');
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);

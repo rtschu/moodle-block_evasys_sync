@@ -30,6 +30,9 @@ $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die T
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
+$string['begin'] = 'Beginn';
+$string['end'] = 'Ende';
+$string['change_mapping'] = "Zuordnung ändern";
 
 // Multi allocation strings.
 
@@ -106,6 +109,8 @@ $string['submit'] = 'Speichern';
 $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
+$string['cc_mode'] = 'evasys_cc_mode';
+$string['auto_mode'] = 'Automatischer modus';
 
 
 // Settings - category table.

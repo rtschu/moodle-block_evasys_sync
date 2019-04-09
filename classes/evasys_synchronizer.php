@@ -241,7 +241,6 @@ class evasys_synchronizer {
                 $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
                 $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
             }
-            // TODO.
             if (is_soap_fault($soapresult)) {
                 throw new \Exception('Sending list of participants to evasys server failed.');
             }

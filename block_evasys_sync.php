@@ -127,9 +127,9 @@ class block_evasys_sync extends block_base{
                         }
                         $outputsurveys[] =
                             '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
-                            '<span class="emphasize">' . 'Evaluationsstatus' . '</span> ' .
+                            '<span class="emphasize">' . get_string('surveystatus', 'block_evasys_sync') . '</span> ' .
                             get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
-                            '<span class="emphasize">' . 'Ausgefüllt' . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>';
+                            '<span class="emphasize">' . get_string('finishedforms', 'block_evasys_sync') . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>';
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
@@ -138,11 +138,11 @@ class block_evasys_sync extends block_base{
             }
             $this->content->text .= "<fieldset>" .
                 "<div class='custom1'>" .
-                "<label for='startDate'>Beginn</label>" .
+                "<label for='startDate'>". get_string('begin', 'block_evasys_sync') . "</label>" .
                 '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
                 "</div>" .
                 "<div class='custom1'>" .
-                "<label for='endDate'>Ende</label>" .
+                "<label for='endDate'>". get_string('end', 'block_evasys_sync') . "</label>" .
                 '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
                 "</div>" .
                 '</fieldset>';
@@ -154,7 +154,7 @@ class block_evasys_sync extends block_base{
                                        . "</form>";
             }
             $addurl = new moodle_url('/blocks/evasys_sync/addcourse.php?', array('id' => $this->page->course->id));
-            $this->content->text .= $OUTPUT->single_button($addurl, 'Zuordnung ändern', 'get');
+            $this->content->text .= $OUTPUT->single_button($addurl, get_string('change_mapping', 'block_evasys_sync'), 'get');
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');

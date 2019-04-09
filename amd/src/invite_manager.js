@@ -1,5 +1,5 @@
 // Sorry Justus.
-define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
+define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, notification, url, $) {
 
     var updateForm = function (dates) {
         var form = document.getElementById('evasys_block_form');
@@ -63,7 +63,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         {'key': 'title_send_failure', component: 'block_evasys_sync'},
                         {'key': 'not_enough_dates', component: 'block_evasys_sync'},
                         {'key': 'ok'}
-                    ]).done(function (s) {
+                    ]).done(function(s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
                 }else{
@@ -75,8 +75,6 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                     notification.alert("Error", s, "OK");
                 });
-                // Aconsole.log(this.responseText);.
-                // Anotification.alert("Erfolg", this.responseText, "ok");.
             }
             if(this.readyState === 4) {
                 $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);

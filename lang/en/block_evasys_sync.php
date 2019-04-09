@@ -30,6 +30,9 @@ $string['syncnotpossible'] = 'Unfortunately, course participants could not be sy
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
 $string['taskname'] = 'Open and close Evasys surveys';
+$string['begin'] = 'beginn';
+$string['end'] = 'end';
+$string['change_mapping'] = "Change mapping";
 
 // Multi allocation strings.
 
@@ -124,6 +127,8 @@ $string['submit'] = 'Save changes';
 $string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
+$string['cc_mode'] = 'evasys_cc_mode';
+$string['auto_mode'] = 'Automatic mode';
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';

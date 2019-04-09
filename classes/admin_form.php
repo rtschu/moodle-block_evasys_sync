@@ -87,8 +87,8 @@ class admin_form extends moodleform {
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
 
-        $name = 'evasys_cc_mode';
-        $title = "Automatischer Modus";
+        $name = get_string('cc_mode', 'block_evasys_sync');
+        $title = get_string('auto_mode', 'block_evasys_sync');
         $mform->addElement('checkbox', $name, $title);
         $mform->setType($name, PARAM_BOOL);
 
@@ -128,7 +128,7 @@ class admin_form extends moodleform {
         $attributes = array();
         $attributes['class'] = 'header c2';
         $attributes['scope'] = 'col';
-        $output .= html_writer::tag('th', "Automatischer Modus", $attributes);
+        $output .= html_writer::tag('th', get_string('auto_mode', 'block_evasys_sync'), $attributes);
         $attributes = array();
         $attributes['class'] = 'header c3 lastcol';
         $attributes['scope'] = 'col';
