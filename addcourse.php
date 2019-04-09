@@ -44,6 +44,9 @@ if (!$pid) {
 if ($mform->is_validated()) {
     global $DB, $USER;
     $data = $mform->get_data();
+    if (is_object($data)) {
+        $data = (Array) $data;
+    }
     $magicstring = ''; // HILFE?
     foreach ($pre as $key) {
         if (!(array_key_exists($key, $data)) || $data[$key] != 0) {
