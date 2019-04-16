@@ -39,14 +39,14 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_block_evasys_sync_upgrade ($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-    if ($oldversion < 2019032600) {
+    if ($oldversion < 2017121403) {
 
         // Define table block_evasys_sync_categories to be created.
         $table = new xmldb_table('block_evasys_sync_categories');
+
         // Adding fields to table block_evasys_sync_categories.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course_category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('category_mode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -57,6 +57,21 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $table->add_key('course_category', XMLDB_KEY_FOREIGN_UNIQUE, array('course_category'), 'course_categories', array('id'));
         $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
 
+        // Conditionally launch create table for block_evasys_sync_categories.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2017121403, 'evasys_sync');
+    }
+
+    if ($oldversion < 2019032600) {
+
+        // Define table block_evasys_sync_categories to be created.
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $table->add_field('category_mode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        
         $coursetable = new xmldb_table('block_evasys_sync_surveys');
         $coursetable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $coursetable->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
