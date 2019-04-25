@@ -48,7 +48,7 @@ if ($mform->is_validated()) {
         $data = (Array) $data;
     }
     $magicstring = ''; // HILFE?
-    foreach ($pre as $key) {
+    foreach ($prefill as $key) {
         if (!(array_key_exists($key, $data)) || $data[$key] != 0) {
             // Disallow removing not owned courses.
             if (!is_course_of_teacher($key, $USER->username)) {
