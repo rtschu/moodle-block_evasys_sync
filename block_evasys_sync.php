@@ -106,21 +106,23 @@ class block_evasys_sync extends block_base{
                         if (!$prefills) {
                             $begin = "";
                             $stop = "";
-                            $beginmin = date("Y-m-d");
+                            $beginmin = $endmin = date("Y-m-d");
                             $endmin = date("Y-m-d");
                         } else {
-                            $begin = date("Y-m-d", $prefills->get("startdate"));
-                            $stop = date("Y-m-d", $prefills->get("enddate"));
-                            if ($begin < date("Y-m-d")) {
-                                $beginmin = $begin;
+                            $begin = (int) $prefills->get("startdate");
+                            $stop = (int) $prefills->get("enddate");
+                            if ($begin < time()) {
+                                $beginmin = date("Y-m-d", $begin);
                             } else {
                                 $beginmin = date("Y-m-d");
                             }
-                            if ($stop < date("Y-m-d")) {
-                                $endmin = $stop;
+                            if ($stop < time()) {
+                                $endmin = date("Y-m-d", $stop);
                             } else {
                                 $endmin = date("Y-m-d");
                             }
+                            $begin = date("Y-m-d", $begin);
+                            $stop = date("Y-m-d", $stop);
                         }
                         if (!($survey->surveyStatus == "closed")) {
                             $readonly = "";
