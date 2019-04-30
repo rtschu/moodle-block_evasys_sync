@@ -57,19 +57,6 @@ $string['endplaceholder'] = "Pick an enddate";
 
 
 // Information box strings.
-
-$string['title_success']  = "Successfully requested the evaluation";
-$string['title_uptodate'] = "The evaluation has already been requested";
-$string['title_failure']  = "The evaluation could not be requested";
-
-$string['content_success'] = "Your evaluation coordinator has been instructed to start the evaluation.<br />" .
-    "!!!THE EVALUATION HAS NOT STARTED YET!!! <br />" .
-    "However you have done your part,".
-    " your evaluation coordinator will process your request in compliance with the regulations enforced by your organization.";
-
-$string['content_uptodate'] = "Your evaluation coordinator has already been instructed to start the evaluation. <br />" .
-    "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
-
 $string['not_enough_dates'] = "Please provide dates for ALL Surveys!";
 $string['title_send_failure'] = "Error while sending";
 
@@ -96,6 +83,7 @@ $string['content_uptodate'] = "Your evaluation coordinator has already been inst
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
 $string['confirm_box'] = "OK";
+
 $string['direct_already'] = "You have already sent invitations to all students.".
                             "No new invitations have been send";
 

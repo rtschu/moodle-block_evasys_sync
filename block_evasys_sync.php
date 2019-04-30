@@ -137,11 +137,11 @@ class block_evasys_sync extends block_base{
                 $this->content->text .= "<input type='hidden' name='count' value='$i'>";
             }
             $this->content->text .= "<fieldset>" .
-                "<div class='custom1'>" .
+                "<div class='inline-block'>" .
                 "<label for='startDate'>". get_string('begin', 'block_evasys_sync') . "</label>" .
                 '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
                 "</div>" .
-                "<div class='custom1'>" .
+                "<div class='inline-block'>" .
                 "<label for='endDate'>". get_string('end', 'block_evasys_sync') . "</label>" .
                 '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
                 "</div>" .
