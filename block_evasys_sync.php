@@ -108,7 +108,6 @@ class block_evasys_sync extends block_base{
                             $begin = "";
                             $stop = "";
                             $beginmin = $endmin = date("Y-m-d");
-                            $endmin = date("Y-m-d");
                         } else {
                             $begin = (int)$prefills->get("startdate");
                             $stop = (int)$prefills->get("enddate");
