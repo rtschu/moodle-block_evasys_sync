@@ -44,7 +44,7 @@ $string['associated'] = "associated";
 // Direct invite strings.
 
 $string['direct_invite'] = "Invite participants directly";
-$string['content_confirm'] = "This will stat the evaluations immediately!<br />" .
+$string['content_confirm'] = "This will start the evaluations immediately!<br />" .
     "Are you sure You want to send invites/reminders to all participants?";
 $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send';

@@ -37,7 +37,7 @@ $string['change_mapping'] = "Zuordnung ändern";
 // Multi allocation strings.
 
 $string['selection_success'] = "Auswahl erfolgreich übermittelt";
-$string['add_course_header'] = "Wählen sie Kurse die dem aktuellen moodle Kurs zugeordnet werden sollen";
+$string['add_course_header'] = "Wählen Sie Kurse, die dem aktuellen Moodle Kurs zugeordnet werden sollen";
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 
@@ -45,13 +45,13 @@ $string['associated'] = "zugeordnet";
 
 $string['direct_invite'] = "Teilnehmer direkt einladen";
 $string['content_confirm'] = "Eine Umfrage soll heute beginnen, diese Funktion versendet daher JETZT Einladungen!<br />" .
-                             "Sind Sie sicher, dass sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
+                             "Sind Sie sicher, dass Sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
                                   '{$a->queued} Evaluationsperioden wurden festgelegt.';
 $string['title_send_failure'] = "Fehler beim Versand";
-$string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen sie den manuellen Versand von EvaSys";
-$string['not_enough_dates'] = "Bitte geben sie Daten für ALLE Umfragen an!";
+$string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
+$string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
 $string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
     "Es wurden keine neuen Einladungen versendet";
 $string['direct_title_info'] = "Einladungen bereits versandt";
@@ -59,7 +59,7 @@ $string['title_send_rejected'] = "Unzulässiges Datum";
 $string['content_send_rejected'] = "Ein Datum wurde in die Vergangenheit geändert. <br />" .
     "Dies ist nicht zulässig! Es können einzelne Evaluationsperioden geändert worden sein.<br />";
 $string['title_send_invalid'] = "Fehlerhafter Zeitraum";
-$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie endet! <br />" .
+$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie endet! <br />" .
     "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
 
 // Form strings.
@@ -82,7 +82,7 @@ $string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auf
                               "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
 
 $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
-                             "Bitte wenden sie sich an den Support.";
+                             "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
 
