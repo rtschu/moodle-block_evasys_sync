@@ -79,6 +79,7 @@ class block_evasys_sync extends block_base{
                                        array('id' => $this->page->course->id, "evasyssynccheck" => true));
             }
             // Begin form.
+
             $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
             $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
             $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
@@ -109,8 +110,8 @@ class block_evasys_sync extends block_base{
                             $beginmin = $endmin = date("Y-m-d");
                             $endmin = date("Y-m-d");
                         } else {
-                            $begin = (int) $prefills->get("startdate");
-                            $stop = (int) $prefills->get("enddate");
+                            $begin = (int)$prefills->get("startdate");
+                            $stop = (int)$prefills->get("enddate");
                             if ($begin < time()) {
                                 $beginmin = date("Y-m-d", $begin);
                             } else {
@@ -135,26 +136,24 @@ class block_evasys_sync extends block_base{
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
+                    $this->content->text .= "<fieldset>" .
+                        "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
+                        '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                        "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
+                        '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                        '</fieldset>';
                 }
-                $this->content->text .= "<input type='hidden' name='count' value='$i'>";
             }
-            $this->content->text .= "<fieldset>" .
-                "<div class='inline-block'>" .
-                "<label for='startDate'>". get_string('begin', 'block_evasys_sync') . "</label>" .
-                '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
-                "</div>" .
-                "<div class='inline-block'>" .
-                "<label for='endDate'>". get_string('end', 'block_evasys_sync') . "</label>" .
-                '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
-                "</div>" .
-                '</fieldset>';
-            if (!$mode) {
-                $this->content->text .= "<input type='submit' value='".get_string('invitestudents', 'block_evasys_sync')."'> \n "
-                                      . "</form>";
-            } else {
-                $this->content->text .= "<input type='submit' value='".get_string('direct_invite', 'block_evasys_sync')."'> \n"
-                                       . "</form>";
+            if ($i > 0) {
+                if (!$mode) {
+                    $this->content->text .= "<input type='submit' value='" .
+                        get_string('invitestudents', 'block_evasys_sync') . "'/> \n ";
+                } else {
+                    $this->content->text .= "<input type='submit' value='" .
+                        get_string('direct_invite', 'block_evasys_sync') . "'/> \n";
+                }
             }
+            $this->content->text .= "</form>";
             $addurl = new moodle_url('/blocks/evasys_sync/addcourse.php?', array('id' => $this->page->course->id));
             $this->content->text .= $OUTPUT->single_button($addurl, get_string('change_mapping', 'block_evasys_sync'), 'get');
         } else {
