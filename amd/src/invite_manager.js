@@ -1,5 +1,5 @@
 // Sorry Justus.
-define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, notification, url, $) {
+define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
 
     var updateForm = function (dates) {
         var form = document.getElementById('evasys_block_form');
@@ -12,8 +12,8 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, no
     var call = function (dates) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
-            if(this.readyState === 4 && this.status === 200){
-                if(this.responseText.includes("/")) {
+            if (this.readyState === 4 && this.status === 200) {
+                if (this.responseText.includes("/")) {
                     var status = this.responseText.split("/");
                     if (status[0] === "success") {
                         var params = {"sent": status[1], "total": status[2], "queued": status[3]};
@@ -50,7 +50,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, no
                             notification.alert("Error", s, "OK");
                         });
                     }
-                }else if(this.responseText === "up_to_date") {
+                } else if (this.responseText === "up_to_date") {
                     str.get_strings([
                         {'key': 'direct_title_info', component: 'block_evasys_sync'},
                         {'key': 'direct_already', component: 'block_evasys_sync'},
@@ -58,25 +58,25 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, no
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                }else if(this.responseText === "not_enough_dates") {
+                } else if (this.responseText === "not_enough_dates") {
                     str.get_strings([
                         {'key': 'title_send_failure', component: 'block_evasys_sync'},
                         {'key': 'not_enough_dates', component: 'block_evasys_sync'},
                         {'key': 'ok'}
-                    ]).done(function(s) {
+                    ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                }else{
+                } else {
                     str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                         notification.alert("Error", s, "OK");
                     });
                 }
-            }else if(this.readyState === 4){
+            } else if (this.readyState === 4) {
                 str.get_string('send_error', 'block_evasys_sync').done(function (s) {
                     notification.alert("Error", s, "OK");
                 });
             }
-            if(this.readyState === 4) {
+            if (this.readyState === 4) {
                 $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
             }
         };
@@ -94,7 +94,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, no
         today = yyyy + '-' + mm + '-' + dd;
         var confirm = (dates['startDate'] === today);
         // If the Evaluation would start today we directly invite students, therefore this action should be confirmed.
-        if(confirm) {
+        if (confirm) {
             str.get_strings([
                 {'key': 'direct_invite', component: 'block_evasys_sync'},
                 {'key': 'content_confirm', component: 'block_evasys_sync'},
@@ -122,9 +122,9 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function(str, no
             $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
             // Call to invite.php with data being passed to it.
             var data = {};
-                $('#evasys_block_form').serializeArray().forEach(function (param) {
-                    data[param['name']] = param['value'];
-                });
+            $('#evasys_block_form').serializeArray().forEach(function (param) {
+                data[param['name']] = param['value'];
+            });
             ajax(data);
         });
     };
