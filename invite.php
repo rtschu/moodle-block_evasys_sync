@@ -22,7 +22,6 @@ require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 $count = required_param('count', PARAM_INT);
-$dates = array();
 $start = required_param('startDate', PARAM_TEXT);
 $end = required_param('endDate', PARAM_TEXT);
 $dates = ["start" => $start, "end" => $end];

@@ -47,7 +47,7 @@ if ($mform->is_validated()) {
     if (is_object($data)) {
         $data = (Array) $data;
     }
-    $magicstring = ''; // HILFE?
+    $magicstring = '';
     foreach ($pre as $key) {
         if (!(array_key_exists($key, $data)) || $data[$key] != 0) {
             // Disallow removing not owned courses.
