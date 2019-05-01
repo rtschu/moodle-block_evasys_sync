@@ -35,7 +35,9 @@ class add_course_form extends moodleform {
         $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
-        $availablecourselist = get_teachers_course_list($USER->username, false);
+        $pid = get_teachers_pid($USER->username);
+        $veranstids = get_veranstids_by_teacher($pid);
+        $availablecourselist = get_courses_by_veranstids_and_time($veranstids, 999);
         // Add Table.
         $mform->addElement('html', $this->tablehead());
         $this->table_body($availablecourselist);
@@ -84,8 +86,12 @@ class add_course_form extends moodleform {
         $mform->addElement('html', '<tbody>');
         foreach ($courses as $course) {
             $mform->addElement('html', '<tr>');
+            $infostring = utf8_encode($course->titel) .
+                ("&nbsp;&nbsp;(" . $course->semestertxt .
+                    ((!empty($course->urlveranst)) ? (", <a href='" . $course->urlveranst .
+                        "'> KVV-Nr. " . $course->veranstnr . "</a>") : "") . ")");
             $mform->addElement('html', '<td class="cell c0"><div>' .
-                                     trim($course->info) .
+                                     trim($infostring) .
                                      '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
 
