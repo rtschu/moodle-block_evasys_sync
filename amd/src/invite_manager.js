@@ -118,7 +118,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         $('#evasys_block_form').submit(function (e) {
             // We don't wanna get redirected.
             e.preventDefault();
-            // Also we don't want someone to send another ajax because the first one didn't compvare yet.
+            // Also we don't want someone to send another ajax because the first one didn't complete yet.
             $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
             // Call to invite.php with data being passed to it.
             var data = {};

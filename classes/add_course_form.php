@@ -37,7 +37,7 @@ class add_course_form extends moodleform {
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pid = get_teachers_pid($USER->username);
         $veranstids = get_veranstids_by_teacher($pid);
-        $availablecourselist = get_courses_by_veranstids_and_time($veranstids, 999);
+        $availablecourselist = get_courses_by_veranstids($veranstids);
         // Add Table.
         $mform->addElement('html', $this->tablehead());
         $this->table_body($availablecourselist);
