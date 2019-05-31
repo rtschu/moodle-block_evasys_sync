@@ -108,7 +108,6 @@ class block_evasys_sync extends block_base{
                             $begin = "";
                             $stop = "";
                             $beginmin = $endmin = date("Y-m-d");
-                            $endmin = date("Y-m-d");
                         } else {
                             $begin = (int)$prefills->get("startdate");
                             $stop = (int)$prefills->get("enddate");
@@ -136,14 +135,14 @@ class block_evasys_sync extends block_base{
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-                    $this->content->text .= "<fieldset>" .
-                        "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
-                        '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
-                        "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
-                        '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
-                        '</fieldset>';
                 }
             }
+            $this->content->text .= "<fieldset>" .
+                "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
+                '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
+                '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                '</fieldset>';
             if ($i > 0) {
                 if (!$mode) {
                     $this->content->text .= "<input type='submit' value='" .
