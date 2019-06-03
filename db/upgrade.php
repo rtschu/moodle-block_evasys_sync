@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion
  * @return bool
  */
-function xmldb_block_evasys_sync_upgrade($oldversion) {
+function xmldb_block_evasys_sync_upgrade ($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
     if ($oldversion < 2017121403) {
@@ -64,6 +64,67 @@ function xmldb_block_evasys_sync_upgrade($oldversion) {
 
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2017121403, 'evasys_sync');
+    }
+
+    if ($oldversion < 2019032600) {
+
+        // Define table block_evasys_sync_categories to be created.
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $table->add_field('category_mode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+
+        $coursetable = new xmldb_table('block_evasys_sync_surveys');
+        $coursetable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $coursetable->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('survey', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('startdate', XMLDB_TYPE_INTEGER, '10', null, false, null, null);
+        $coursetable->add_field('enddate', XMLDB_TYPE_INTEGER, '10', null, false, null, null);
+        $coursetable->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $coursetable->add_key('survey', XMLDB_KEY_FOREIGN_UNIQUE, array('survey'), 'course', array('id'));
+
+        $multitable = new xmldb_table('block_evasys_sync_courses');
+        $multitable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $multitable->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $multitable->add_field('evasyscourses', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $multitable->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $multitable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $multitable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        $multitable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $multitable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+        // Conditionally launch create table for block_evasys_sync_categories.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        if (!$dbman->table_exists($coursetable)) {
+            $dbman->create_table($coursetable);
+        }
+        if (!$dbman->table_exists($multitable)) {
+            $dbman->create_table($multitable);
+        }
+
+        // Add new fields to existing table.
+        foreach ($table->getFields() as $item) {
+            if (!$dbman->field_exists($table, $item)) {
+                $dbman->add_field($table, $item);
+            }
+        }
+        foreach ($coursetable->getFields() as $item) {
+            if (!$dbman->field_exists($coursetable, $item)) {
+                $dbman->add_field($coursetable, $item);
+            }
+        }
+        foreach ($multitable->getFields() as $item) {
+            if (!$dbman->field_exists($multitable, $item)) {
+                $dbman->add_field($multitable, $item);
+            }
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2019032600, 'evasys_sync');
     }
 
     return true;

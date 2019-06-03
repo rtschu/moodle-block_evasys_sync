@@ -29,8 +29,46 @@ $string['nosurveys'] = 'Currently there are no surveys available.';
 $string['syncnotpossible'] = 'Unfortunately, course participants could not be synchronized to EvaSys due to a technical problem. Please get in touch with the support contact.';
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
+$string['taskname'] = 'Open and close Evasys surveys';
+$string['begin'] = 'beginn';
+$string['end'] = 'end';
+$string['change_mapping'] = "Change mapping";
+
+// Multi allocation strings.
+
+$string['selection_success'] = "Selection successful";
+$string['add_course_header'] = "Choose courses, that should be synchronized with this moodle course";
+$string['coursename'] = "Coursename";
+$string['associated'] = "associated";
+
+// Direct invite strings.
+
+$string['direct_invite'] = "Invite participants directly";
+$string['content_confirm'] = "This will start the evaluations immediately!<br />" .
+    "Are you sure You want to send invites/reminders to all participants?";
+$string['title_send_success'] = "Evaluation started";
+$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send';
+$string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
+
+// Form strings.
+
+$string['startplaceholder'] = "Pick a startdate";
+$string['endplaceholder'] = "Pick an enddate";
+
 
 // Information box strings.
+$string['not_enough_dates'] = "Please provide dates for ALL Surveys!";
+$string['title_send_failure'] = "Error while sending";
+
+$string['content_failure'] = "Unfortunately we weren't able to request the start of the evaluation. <br />" .
+    "For help please contact your local support team";
+
+$string['title_send_invalid'] = "Invalid time period";
+$string['content_send_invalid'] = "An evaluationperiod is set to start after it ends. <br />" .
+    "All other evlautionperiods have been changed normally.";
+
+
+$string['confirm_box'] = "OK";
 
 $string['title_success']  = "Successfully requested the evaluation";
 $string['title_uptodate'] = "The evaluation has already been requested";
@@ -45,6 +83,14 @@ $string['content_uptodate'] = "Your evaluation coordinator has already been inst
     "If you have questions regarding the status of the evaluation please contact your evaluation coordinator.";
 
 $string['confirm_box'] = "OK";
+
+$string['direct_already'] = "You have already sent invitations to all students.".
+                            "No new invitations have been send";
+
+$string['direct_title_info'] = "Invitation already complete";
+$string['title_send_rejected'] = "Invalid Date";
+$string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
+    "This is not allowed. Some evaluationperiods may have been altered.<br />";
 
 // Survey status.
 $string['surveystatusopen'] = 'open';
@@ -61,6 +107,7 @@ $string['settings_password'] = 'EvaSys Password';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Default user ID of mail recipient after sync';
+$string['settings_mode'] = 'Default mode for categories';
 $string['settings_moodleuser_select'] = 'Course categories';
 $string['settings_cc_select'] = 'Select course category';
 $string['settings_cc_user'] = 'Recipient (moodle user id) for selected course category';
@@ -68,6 +115,8 @@ $string['submit'] = 'Save changes';
 $string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
+$string['cc_mode'] = 'evasys_cc_mode';
+$string['auto_mode'] = 'Automatic mode';
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
@@ -79,6 +128,11 @@ $string['delete'] = 'Delete';
 
 // Persistance class.
 $string['invalidcoursecat'] = 'Invalid course category';
+$string['invalidmode'] = 'Invalid category mode';
+$string['invalidcourse'] = "Invalid course";
+$string['invalidsurvey'] = "Invalid survey";
+$string['invaliddate'] = "Invalid date";
+
 
 // Privacy API.
 $string['privacy:metadata'] = 'Invite students to participate in course quality evaluations performed using an EvaSys installation.';

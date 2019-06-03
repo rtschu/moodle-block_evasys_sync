@@ -16,17 +16,21 @@
 
 namespace block_evasys_sync;
 
+use core_availability\result;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 class evasys_synchronizer {
     private $courseid;
-    private $soapclient;
+    protected $soapclient;
     private $blockcontext;
     private $courseinformation;
 
-    private $evasyscourseid;
+    private $evasyscourseids;
 
     public function __construct($courseid) {
         $this->courseid = $courseid;
@@ -36,8 +40,9 @@ class evasys_synchronizer {
     }
 
     public function get_evasys_courseid() {
-        if ($this->evasyscourseid !== null) {
-            return $this->evasyscourseid;
+        global $DB;
+        if ($this->evasyscourseids !== null) {
+            return $this->evasyscourseids;
         }
         $course = get_course($this->courseid);
 
@@ -49,8 +54,30 @@ class evasys_synchronizer {
         if (!is_object($lsfentry)) {
             throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
         }
-        $this->evasyscourseid = trim($lsfentry->veranstnr) . ' ' . trim($lsfentry->semestertxt);
-        return $this->evasyscourseid;
+        $maincourse = trim($lsfentry->veranstid);
+        // Fetch persistent object id.
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
+        // Get all associated courses.
+        if (!$pid === false) {
+            $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+            $extras = explode('#', $extras->get('evasyscourses'));
+        } else {
+            $extras = [];
+        }
+        // If noone has associated the course itself, we force that.
+        if (!in_array($maincourse, $extras)) {
+            array_unshift($extras, $maincourse);
+        }
+        $extras = array_filter($extras);
+        establish_secondary_DB_connection();
+        // Fetch the Evasysids for the courses.
+        foreach ($extras as &$course) {
+            $courseinfo = get_course_by_veranstid(intval($course));
+            $course = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
+        }
+        close_secondary_DB_connection();
+        $this->evasyscourseids = $extras;
+        return $this->evasyscourseids;
     }
 
     private function init_soap_client() {
@@ -69,23 +96,28 @@ class evasys_synchronizer {
     }
 
     private function get_course_information() {
-        $soapresult = $this->soapclient->GetCourse($this->get_evasys_courseid(), 'PUBLIC', true, true);
-        if (is_soap_fault($soapresult)) {
-            // This happens e.g. if there is no corresponding course in EvaSys.
-            return null;
+        $result = [];
+        foreach ($this->get_evasys_courseid() as $courseid) {
+            $soapresult = $this->soapclient->GetCourse($courseid, 'PUBLIC', true, true);
+            if (is_soap_fault($soapresult)) {
+                // This happens e.g. if there is no corresponding course in EvaSys.
+                return null;
+            }
+            $result[$courseid] = $soapresult;
         }
-        return $soapresult;
+        return $result;
     }
 
     /**
      * Builds array with all surveys and additional information to surveys
      * @return array of surveys with additional information
      */
-    public function get_surveys() {
-        if ($this->courseinformation === null) {
+    public function get_surveys($courseid) {
+        if ($this->courseinformation[$courseid] === null) {
             return array();
         }
-        $rawsurveys = $this->courseinformation->m_oSurveyHolder->m_aSurveys->Surveys;
+
+        $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
 
         if (is_object($rawsurveys)) {
             // Course only has one associated survey.
@@ -100,6 +132,15 @@ class evasys_synchronizer {
         return $enrichedsurveys;
     }
 
+    public function get_all_surveys() {
+        // Gets all surveys from the associated evasys courses.
+        $surveys = [];
+        foreach ($this->evasyscourseids as $course) {
+            $surveys = array_merge($surveys, $this->get_surveys($course));
+        }
+        return $surveys;
+    }
+
     /**
      * Enriches Surveys with Information
      * @param \stdClass $rawsurvey Survey without additional information
@@ -107,11 +148,16 @@ class evasys_synchronizer {
      */
     private function enrich_survey($rawsurvey) {
         $enrichedsurvey = new \stdClass();
+        $enrichedsurvey->id = $rawsurvey->m_nSurveyId;
         $enrichedsurvey->amountOfCompletedForms = $rawsurvey->m_nFormCount;
         $enrichedsurvey->surveyStatus = $this->get_survey_status($rawsurvey->m_nOpenState);
         $enrichedsurvey->formName = $this->get_form_name($rawsurvey->m_nFrmid);
         $enrichedsurvey->formIdPub = $this->get_public_formid($rawsurvey->m_nFrmid);
         $enrichedsurvey->formId = $rawsurvey->m_nFrmid;
+        $start = $rawsurvey->m_oPeriod->m_sStartDate;
+        $end = $rawsurvey->m_oPeriod->m_sEndDate;
+        $enrichedsurvey->startDate = $start;
+        $enrichedsurvey->endDate = $end;
         return $enrichedsurvey;
     }
 
@@ -135,12 +181,15 @@ class evasys_synchronizer {
         return $formname;
     }
 
-    public function get_amount_participants() {
-        if ($this->courseinformation === null || !property_exists($this->courseinformation->m_aoParticipants, "Persons")) {
+    public function get_amount_participants($courseid) {
+        if ($this->courseinformation[$courseid] === null || !property_exists($this->courseinformation[$courseid]->m_aoParticipants, "Persons")) {
             return 0;
         }
+        if (is_object($this->courseinformation[$courseid]->m_aoParticipants->Persons)) {
+            return 1;
+        }
 
-        return count($this->courseinformation->m_aoParticipants->Persons);
+        return count($this->courseinformation[$courseid]->m_aoParticipants->Persons);
     }
 
     /**
@@ -178,18 +227,109 @@ class evasys_synchronizer {
             array_push($students, $student);
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
-        $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourseid, 'PUBLIC', false);
-        if (is_soap_fault($soapresult)) {
-            throw new \Exception('Sending list of participants to evasys server failed.');
+        $this->get_course_information();
+        foreach ($this->courseinformation as $course) {
+            $soapresult = $this->soapclient->InsertParticipants($personlist, $course->m_sPubCourseId, 'PUBLIC', false);
+            $course = $this->soapclient->GetCourse($course->m_sPubCourseId, 'PUBLIC', true, true); // Update usercount.
+            $usercountnow = $course->m_nCountStud;
+            if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
+                foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
+                    $id = $survey->m_nSurveyId;
+                    $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false);
+                }
+            } else {
+                $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
+                $this->soapclient->GetPswdsBySurvey($id, $usercountnow, 1, true, false); // Create new TAN's.
+            }
+            if (is_soap_fault($soapresult)) {
+                throw new \Exception('Sending list of participants to evasys server failed.');
+            }
         }
         return $soapresult;
+    }
+
+    public function invite_all($dates) {
+        // Get all surveys of this moodle course.
+        $surveys = $this->get_all_surveys();
+        $sent = 0;
+        $total = 0;
+        $reminders = 0;
+        $status = "success";
+        $today = date("Ymd");
+        for ($i = 0; $i < count($surveys); $i++) {
+            $survey = $surveys[$i];
+            if (intval(str_replace("-", "", $dates["start"])) == $today) {
+                // If the survey is set to start today we sent our the invites via evasys right away.
+                $id = $survey->m_nSurveyId;
+                $soap = $this->soapclient->sendInvitationToParticipants($id);
+                $soap = str_replace(" emails sent successful", "", $soap);
+                $sent += intval(explode("/", $soap)[0]);
+                $total += intval(explode("/", $soap)[1]);
+                $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
+            } else {
+                // If its's set to start on any other date we simply set them to start at that time.
+                $start = $dates["start"];
+            }
+            try {
+                if ($this->setstartandend($survey->id, $start, $dates["end"])) {
+                    $reminders++;
+                }
+            } catch (\InvalidArgumentException $e) {
+                if ($e->getMessage() == "Start date is after end date") {
+                    $status = "warning";
+                } else if ($e->getMessage() == 'Date is in the past') {
+                    $status = "rejected";
+                } else {
+                    throw $e;
+                }
+            }
+        }
+        $soap = "$status/$sent/$total/$reminders";
+        return $soap;
+    }
+
+    public function setstartandend ($id, $start, $end) {
+        global $DB;
+        if (strtotime($start) > strtotime($end) && $start != null && $end != null) {
+            throw new \InvalidArgumentException("Start date is after end date");
+        }
+
+        $data = new \stdClass();
+        $data->course = $this->courseid;
+        $data->survey = $id;
+        $data->startdate = strtotime($start);
+        $data->enddate = strtotime($end);
+        $recordid = $DB->get_record("block_evasys_sync_surveys", array('survey' => $id), 'id', IGNORE_MISSING);
+        if (!$recordid) {
+            if ($data->startdate < strtotime(date('Y-m-d')) or $data->enddate < strtotime(date('Y-m-d'))) {
+                throw new \InvalidArgumentException('Date is in the past');
+            }
+            $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
+            $record->create();
+            return true;
+        } else {
+            $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
+            $return = false;
+            foreach ($data as $key => $value) {
+                if (($key == 'startdate' or $key == 'enddate')
+                    and $value < strtotime(date('Y-m-d')) and $record->get($key) != $value) {
+                    throw new \InvalidArgumentException('Date is in the past');
+                }
+                if ($record->get($key) != $value) {
+                    $record->set($key, $value);
+                    $return = true;
+                }
+            }
+            $record->update();
+            return $return;
+        }
     }
 
     /**
      * Sends an e-mail with the request to start a Evaluation for a course.
      * @throws \Exception when e-mail request fails
      */
-    public function notify_evaluation_responsible_person() {
+    public function notify_evaluation_responsible_person($dates) {
         global $USER;
         $course = get_course($this->courseid);
 
@@ -204,16 +344,24 @@ class evasys_synchronizer {
 
         $notiftext = "Sehr geehrte/r Evaluationskoordinator/in,\r\n\r\n";
         $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein Dozent die Evaluation " .
-            "der nachfolgenden Veranstaltung aktiviert hat. Bitte versenden Sie schnellstmöglich die TANs im EvaSys-Menü " .
-            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltung.\r\n\r\n";
-        $notiftext .= "Name: " . $course->fullname . "\r\n";
-        $notiftext .= "EvaSys-ID: " . $this->get_evasys_courseid() . "\r\n\r\n";
-        $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
+            "der nachfolgenden Veranstaltung aktiviert hat. \r\n".
+            "Bitte passen Sie die Evaluationszeiträume gemäß der Wünsche des Dozenten an. \r\n".
+            "Bitte versenden Sie die TANs im EvaSys-Menü " .
+            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n\r\n";
 
-        $surveys = $this->get_surveys();
-        foreach ($surveys as &$survey) {
-            $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
-            $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n\r\n";
+        foreach ($this->courseinformation as $course) {
+            $notiftext .= "Name: " . $course->m_sCourseTitle . "\r\n";
+            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId . "\r\n\r\n";
+            $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
+
+            $surveys = $this->get_surveys($course->m_sPubCourseId);
+            $i = 0;
+            foreach ($surveys as &$survey) {
+                $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
+                $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
+                $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . "\r\n\r\n";
+                $i++;
+            }
         }
 
         $notiftext .= "Mit freundlichen Grüßen\r\n";

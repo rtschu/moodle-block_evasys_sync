@@ -18,7 +18,7 @@
  * Class for loading/storing user-category pairs in the DB.
  *
  * @package block_evasys_sync
- * @copyright 2017 Tamara Gunkel
+ * @copyright 2019 Robin Tschudi
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,10 +34,8 @@ use core\persistent;
  * @copyright 2017 Tamara Gunkel
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_cat_allocation extends persistent {
-
-    const TABLE = 'block_evasys_sync_categories';
-
+class evaluationperiod_survey_allocation extends persistent {
+    const TABLE = 'block_evasys_sync_surveys';
     /**
      * Return the definition of the properties of this model.
      *
@@ -45,31 +43,22 @@ class user_cat_allocation extends persistent {
      */
     protected static function define_properties() {
         return array(
-            'userid' => array(
+            'course' => array(
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invaliduserid', 'error')
+                'message' => new \lang_string('invalidcourse', 'block_evasys_sync')
             ),
-            'course_category' => array(
+            'survey' => array(
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidcoursecat', 'block_evasys_sync')
+                'message' => new \lang_string('invalidsurvey', 'block_evasys_sync')
             ),
-            'category_mode' => array(
+            'startdate' => array(
                 'type' => PARAM_INT,
-                'message' => new \lang_string('invalidmode', 'block_evasys_sync')
-            )
+                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
+            ),
+            'enddate' => array(
+                'type' => PARAM_INT,
+                'message' => new \lang_string('invaliddate', 'block_evasys_sync')
+            ),
         );
-    }
-
-    /**
-     * Validate the user ID.
-     *
-     * @param $value
-     * @return bool|\lang_string
-     */
-    protected function validate_userid($value) {
-        if (!\core_user::is_real_user($value, true)) {
-            return new \lang_string('invaliduserid', 'error');
-        }
-        return true;
     }
 }
