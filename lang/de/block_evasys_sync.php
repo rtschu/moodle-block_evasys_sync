@@ -29,6 +29,43 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
+$string['taskname'] = 'Evasys Umfragen öffnen und schließen';
+$string['begin'] = 'Beginn';
+$string['end'] = 'Ende';
+$string['change_mapping'] = "Zuordnung ändern";
+
+// Multi allocation strings.
+
+$string['selection_success'] = "Auswahl erfolgreich übermittelt";
+$string['add_course_header'] = "Wählen Sie Kurse, die dem aktuellen Moodle Kurs zugeordnet werden sollen";
+$string['coursename'] = "Kursname";
+$string['associated'] = "zugeordnet";
+
+// Direct invite strings.
+
+$string['direct_invite'] = "Teilnehmer direkt einladen";
+$string['content_confirm'] = "Eine Umfrage soll heute beginnen, diese Funktion versendet daher JETZT Einladungen!<br />" .
+                             "Sind Sie sicher, dass Sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
+$string['title_send_success'] = "Evaluation erfolgreich gestartet";
+$string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
+                                  '{$a->queued} Evaluationsperioden wurden festgelegt.';
+$string['title_send_failure'] = "Fehler beim Versand";
+$string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
+$string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
+$string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
+    "Es wurden keine neuen Einladungen versendet";
+$string['direct_title_info'] = "Einladungen bereits versandt";
+$string['title_send_rejected'] = "Unzulässiges Datum";
+$string['content_send_rejected'] = "Ein Datum wurde in die Vergangenheit geändert. <br />" .
+    "Dies ist nicht zulässig! Es können einzelne Evaluationsperioden geändert worden sein.<br />";
+$string['title_send_invalid'] = "Fehlerhafter Zeitraum";
+$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie endet! <br />" .
+    "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
+
+// Form strings.
+
+$string['startplaceholder'] = "Startdatum für die Evaluation";
+$string['endplaceholder'] = "Enddatum für die Evaluation";
 
 // Information box strings.
 
@@ -39,10 +76,13 @@ $string['title_failure']  = "Evaluation nicht beauftragt";
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
                              "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
                              "Sie müssen nichts weiter tun, ".
-                             "Ihr/e Evaluationsbeauftragte/r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+                             "Ihr Evaluationsbeauftragter wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
-$string['content_uptodate'] = "Ihr/e Evaluationsbeauftragte/r hat bereits einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
-                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre/n Evaluationsbeauftragte/n.";
+$string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
+
+$string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
+                             "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
 
@@ -61,6 +101,7 @@ $string['settings_password'] = 'EvaSys-API-Password';
 $string['settings_soap_url'] = 'EvaSys SOAP URL';
 $string['settings_wsdl_url'] = 'EvaSys WSDL URL';
 $string['settings_moodleuser'] = 'Standard Nutzer-ID des Benachrichtigungsempfängers nach Sync';
+$string['settings_mode'] = 'Standardmodus für Kategorien';
 $string['settings_moodleuser_select'] = 'Kurskategorien';
 $string['settings_cc_select'] = 'Kurskategorie auswählen';
 $string['settings_cc_user'] = 'Nutzer-ID des Empfängers für die gewählte Kurskategorie';
@@ -68,6 +109,8 @@ $string['submit'] = 'Speichern';
 $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
+$string['cc_mode'] = 'evasys_cc_mode';
+$string['auto_mode'] = 'Automatischer modus';
 
 
 // Settings - category table.
@@ -80,6 +123,10 @@ $string['delete'] = 'Löschen';
 
 // Persistance class.
 $string['invalidcoursecat'] = 'Ungültige Kurskategorie';
+$string['invalidmode'] = "Ungültiger Modus";
+$string['invalidcourse'] = 'Ungültiger Kurs';
+$string['invalidsurvey'] = "Ungültige Umfrage";
+$string['invaliddate'] = "Ungültiges Datum";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

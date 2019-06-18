@@ -49,4 +49,13 @@ $capabilities = array(
       'manager' => CAP_ALLOW,
     ),
   ),
+  'block/evasys_sync:modifymapping' => array(
+      'riskbitmap' => RISK_XSS,
+      'captype' => 'write',
+      'contextlevel' => CONTEXT_BLOCK,
+      'archetypes' => array(
+          'editingteacher' => CAP_ALLOW,
+          'manager' => CAP_ALLOW,
+      ),
+  ),
 );

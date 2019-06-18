@@ -14,17 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
+// This shouldn't be visited but accessed by ajax requests.
 require_once('../../config.php');
 
 require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
+$count = required_param('count', PARAM_INT);
 $start = required_param('startDate', PARAM_TEXT);
 $end = required_param('endDate', PARAM_TEXT);
-$start = explode("-", $start);
-$end = explode("-", $end);
-$start = $start[2] . "." . $start[1] . "." . $start[0];
-$end = $end[2] . "." . $end[1] . "." . $end[0];
 $dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
@@ -33,23 +32,17 @@ $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
 $PAGE->set_context(context_course::instance($courseid));
 require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
 
-$returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
-$returnurl->param('id', $courseid);
-$returnurl->param('evasyssynccheck', 1);
-
 try {
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
-        $evasyssynchronizer->notify_evaluation_responsible_person($dates);
-        $returnurl->param('status', 'success');
-        redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
-    } else {
-        $returnurl->param('status', 'uptodate');
-        redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 1);
+    $evasyssynchronizer->sync_students();
+    try {
+        $result = $evasyssynchronizer->invite_all($dates);
+    } catch (\InvalidArgumentException $e) {
+        die('date_in_the_past');
     }
+        echo($result);
 } catch (Exception $exception) {
     debugging($exception);
-    $returnurl->param('status', 'failure');
-    notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
+    echo(get_string('content_failure', 'block_evasys_sync'));
     exit();
 }
