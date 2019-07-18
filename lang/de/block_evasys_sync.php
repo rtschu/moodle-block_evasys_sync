@@ -23,6 +23,7 @@ $string['countparticipants'] = 'Anzahl Teilnehmer: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
 $string['finishedforms'] = 'Ausgefüllt:';
 $string['evacourseid'] = 'EvaSys-Kurs-ID:';
+$string['evacoursename'] = 'Veranstaltungsname:';
 $string['surveys'] = 'Evaluationen: ';
 $string['nocourse'] = 'Kurs konnte zur Zeit nicht gefunden werden, bitte versuchen Sie es später erneut.';
 $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
@@ -32,7 +33,7 @@ $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen 
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
-$string['change_mapping'] = "Zuordnung ändern";
+$string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
 
 // Multi allocation strings.
 
