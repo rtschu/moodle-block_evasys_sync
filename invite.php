@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // This shouldn't be visited but accessed by ajax requests.
 require_once('../../config.php');
-
 require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
-$count = required_param('count', PARAM_INT);
 $start = required_param('startDate', PARAM_TEXT);
 $end = required_param('endDate', PARAM_TEXT);
 $dates = ["start" => $start, "end" => $end];
