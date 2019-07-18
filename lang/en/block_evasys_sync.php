@@ -29,6 +29,7 @@ $string['nosurveys'] = 'Currently there are no surveys available.';
 $string['syncnotpossible'] = 'Unfortunately, course participants could not be synchronized to EvaSys due to a technical problem. Please get in touch with the support contact.';
 $string['syncsucessful'] = 'Sync to EvaSys was successful';
 $string['syncalreadyuptodate'] = 'Users were already up to date';
+$string['syncnostudents'] = 'This course does not contain any students that can evaluate it.';
 $string['taskname'] = 'Open and close Evasys surveys';
 $string['begin'] = 'beginn';
 $string['end'] = 'end';
@@ -59,6 +60,7 @@ $string['endplaceholder'] = "Pick an enddate";
 
 // Information box strings.
 $string['not_enough_dates'] = "Please provide dates for ALL Surveys!";
+$string['content_nostudents'] = 'This course does not contain any students that can evaluate it.';
 $string['title_send_failure'] = "Error while sending";
 
 $string['content_failure'] = "Unfortunately we weren't able to request the start of the evaluation. <br />" .

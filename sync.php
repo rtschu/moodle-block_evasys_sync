@@ -44,8 +44,13 @@ try {
         $returnurl->param('status', 'success');
         redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
     } else {
-        $returnurl->param('status', 'uptodate');
-        redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 1);
+        if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') != 0) {
+            $returnurl->param('status', 'uptodate');
+            redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 1);
+        } else {
+            $returnurl->param('status', 'nostudents');
+            redirect($returnurl, get_string('syncnostudents', 'block_evasys_sync'), 1);
+        }
     }
 } catch (Exception $exception) {
     debugging($exception);
