@@ -33,6 +33,7 @@ $string['taskname'] = 'Open and close Evasys surveys';
 $string['begin'] = 'beginn';
 $string['end'] = 'end';
 $string['change_mapping'] = "Change mapping";
+$string['semester'] = "Semester";
 
 // Multi allocation strings.
 
