@@ -63,7 +63,7 @@ class block_evasys_sync extends block_base{
         }
 
         if ($evasyssynccheck === 1) {
-            $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
+            $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->__get('course')->id);
             try {
                 $evasyscourseids = $evasyssynchronizer->get_evasys_courseid();
             } catch (Exception $exception) {
@@ -138,10 +138,23 @@ class block_evasys_sync extends block_base{
                 }
             }
             $this->content->text .= "<fieldset>" .
+                "<table cellpadding='2px'>".
+                '<tr>'.
+                '<td>'.
                 "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
+                '</td><td>'.
                 '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                '</td><td>'.
+                '<input type="time" name="startTime" /><br/>'.
+                '</td></tr>'.
+                '<tr><td>'.
                 "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
+                '</td><td>'.
                 '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                '</td><td>'.
+                '<input type="time" name="endTime" />'.
+                '</td></tr>'.
+                '</table>'.
                 '</fieldset>';
             if ($i > 0) {
                 if (!$mode) {

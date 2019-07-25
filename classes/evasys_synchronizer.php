@@ -260,7 +260,7 @@ class evasys_synchronizer {
             $survey = $surveys[$i];
             if (intval(str_replace("-", "", $dates["start"])) == $today) {
                 // If the survey is set to start today we sent our the invites via evasys right away.
-                $id = $survey->m_nSurveyId;
+                $id = $survey->id;
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
                 $soap = str_replace(" emails sent successful", "", $soap);
                 $sent += intval(explode("/", $soap)[0]);
