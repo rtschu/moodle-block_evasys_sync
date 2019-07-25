@@ -60,7 +60,8 @@ class evaluationperiod_survey_allocation extends persistent {
                 'message' => new \lang_string('invaliddate', 'block_evasys_sync')
             ),
             'state' => array(
-                'type' =>PARAM_INT,
+                'type' => PARAM_INT,
+                'default' => 0,
                 'message' => new \lang_string('invalidstate', 'block_evasys_sync')
             )
         );
