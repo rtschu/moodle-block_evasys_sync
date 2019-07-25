@@ -125,7 +125,23 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
 
         // Evasys_sync savepoint reached.
         upgrade_block_savepoint(true, 2019032600, 'evasys_sync');
+
     }
+    if($oldversion < 2019172402){
+        $coursetable = new xmldb_table('block_evasys_sync_surveys');
+        $coursetable->add_field('state', XMLDB_TYPE_INTEGER, '2', null, true, null, 0);
+        foreach ($coursetable->getFields() as $item) {
+            if (!$dbman->field_exists($coursetable, $item)) {
+                $dbman->add_field($coursetable, $item);
+            }
+        }
+        $time = time();
+        $DB->execute("UPDATE {block_evasys_sync_surveys} SET state=1 WHERE startdate <= $time");
+        $DB->execute("UPDATE {block_evasys_sync_surveys} SET state=2 WHERE enddate <= $time");
+    }
+
+    // Evasys_sync savepoint reached.
+    upgrade_block_savepoint(true, 2019172402, 'evasys_sync');
 
     return true;
 }
