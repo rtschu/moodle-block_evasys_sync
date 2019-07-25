@@ -53,9 +53,13 @@ class update_survey_status extends \core\task\scheduled_task {
 
         foreach ($startcourses as $record) {
             $soap->sendInvitationToParticipants($record->get("survey"));
+            $record->set('state', 1);
+            $record->update();
         }
-        foreach ($closecourses as $record){
+        foreach ($closecourses as $record) {
             $soap->CloseSurvey($record->get("survey"));
+            $record->set('state', 2);
+            $record->update();
         }
     }
 
