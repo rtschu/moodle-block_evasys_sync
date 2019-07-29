@@ -119,6 +119,11 @@ class evasys_synchronizer {
 
         $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
 
+        if(count((array)$rawsurveys) == 0){
+            // no surveys available
+            return array();
+        }
+
         if (is_object($rawsurveys)) {
             // Course only has one associated survey.
             return [$this->enrich_survey($rawsurveys)];

@@ -135,21 +135,21 @@ class block_evasys_sync extends block_base{
                         $i++;
                     }
                     $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-                }
-            }
-            $this->content->text .= "<fieldset>" .
-                "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
-                '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
-                "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
-                '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
-                '</fieldset>';
-            if ($i > 0) {
-                if (!$mode) {
-                    $this->content->text .= "<input type='submit' value='" .
-                        get_string('invitestudents', 'block_evasys_sync') . "'/> \n ";
-                } else {
-                    $this->content->text .= "<input type='submit' value='" .
-                        get_string('direct_invite', 'block_evasys_sync') . "'/> \n";
+                    $this->content->text .= "<fieldset>" .
+                        "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
+                        '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
+                        "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
+                        '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
+                        '</fieldset>';
+                    if ($i > 0) {
+                        if (!$mode) {
+                            $this->content->text .= "<input type='submit' value='" .
+                                get_string('invitestudents', 'block_evasys_sync') . "'/> \n ";
+                        } else {
+                            $this->content->text .= "<input type='submit' value='" .
+                                get_string('direct_invite', 'block_evasys_sync') . "'/> \n";
+                        }
+                    }
                 }
             }
             $this->content->text .= "</form>";
