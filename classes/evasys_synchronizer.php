@@ -119,6 +119,11 @@ class evasys_synchronizer {
 
         $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
 
+        if(count((array)$rawsurveys) == 0){
+            // no surveys available
+            return array();
+        }
+
         if (is_object($rawsurveys)) {
             // Course only has one associated survey.
             return [$this->enrich_survey($rawsurveys)];
@@ -256,6 +261,8 @@ class evasys_synchronizer {
         $reminders = 0;
         $status = "success";
         $today = date("Ymd");
+        $start = $dates['start'];
+        $end = $dates['end'];
         for ($i = 0; $i < count($surveys); $i++) {
             $survey = $surveys[$i];
             if (intval(str_replace("-", "", $dates["start"])) == $today) {
@@ -284,6 +291,14 @@ class evasys_synchronizer {
                 }
             }
         }
+        global $USER;
+        $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
+            'userid' => $USER->id,
+            'courseid' => $this->courseid,
+            'context' => \context_course::instance($this->courseid),
+            'other' => array('surveys' => $surveys, 'start' => $start, 'end' => $end)
+        ));
+        $event->trigger();
         $soap = "$status/$sent/$total/$reminders";
         return $soap;
     }
@@ -306,7 +321,7 @@ class evasys_synchronizer {
             }
             $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
             $record->create();
-            return true;
+            $return = true;
         } else {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
             $return = false;
@@ -321,8 +336,9 @@ class evasys_synchronizer {
                 }
             }
             $record->update();
-            return $return;
         }
+
+        return $return;
     }
 
     /**

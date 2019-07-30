@@ -131,3 +131,6 @@ $string['invaliddate'] = "Ungültiges Datum";
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';
 $string['privacy:metadata:username'] = 'Benutzernamen von Studierenden, welche in einem Kurs eingeschrieben sind (as E-Mail-Adresse dargestellt, um EvaSys-Erfordernisse zu erfüllen).';
+
+// Events.
+$string['eventevaluationperiod_set'] = 'Evaluationszeitraum wurde festgelegt';
