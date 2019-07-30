@@ -261,8 +261,6 @@ class evasys_synchronizer {
         $reminders = 0;
         $status = "success";
         $today = date("Ymd");
-        $start = $dates['start'];
-        $end = $dates['end'];
         for ($i = 0; $i < count($surveys); $i++) {
             $survey = $surveys[$i];
             if (intval(str_replace("-", "", $dates["start"])) == $today) {
@@ -291,14 +289,21 @@ class evasys_synchronizer {
                 }
             }
         }
+        
         global $USER;
-        $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
-            'userid' => $USER->id,
-            'courseid' => $this->courseid,
-            'context' => \context_course::instance($this->courseid),
-            'other' => array('surveys' => $surveys, 'start' => $start, 'end' => $end)
-        ));
-        $event->trigger();
+        $ids = array();
+        foreach($surveys as $survey){
+            array_push($ids, $survey->id);
+        }
+        if($status == "success") {
+            $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
+                'userid' => $USER->id,
+                'courseid' => $this->courseid,
+                'context' => \context_course::instance($this->courseid),
+                'other' => array('surveys' => $ids, 'start' => $dates['start'], 'end' => $dates['end'])
+            ));
+            $event->trigger();
+        }
         $soap = "$status/$sent/$total/$reminders";
         return $soap;
     }
