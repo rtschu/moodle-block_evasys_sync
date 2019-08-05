@@ -338,9 +338,10 @@ class evasys_synchronizer {
         } else {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
             $return = false;
+            $time = time();
             foreach ($data as $key => $value) {
                 if (($key == 'startdate' or $key == 'enddate')
-                    and $value < strtotime(date('Y-m-d')) and $record->get($key) != $value) {
+                    and $value < $time and $record->get($key) != $value) {
                     throw new \InvalidArgumentException('Date is in the past');
                 }
                 if ($record->get($key) != $value) {

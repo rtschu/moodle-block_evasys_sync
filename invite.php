@@ -22,8 +22,10 @@ require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 $start = required_param('startDate', PARAM_TEXT);
+$starttime = required_param('startTime', PARAM_TEXT) . ":00";
 $end = required_param('endDate', PARAM_TEXT);
-$dates = ["start" => $start, "end" => $end];
+$endtime = required_param('endTime', PARAM_TEXT) . ":00";
+$dates = ["start" => $start . " " . $starttime , "end" => $end . " " . $endtime];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);

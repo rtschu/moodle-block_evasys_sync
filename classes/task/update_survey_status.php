@@ -39,33 +39,38 @@ class update_survey_status extends \core\task\scheduled_task {
     // ...or to simply remove a record once the survey is closed.
     public function execute () {
         global $DB;
-        $records = \block_evasys_sync\evaluationperiod_survey_allocation::get_records();
+        $time = time();
+        $startcourses = \block_evasys_sync\evaluationperiod_survey_allocation::get_records_select("state < 2 AND startdate <=$time");
+        $closecourses = \block_evasys_sync\evaluationperiod_survey_allocation::get_records_select("state < 2 AND enddate <=$time");
         $soap = $this->init_soap_client();
-        $courseids = $DB->get_fieldset_sql("SELECT DISTINCT course FROM {block_evasys_sync_surveys}");
+        $courseids = $DB->get_fieldset_sql("SELECT DISTINCT course FROM {block_evasys_sync_surveys} WHERE state = 0 AND startdate <= $time
+                                                 UNION
+                                                 SELECT DISTINCT course FROM {block_evasys_sync_surveys} WHERE state = 1 AND enddate <= $time");
         foreach ($courseids as $id) {
             $sync = new \block_evasys_sync\evasys_synchronizer($id);
             $sync->sync_students();
         }
-        foreach ($records as $record) {
-            if (strtotime(date("Y-m-d", $record->get("startdate"))) == strtotime(date("Y-m-d"))) {
-                $soap->sendInvitationToParticipants($record->get("survey"));
-                $event = \block_evasys_sync\event\evaluation_opened::create(array(
+
+        foreach ($startcourses as $record) {
+            $soap->sendInvitationToParticipants($record->get("survey"));
+            $record->set('state', 1);
+            $record->update();
+            $event = \block_evasys_sync\event\evaluation_opened::create(array(
                     'courseid' => $record->get("course"),
-                    'other' => array('teacher' => $record-> get('usermodified'), 'evasysid' => $record->get("survey"), 'type' => "automatic")
+                    'other' => array('teacher' => $record->get('usermodified'), 'evasysid' => $record->get("survey"), 'type' => "automatic")
                 ));
                 $event->trigger();
-            }
-            $end = strtotime(date("Y-m-d", $record->get("enddate")));
-            $yesterday = strtotime('-1 day', strtotime('00:00:00'));
-            if ($end == $yesterday) {
-                $soap->CloseSurvey($record->get("survey"));
-                $event = \block_evasys_sync\event\evaluation_closed::create(array(
+        }
+        foreach ($closecourses as $record) {
+            $soap->CloseSurvey($record->get("survey"));
+            $record->set('state', 2);
+            $record->update();
+            $event = \block_evasys_sync\event\evaluation_closed::create(array(
                     'objectid' => $record->get("id"),
                     'courseid' => $record->get("course"),
-                    'other' => array('teacher' => $record-> get('usermodified'), 'evasysid' => $record->get("survey"))
+                    'other' => array('teacher' => $record->get('usermodified'), 'evasysid' => $record->get("survey"))
                 ));
                 $event->trigger();
-            }
         }
     }
 

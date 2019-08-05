@@ -130,6 +130,7 @@ $string['invalidmode'] = "Ungültiger Modus";
 $string['invalidcourse'] = 'Ungültiger Kurs';
 $string['invalidsurvey'] = "Ungültige Umfrage";
 $string['invaliddate'] = "Ungültiges Datum";
+$string['invalidstate'] = "Ungültiger Statuscode";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

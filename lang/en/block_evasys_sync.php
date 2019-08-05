@@ -49,7 +49,8 @@ $string['direct_invite'] = "Invite participants directly";
 $string['content_confirm'] = "This will start the evaluations immediately!<br />" .
     "Are you sure You want to send invites/reminders to all participants?";
 $string['title_send_success'] = "Evaluation started";
-$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send';
+$string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
+                                  '{$a->queued} jobs have been queued';
 $string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
 
 // Form strings.
@@ -134,6 +135,7 @@ $string['invalidmode'] = 'Invalid category mode';
 $string['invalidcourse'] = "Invalid course";
 $string['invalidsurvey'] = "Invalid survey";
 $string['invaliddate'] = "Invalid date";
+$string['invalidstate'] = "Invalid statecode";
 
 
 // Privacy API.
