@@ -23,6 +23,7 @@ $string['countparticipants'] = 'Number of participants: ';
 $string['surveystatus'] = 'Survey status:';
 $string['finishedforms'] = 'Completed forms:';
 $string['evacourseid'] = 'EvaSys course ID:';
+$string['evacoursename'] = 'Name:';
 $string['surveys'] = 'Surveys: ';
 $string['nocourse'] = 'Problem finding course, please try again later.';
 $string['nosurveys'] = 'Currently there are no surveys available.';

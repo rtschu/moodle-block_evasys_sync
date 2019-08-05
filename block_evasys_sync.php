@@ -115,13 +115,14 @@ class block_evasys_sync extends block_base{
             // Output for each Evasys-course mapped to this moodle course.
             foreach ($evasyscourseids as $evasyscourseid) {
                 $this->content->text .= html_writer::div(html_writer::span(
-                                                             get_string('evacourseid', 'block_evasys_sync'), 'emphasize') . ' ' . $evasyscourseid);
+                                                             get_string('evacoursename', 'block_evasys_sync'), 'emphasize') .
+                                                         ' <span title="' . $evasyscourseid['tooltip'] . '">' . $evasyscourseid['title'] . '</span>');
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid)));
+                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid['tooltip'])));
                 $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
                 $outputsurveys = array();
-                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid);
+                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid['tooltip']);
 
                 if (empty($surveys)) {
                     $this->content->text .= get_string('nosurveys', 'block_evasys_sync');

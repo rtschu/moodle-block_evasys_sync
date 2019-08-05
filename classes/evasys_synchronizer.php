@@ -73,7 +73,9 @@ class evasys_synchronizer {
         // Fetch the Evasysids for the courses.
         foreach ($extras as &$course) {
             $courseinfo = get_course_by_veranstid(intval($course));
-            $course = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
+            $course = array(
+                'title' => $courseinfo->titel,
+                'tooltip' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
         }
         close_secondary_DB_connection();
         $this->evasyscourseids = $extras;
@@ -98,12 +100,12 @@ class evasys_synchronizer {
     private function get_course_information() {
         $result = [];
         foreach ($this->get_evasys_courseid() as $courseid) {
-            $soapresult = $this->soapclient->GetCourse($courseid, 'PUBLIC', true, true);
+            $soapresult = $this->soapclient->GetCourse($courseid['tooltip'], 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
-            $result[$courseid] = $soapresult;
+            $result[$courseid['tooltip']] = $soapresult;
         }
         return $result;
     }
@@ -222,7 +224,6 @@ class evasys_synchronizer {
         }
 
         $emailadresses = $this->get_enrolled_student_email_adresses_from_usernames();
-        $evasyscourseid = $this->get_evasys_courseid();
         $students = array();
 
         foreach ($emailadresses as $emailadress) {
