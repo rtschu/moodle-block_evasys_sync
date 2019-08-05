@@ -20,8 +20,8 @@ $tasks = array(
     array(
         'classname' => '\block_evasys_sync\task\update_survey_status',
         'blocking' => 0,
-        'minute' => '0',
-        'hour' => '0',
+        'minute' => '*',
+        'hour' => '*',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',

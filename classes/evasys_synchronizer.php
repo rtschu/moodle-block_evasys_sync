@@ -254,6 +254,7 @@ class evasys_synchronizer {
     }
 
     public function invite_all($dates) {
+        global $USER;
         // Get all surveys of this moodle course.
         $surveys = $this->get_all_surveys();
         $sent = 0;
@@ -270,13 +271,19 @@ class evasys_synchronizer {
                 $soap = str_replace(" emails sent successful", "", $soap);
                 $sent += intval(explode("/", $soap)[0]);
                 $total += intval(explode("/", $soap)[1]);
-                $start = $today; // TASK MUST RUN AT 0:00 OR YOU RISK DOUBLE INVITES.
+                $start = time();
+                global $USER;
+                $event = \block_evasys_sync\event\evaluation_opened::create(array(
+                    'courseid' => $this->courseid,
+                    'other' => array('teacher' => $USER->id, 'evasysid' => $id, 'type' => "manual")
+                ));
+                $event->trigger();
             } else {
                 // If its's set to start on any other date we simply set them to start at that time.
-                $start = $dates["start"];
+                $start = strtotime($dates["start"]);
             }
             try {
-                if ($this->setstartandend($survey->id, $start, $dates["end"])) {
+                if ($this->setstartandend($survey->id, $start, strtotime($dates["end"]))) {
                     $reminders++;
                 }
             } catch (\InvalidArgumentException $e) {
@@ -289,8 +296,7 @@ class evasys_synchronizer {
                 }
             }
         }
-        
-        global $USER;
+
         $ids = array();
         foreach($surveys as $survey){
             array_push($ids, $survey->id);
@@ -317,8 +323,9 @@ class evasys_synchronizer {
         $data = new \stdClass();
         $data->course = $this->courseid;
         $data->survey = $id;
-        $data->startdate = strtotime($start);
-        $data->enddate = strtotime($end);
+
+        $data->startdate = $start;
+        $data->enddate = $end;
         $recordid = $DB->get_record("block_evasys_sync_surveys", array('survey' => $id), 'id', IGNORE_MISSING);
         if (!$recordid) {
             if ($data->startdate < strtotime(date('Y-m-d')) or $data->enddate < strtotime(date('Y-m-d'))) {
@@ -393,6 +400,10 @@ class evasys_synchronizer {
         if (!$mailresult) {
             throw new \Exception('Could not send e-mail to person responsible for evaluation');
         }
+        $event = \block_evasys_sync\event\evaluation_requested::create(array(
+            'userid' => $USER->id,
+            'courseid' => $this->courseid
+        ));
     }
 
     /**

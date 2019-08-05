@@ -49,11 +49,22 @@ class update_survey_status extends \core\task\scheduled_task {
         foreach ($records as $record) {
             if (strtotime(date("Y-m-d", $record->get("startdate"))) == strtotime(date("Y-m-d"))) {
                 $soap->sendInvitationToParticipants($record->get("survey"));
+                $event = \block_evasys_sync\event\evaluation_opened::create(array(
+                    'courseid' => $record->get("course"),
+                    'other' => array('teacher' => $record-> get('usermodified'), 'evasysid' => $record->get("survey"), 'type' => "automatic")
+                ));
+                $event->trigger();
             }
             $end = strtotime(date("Y-m-d", $record->get("enddate")));
             $yesterday = strtotime('-1 day', strtotime('00:00:00'));
             if ($end == $yesterday) {
                 $soap->CloseSurvey($record->get("survey"));
+                $event = \block_evasys_sync\event\evaluation_closed::create(array(
+                    'objectid' => $record->get("id"),
+                    'courseid' => $record->get("course"),
+                    'other' => array('teacher' => $record-> get('usermodified'), 'evasysid' => $record->get("survey"))
+                ));
+                $event->trigger();
             }
         }
     }

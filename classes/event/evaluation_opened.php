@@ -16,7 +16,7 @@
 namespace block_evasys_sync\event;
 defined('MOODLE_INTERNAL') || die();
 
-class evaluationperiod_set extends \core\event\base {
+class evaluation_opened extends \core\event\base {
 
     /**
      * Override in subclass.
@@ -42,13 +42,8 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public function get_description() {
-        // TODO reformat to use get_string
-        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid} to {$this->other['start']} - {$this->other['end']} with the evasyscourses: </br>";
-
-        foreach($this->other['surveys'] as $id) {
-            $return .= "$id,</br>";
-        }
-
+        $return = "The Evasys-evaluation {$this->other['evasysid']} has been opened" .
+        " in response to Course {$this->courseid}'s' start being set by {$this->other['teacher']}. This was a {$this->other['type']} action";
         return $return;
     }
 

@@ -16,7 +16,7 @@
 namespace block_evasys_sync\event;
 defined('MOODLE_INTERNAL') || die();
 
-class evaluationperiod_set extends \core\event\base {
+class evaluation_closed extends \core\event\base {
 
     /**
      * Override in subclass.
@@ -35,6 +35,7 @@ class evaluationperiod_set extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = "evaluationperiod_survey_allocation";
     }
 
     public static function get_name() {
@@ -42,13 +43,7 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public function get_description() {
-        // TODO reformat to use get_string
-        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid} to {$this->other['start']} - {$this->other['end']} with the evasyscourses: </br>";
-
-        foreach($this->other['surveys'] as $id) {
-            $return .= "$id,</br>";
-        }
-
+        $return = "The Evasys-evaluation {$this->other['evasysid']} has been closed in response to Course {$this->courseid}'s' end being set by {$this->other['teacher']} in request {$this->objectid}.";
         return $return;
     }
 

@@ -16,7 +16,7 @@
 namespace block_evasys_sync\event;
 defined('MOODLE_INTERNAL') || die();
 
-class evaluationperiod_set extends \core\event\base {
+class evaluation_requested extends \core\event\base {
 
     /**
      * Override in subclass.
@@ -38,17 +38,11 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public static function get_name() {
-        return get_string('eventevaluationperiod_set', 'block_evasys_sync');
+        return get_string('eventevaluation_requested', 'block_evasys_sync');
     }
 
     public function get_description() {
-        // TODO reformat to use get_string
-        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid} to {$this->other['start']} - {$this->other['end']} with the evasyscourses: </br>";
-
-        foreach($this->other['surveys'] as $id) {
-            $return .= "$id,</br>";
-        }
-
+        $return = "The user with ID {$this->userid} requested the evaluation of the Course with courseid {$this->courseid}";
         return $return;
     }
 
