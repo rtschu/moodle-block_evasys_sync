@@ -115,6 +115,7 @@ class evasys_synchronizer {
      * @return array of surveys with additional information
      */
     public function get_surveys($courseid) {
+        $courseid = $courseid['tooltip'];
         if ($this->courseinformation[$courseid] === null) {
             return array();
         }

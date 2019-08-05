@@ -30,6 +30,7 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
+$string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer die évaluieren könnten.';
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
@@ -55,6 +56,7 @@ $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladun
 $string['title_send_failure'] = "Fehler beim Versand";
 $string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
 $string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
+$string['content_nostudents'] = "In diesem Kurs existieren keine Teilnehmer die an der Evaluierung teilnehmen könnten.";
 $string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
     "Es wurden keine neuen Einladungen versendet";
 $string['direct_title_info'] = "Einladungen bereits versandt";
