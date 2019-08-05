@@ -33,12 +33,14 @@ $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen 
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
+
 $string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
+$string['semester'] = "Semester";
 
 // Multi allocation strings.
 
 $string['selection_success'] = "Auswahl erfolgreich übermittelt";
-$string['add_course_header'] = "Wählen Sie Kurse, die dem aktuellen Moodle Kurs zugeordnet werden sollen";
+$string['add_course_header'] = "Wählen Sie die Veranstaltungen, die über diesen Learnweb-Kurs evaluiert werden sollen";
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
 

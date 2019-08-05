@@ -28,21 +28,44 @@ require_once($CFG->dirroot . '/local/lsf_unification/class_pg_lite.php');
 class add_course_form extends moodleform {
 
     protected function definition () {
+    }
+
+    public function init ($id) {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
-        global $pgDB, $USER; // phpcs:ignore // @codingStandardsIgnoreLine
+        global $pgDB, $USER, $COURSE; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
 
         $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
-        $availablecourselist = get_teachers_course_list($USER->username, false);
+        global $DB;
+        $lsfid = $DB->get_field('course', 'idnumber', array('id' => $id));
+        $maincourse = (array) get_course_by_veranstid($lsfid);
+        $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
+        $courses = get_courses_by_veranstids($veranstids);
+        $availablecourselist = array();
+        foreach ($courses as $veranstid => $course) {
+            $result = array();
+            $result['veranstid'] = $course->veranstid;
+            $result['info'] = $course->titel;
+            $result['semestertxt'] = $course->semestertxt;
+            $result['semester'] = $course->semester;
+            $availablecourselist[$course->veranstid] = $result;
+            $sorter = function ($a, $b) {
+                return $a['semester'] < $b['semester'];
+            };
+        }
+        unset($availablecourselist[$lsfid]);
+        usort($availablecourselist, $sorter);
+
         // Add Table.
         $mform->addElement('html', $this->tablehead());
         $this->table_body($availablecourselist);
-        $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_evasys_sync'));
+        $this->addpubid($maincourse);
+        $this->addid($id);
     }
 
-    public function addid($id) {
+    private function addid($id) {
         $mform = $this->_form;
         $mform->addElement('html', '<input type="hidden" name="id" value="'. $id .'">');
     }
@@ -65,7 +88,11 @@ class add_course_form extends moodleform {
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('coursename', 'block_evasys_sync'), $attributes);
         $attributes = array();
-        $attributes['class'] = 'header c1 lastcol';
+        $attributes['class'] = 'header c1';
+        $attributes['scope'] = 'col';
+        $output .= html_writer::tag('th', get_string('semester', 'block_evasys_sync'), $attributes);
+        $attributes = array();
+        $attributes['class'] = 'header c2 lastcol';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('associated', 'block_evasys_sync'), $attributes);
         $output .= html_writer::end_tag('tr');
@@ -85,18 +112,53 @@ class add_course_form extends moodleform {
         foreach ($courses as $course) {
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' .
-                                     trim($course->info) .
+                                     trim($course['info']) .
                                      '</div></td>');
             $mform->addElement('html', '<td class="cell c1">');
 
-            $name = $course->veranstid;
+            $mform->addElement('html', '<div>' .
+                                     trim($course['semestertxt']) .
+                                     '</div></td>');
+
+            $mform->addElement('html', '<td class="cell c2">');
+
+            $name = $course['veranstid'];
             $mform->addElement('checkbox', $name);
             $mform->setType($name, PARAM_BOOL);
             $mform->setDefault($name, false);
 
             $mform->addElement('html', '</td></tr>');
         }
+    }
+
+    private function addpubid($course) {
+        $mform = $this->_form;
+        $mform->addElement('html', '<tr disabled="disabled">');
+        $mform->addElement('html', '<td class="cell c0"><div>' .
+                                 trim($course['titel']) .
+                                 '</div></td>');
+        $mform->addElement('html', '<td class="cell c1">');
+
+        $mform->addElement('html', '<div>' .
+                                 trim($course['semestertxt']) .
+                                 '</div></td>');
+
+        $mform->addElement('html', '<td class="cell c2">');
+
+        $name = $course['veranstid'];
+        $mform->addElement('checkbox', $name);
+        $mform->setType($name, PARAM_BOOL);
+        $mform->setDefault($name, true);
+        $mform->addElement( 'checkbox', 'dummy');
+        $mform->setType('dummy', PARAM_BOOL);
+        $mform->setDefault('dummy', false);
+        // You can't directly declare a checkbox allways disabled so we have to create an artificial circle.
+        $mform->hideIf('dummy', $name, 'checked');
+        $mform->disabledIf($name, 'dummy');
+
+        $mform->addElement('html', '</td></tr>');
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
+        $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_evasys_sync'));
     }
 }
