@@ -79,6 +79,33 @@ class block_evasys_sync extends block_base{
                                        array('id' => $this->page->course->id, "evasyssynccheck" => true));
             }
             // Begin form.
+            $data = array(
+                'href' => $href,
+                'sesskey' => sesskey(),
+                'courseid' => $this->page->course->id,
+            );
+            $courses = array();
+            $showcontrols = false;
+            foreach ($evasyscourseids as $evasyscourseid) {
+                $course = array();
+                $course['evasyscourseid'] = $evasyscourseid;
+                $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseid));
+                $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseid);
+                $surveys = array();
+                foreach ($rawsurveys as $rawsurvey) {
+                    $survey = array();
+                    $survey['formName'] = format_string($rawsurvey->formName);
+                    $survey['surveystatus'] = get_string('surveystatus' . $rawsurvey->surveyStatus, 'block_evasys_sync');
+                    $survey['amountOfCompleteForms'] = format_string($rawsurvey->amountOfCompletedForms);
+                    array_push($surveys, $survey);
+                    $showcontrols = true;
+                }
+                $course['surveys'] = $surveys;
+                array_push($courses, $course);
+            }
+            $data['courses'] = $courses;
+            $data['showcontrols'] = $showcontrols;
+            $return = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
 
             $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
             $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
@@ -160,6 +187,7 @@ class block_evasys_sync extends block_base{
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
         }
 
+        $this->content->text = $return;
         $this->content->footer = '';
         return $this->content;
     }
