@@ -1,6 +1,7 @@
 <form action="{{href}}" method="post" id="evasys_block_form">
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="courseid" value="{{courseid}}">
+    {{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
     {{#courses}}
         {{#.}}
             <div><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscourseid}}</div>
@@ -19,23 +20,39 @@
             {{/surveys}}
         {{/.}}
     {{/courses}}
+{{#warning}}<span style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</span>{{/warning}}
     {{#showcontrols}}
         <fieldset>
-            <label for="startDate">{{# str}}begin, block_evasys_sync{{/str}}</label>
-            <input type="date" name="startDate" min="{{beginmin}}" value="{{beginpre}}" {{readonlybegin}}/><br/>
-            <label for="endDate">{{# str}}end, block_evasys_sync{{/str}}</label>
-            <input type="date" name="endDate" min="{{endmin}}" value="{{endpre}}" {{readonlyend}}/><br/>
+        {{#startoption}}<input type="checkbox" id="reactivate"> {{# str}}reactivate_invite, block_evasys_sync{{/str}} <br/>{{/startoption}}
+            Evaluieren von:
+            {{#direct}}
+                &nbsp;&nbsp; <input type="checkbox" name="direct_invite" value="true" {{startdisabled}}> {{# str}}direct_invite_checkbox, block_evasys_sync{{/str}}
+            {{/direct}}
+            <br />
+            {{< block_evasys_sync/datetimepicker}}
+                {{$id}}start{{/id}}
+                {{$disabled}}{{startdisabled}}{{/disabled}}
+            {{/block_evasys_sync/datetimepicker}}
+            {{#direct}}
+            {{/direct}}
+        <br/>bis<br/>
+            {{< block_evasys_sync/datetimepicker}}
+                {{$id}}end{{/id}}
+                {{$disabled}}{{enddisabled}}{{/disabled}}
+            {{/block_evasys_sync/datetimepicker}}
         </fieldset>
+        {{^direct}}
+            <input type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}"/>
+        {{/direct}}
+        {{#direct}}
+            <input type="submit" value="{{# str}}direct_invite, block_evasys_sync{{/str}}"/>
+        {{/direct}}
     {{/showcontrols}}
-    {{#direct}}
-        <input type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}"/>
-    {{/direct}}
-    {{^direct}}
-        <input type="submit" value="{{# str}}direct_invite, block_evasys_sync{{/str}}"/>
-    {{/direct}}
 </form>
+{{#coursemappingenabled}}
 <form action="../blocks/evasys_sync/addcourse.php">
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="id" value="{{courseid}}">
-    <input type="submit" value="{{# str}}change_mapping, block_evasys_sync{{/str}}">
+    <input type="submit" value="{{# str}}change_mapping, block_evasys_sync{{/str}}" {{#disabled}}disabled{{/disabled}}>
 </form>
+{{/coursemappingenabled}}
