@@ -49,21 +49,21 @@ if ($mform->is_validated()) {
         $data = (Array) $data;
     }
     $magicstring = '';
-    foreach ($prefill as $key) {
-        if (!(array_key_exists($key, $data)) || $data[$key] != 0) {
-            // Disallow removing not owned courses.
-            if (!is_course_of_teacher($key, $USER->username)) {
-                $data[$key] = 1;
-            }
+
+    foreach ($pre as $entry) {
+        if (!is_course_of_teacher($entry, $USER->username) and !is_siteadmin()) {
+            $magicstring .= $entry . "#";
         }
     }
+
     foreach ($data as $key => $value) {
-        if ($value == 1) {
-            if (is_course_of_teacher($key, $USER->username)) {
-                $magicstring .= $key . '#';
+        if ($value) {
+            if (is_course_of_teacher($key, $USER->username) or is_siteadmin()) {
+                $magicstring .= $key . "#";
             }
         }
     }
+
     $persistent->set('course',  $id);
     $persistent->set('evasyscourses', $magicstring);
     $persistent->save();
