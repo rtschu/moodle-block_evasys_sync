@@ -34,6 +34,9 @@ $string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer die évalui
 $string['taskname'] = 'Evasys Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
+$string['direct_invite_checkbox'] = 'Umfrage sofort starten';
+$string['reactivate_invite'] = 'Einladung erneut durchführen';
+$string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
 
 $string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
 $string['semester'] = "Semester";
@@ -67,6 +70,17 @@ $string['title_send_invalid'] = "Fehlerhafter Zeitraum";
 $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie endet! <br />" .
     "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
 
+// New invite strings.
+$string['title_success'] = "Erfolgreich";
+$string['content_success_invite'] = "Die Evaluation wurd erfolgreich gestartet";
+$string['content_success'] = "Die Evaluationsperiode wurde erfolgreich gesetzt";
+$string['title_date_invalid'] = "Unzulässiges Datum";
+$string['content_invalidstart'] = "Der Start ist in der Vergangenheit";
+$string['content_invalidend'] = "Das Ende ist in der Vergangenheit";
+$string['content_start_after_end'] = "Der Start ist nach dem Ende";
+$string['title_wrong_mode'] = "Unzulässige operation";
+$string['content_wrong_mode'] = "Dieser Kurs ist nicht im angesprochenen modus!";
+
 // Form strings.
 
 $string['startplaceholder'] = "Startdatum für die Evaluation";
@@ -90,6 +104,9 @@ $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werd
                              "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
+$string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes setzen der Startzeit wird " .
+                                " die Evaluation in allen Evasysumfrage neu anstoßen, die mindestens einen neuen Teilnehmer haben. <br />" .
+                                "Sind Sie sicher, dass sie die Startzeit freigeben möchten?";
 
 // Survey status.
 $string['surveystatusopen'] = 'offen';
@@ -140,3 +157,20 @@ $string['privacy:metadata:username'] = 'Benutzernamen von Studierenden, welche i
 
 // Events.
 $string['eventevaluationperiod_set'] = 'Evaluationszeitraum wurde festgelegt';
+$string['eventevaluation_opened'] = 'Evaluation wurde gestartet';
+$string['eventevaluation_closed'] = 'Evaluation wurde beendet';
+$string['eventevaluation_requested'] = 'Evaluation wurde angefragt';
+
+// Months.
+$string['January'] = 'Januar';
+$string['February'] = 'Februar';
+$string['March'] = 'März';
+$string['April'] = 'April';
+$string['May'] = 'Mai';
+$string['June'] = 'Juni';
+$string['July'] = 'Juli';
+$string['August'] = 'August';
+$string['September'] = 'September';
+$string['October'] = 'Oktober';
+$string['November'] = 'November';
+$string['December'] = 'Dezember';

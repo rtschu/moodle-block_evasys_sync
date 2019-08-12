@@ -36,6 +36,9 @@ $string['begin'] = 'beginn';
 $string['end'] = 'end';
 $string['change_mapping'] = "Change mapping";
 $string['semester'] = "Semester";
+$string['direct_invite_checkbox'] = 'Start evaluation immediately';
+$string['reactivate_invite'] = 'Invite Students again';
+$string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 
 // Multi allocation strings.
 
@@ -96,6 +99,18 @@ $string['direct_title_info'] = "Invitation already complete";
 $string['title_send_rejected'] = "Invalid Date";
 $string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
     "This is not allowed. Some evaluationperiods may have been altered.<br />";
+$string['content_confirm_reactivate'] = "Are you sure you want to reactivate the invite options? This will restart all surveys with at least one new participant";
+
+// New invite strings.
+$string['title_success'] = "Success";
+$string['content_success_invite'] = "Evaluation has been started";
+$string['content_success'] = "Evaluationperiod has been set";
+$string['title_date_invalid'] = "Invalid Date";
+$string['content_invalidstart'] = "Start is in the past";
+$string['content_invalidend'] = "End is in the past";
+$string['content_start_after_end'] = "Start is after end";
+$string['title_wrong_mode'] = "Invalid operation";
+$string['content_wrong_mode'] = "This course is not in the requested mode!";
 
 // Survey status.
 $string['surveystatusopen'] = 'open';
@@ -146,3 +161,20 @@ $string['privacy:metadata:username'] = 'Usernames of students enrolled in a cour
 
 // Events.
 $string['eventevaluationperiod_set'] = 'Evaluationperiod has been set';
+$string['eventevaluation_opened'] = 'Evaluation has been started';
+$string['eventevaluation_closed'] = 'Evaluation has been closed';
+$string['eventevaluation_requested'] = 'Evaluation has been requested';
+
+// Months.
+$string['January'] = 'January';
+$string['February'] = 'February';
+$string['March'] = 'March';
+$string['April'] = 'April';
+$string['May'] = 'May';
+$string['June'] = 'June';
+$string['July'] = 'July';
+$string['August'] = 'August';
+$string['September'] = 'September';
+$string['October'] = 'October';
+$string['November'] = 'November';
+$string['December'] = 'December';
