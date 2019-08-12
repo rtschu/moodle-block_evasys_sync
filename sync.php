@@ -19,12 +19,21 @@ require_once('../../config.php');
 require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
-$start = required_param('startDate', PARAM_TEXT);
-$end = required_param('endDate', PARAM_TEXT);
-$start = explode("-", $start);
-$end = explode("-", $end);
-$start = $start[2] . "." . $start[1] . "." . $start[0];
-$end = $end[2] . "." . $end[1] . "." . $end[0];
+
+$endyear = required_param('year_end', PARAM_TEXT);
+$endmonth = required_param('month_end', PARAM_TEXT);
+$endday = required_param('day_end', PARAM_TEXT);
+$endhour = required_param('hour_end', PARAM_TEXT);
+$endmin = required_param('minute_end', PARAM_TEXT);
+
+$startyear = required_param('year_start', PARAM_TEXT);
+$startmonth = required_param('month_start', PARAM_TEXT);
+$startday = required_param('day_start', PARAM_TEXT);
+$starthour = required_param('hour_start', PARAM_TEXT);
+$startmin = required_param('minute_start', PARAM_TEXT);
+
+$start = "$startday $startmonth $startyear $starthour:$startmin";
+$end = "$endday $endmonth $endyear $endhour:$endmin";
 $dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
