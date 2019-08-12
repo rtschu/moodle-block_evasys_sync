@@ -35,15 +35,14 @@ class evaluation_closed extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = "evaluationperiod_survey_allocation";
     }
 
     public static function get_name() {
-        return get_string('eventevaluationperiod_set', 'block_evasys_sync');
+        return get_string('eventevaluation_closed', 'block_evasys_sync');
     }
 
     public function get_description() {
-        $return = "The Evasys-evaluation {$this->other['evasysid']} has been closed in response to Course {$this->courseid}'s' end being set by {$this->other['teacher']} in request {$this->objectid}.";
+        $return = "Evaluation of the course with id {$this->courseid} has been endend.";
         return $return;
     }
 

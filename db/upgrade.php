@@ -127,7 +127,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019032600, 'evasys_sync');
 
     }
-    if($oldversion < 2019172402){
+    if ($oldversion < 2019172402) {
         $coursetable = new xmldb_table('block_evasys_sync_surveys');
         $coursetable->add_field('state', XMLDB_TYPE_INTEGER, '2', null, true, null, 0);
         foreach ($coursetable->getFields() as $item) {
@@ -140,8 +140,36 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $DB->execute("UPDATE {block_evasys_sync_surveys} SET state=2 WHERE enddate <= $time");
     }
 
+    if ($oldversion < 2019180500) {
+        $coursetable = new xmldb_table('block_evasys_sync_courseeval');
+
+        $coursetable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $coursetable->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('startdate', XMLDB_TYPE_INTEGER, '10', null, false, null, null);
+        $coursetable->add_field('enddate', XMLDB_TYPE_INTEGER, '10', null, false, null, null);
+        $coursetable->add_field('state', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, 0);
+        $coursetable->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $coursetable->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        $coursetable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $coursetable->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'course', array('id'));
+
+        if (!$dbman->table_exists($coursetable)) {
+            $dbman->create_table($coursetable);
+        }
+
+        foreach ($coursetable->getFields() as $item) {
+            if (!$dbman->field_exists($coursetable, $item)) {
+                $dbman->add_field($coursetable, $item);
+            }
+        }
+        $DB->execute("INSERT INTO {block_evasys_sync_courseeval} (course, startdate, enddate, usermodified, timecreated, timemodified)".
+                             " SELECT DISTINCT ON (course) course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
+    }
+
     // Evasys_sync savepoint reached.
-    upgrade_block_savepoint(true, 2019172402, 'evasys_sync');
+    upgrade_block_savepoint(true, 2019180500, 'evasys_sync');
 
     return true;
 }

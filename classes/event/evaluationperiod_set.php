@@ -42,12 +42,9 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public function get_description() {
-        // TODO reformat to use get_string
-        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid} to {$this->other['start']} - {$this->other['end']} with the evasyscourses: </br>";
-
-        foreach($this->other['surveys'] as $id) {
-            $return .= "$id,</br>";
-        }
+        // TODO reformat to use get_string.
+        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid}".
+                    "to {$this->other['start']} - {$this->other['end']}";
 
         return $return;
     }

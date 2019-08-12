@@ -38,12 +38,11 @@ class evaluation_opened extends \core\event\base {
     }
 
     public static function get_name() {
-        return get_string('eventevaluationperiod_set', 'block_evasys_sync');
+        return get_string('eventevaluation_opened', 'block_evasys_sync');
     }
 
     public function get_description() {
-        $return = "The Evasys-evaluation {$this->other['evasysid']} has been opened" .
-        " in response to Course {$this->courseid}'s' start being set by {$this->other['teacher']}. This was a {$this->other['type']} action";
+        $return = "Evaluation of the course with id {$this->courseid} has been opened.";
         return $return;
     }
 
