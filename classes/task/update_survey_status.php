@@ -16,6 +16,8 @@
 
 namespace block_evasys_sync\task;
 
+use block_evasys_sync\evasys_inviter;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -24,7 +26,7 @@ class update_survey_status extends \core\task\scheduled_task {
      * Get a descriptive name for this task (shown to admins).
      *
      * @return string
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     public function get_name () {
         return get_string('taskname', 'block_evasys_sync');
@@ -38,55 +40,19 @@ class update_survey_status extends \core\task\scheduled_task {
     // My personal advice is to either move records that are in the past to another table, so you can still display the dates,
     // ...or to simply remove a record once the survey is closed.
     public function execute () {
-        global $DB;
         $time = time();
-        $startcourses = \block_evasys_sync\evaluationperiod_survey_allocation::get_records_select("state < 2 AND startdate <=$time");
-        $closecourses = \block_evasys_sync\evaluationperiod_survey_allocation::get_records_select("state < 2 AND enddate <=$time");
-        $soap = $this->init_soap_client();
-        $courseids = $DB->get_fieldset_sql("SELECT DISTINCT course FROM {block_evasys_sync_surveys} WHERE state = 0 AND startdate <= $time
-                                                 UNION
-                                                 SELECT DISTINCT course FROM {block_evasys_sync_surveys} WHERE state = 1 AND enddate <= $time");
-        foreach ($courseids as $id) {
-            $sync = new \block_evasys_sync\evasys_synchronizer($id);
-            $sync->sync_students();
+        $startcourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("startdate <= $time AND state = 0");
+        $closecourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("enddate <= $time AND state < 2");
+        $inviter = evasys_inviter::get_instance();
+        $startcourses = array();
+        foreach ($startcourseobjects as $object) {
+            array_push($startcourses, $object->get("course"));
         }
-
-        foreach ($startcourses as $record) {
-            $soap->sendInvitationToParticipants($record->get("survey"));
-            $record->set('state', 1);
-            $record->update();
-            $event = \block_evasys_sync\event\evaluation_opened::create(array(
-                    'courseid' => $record->get("course"),
-                    'other' => array('teacher' => $record->get('usermodified'), 'evasysid' => $record->get("survey"), 'type' => "automatic")
-                ));
-                $event->trigger();
+        $closecourses = array();
+        foreach ($closecourseobjects as $object) {
+            array_push($closecourses, $object->get("course"));
         }
-        foreach ($closecourses as $record) {
-            $soap->CloseSurvey($record->get("survey"));
-            $record->set('state', 2);
-            $record->update();
-            $event = \block_evasys_sync\event\evaluation_closed::create(array(
-                    'objectid' => $record->get("id"),
-                    'courseid' => $record->get("course"),
-                    'other' => array('teacher' => $record->get('usermodified'), 'evasysid' => $record->get("survey"))
-                ));
-                $event->trigger();
-        }
-    }
-
-    private function init_soap_client() {
-        $soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
-            'trace' => 1,
-            'exceptions' => 0,
-            'location' => get_config('block_evasys_sync', 'evasys_soap_url')
-        ]);
-
-        $headerbody = new \SoapVar([
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_username'), XSD_STRING, null, null, 'Login', null),
-            new \SoapVar(get_config('block_evasys_sync', 'evasys_password'), XSD_STRING, null, null, 'Password', null),
-        ], SOAP_ENC_OBJECT);
-        $header = new \SOAPHEADER('soap', 'Header', $headerbody);
-        $soapclient->__setSoapHeaders($header);
-        return $soapclient;
+        $inviter->open_moodle_courses($startcourses);
+        $inviter->close_moodle_course($closecourses);
     }
 }
