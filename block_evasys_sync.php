@@ -31,6 +31,7 @@ class block_evasys_sync extends block_base{
      * @return object
      */
     public function get_content() {
+        // TODO double check.
         global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
@@ -59,7 +60,7 @@ class block_evasys_sync extends block_base{
         }
 
         if ($evasyssynccheck === 1) {
-            $mode = (bool) $this->getmode($this->page->course->category);
+            $mode = (bool) \block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
             // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
             if ($mode) {
                 $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
@@ -67,7 +68,7 @@ class block_evasys_sync extends block_base{
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->__get('course')->id);
 
             try {
-                $evasyscourseids = $evasyssynchronizer->get_evasys_courseid();
+                $evasyscourseinfos = $evasyssynchronizer->get_evasys_courseid();
             } catch (Exception $exception) {
                 \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
                 $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
@@ -80,25 +81,60 @@ class block_evasys_sync extends block_base{
                 $href = new moodle_url('/course/view.php',
                                        array('id' => $this->page->course->id, "evasyssynccheck" => true));
             }
+
+            // Get Status.
+            $startdisabled = "";
+            $enddisabled = "";
+            $start = time();
+            $end = time();
+            global $DB;
+            $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $this->page->course->id));
+            if (is_object($record)) {
+                if ($record->state > 0) {
+                    $startdisabled = "disabled";
+                }
+                if ($record->state > 1) {
+                    $enddisabled = "disabled";
+                }
+                if (isset($record->startdate)) {
+                    $start = $record->startdate;
+                }
+                if (isset($record->enddate)) {
+                    $end = $record->enddate;
+                }
+            }
+            $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
             // Begin form.
+            // Todo evasysname is actually lsf name. change.
+            // Todo display error if some open surveys in closed state.
             $data = array(
                 'href' => $href,
                 'sesskey' => sesskey(),
                 'courseid' => $this->page->course->id,
+                'direct' => $mode,
+                'startdisabled' => $startdisabled,
+                'enddisabled' => $enddisabled,
+                'startoption' => $enddisabled xor $startdisabled,
+                'coursemappingenabled' => !$startdisabled or is_siteadmin()
             );
             $courses = array();
             $showcontrols = false;
-            foreach ($evasyscourseids as $evasyscourseid) {
+            foreach ($evasyscourseinfos as $evasyscourseinfo) {
                 $course = array();
-                $course['evasyscourseid'] = $evasyscourseid;
-                $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseid));
-                $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseid);
+                $course['evasyscourseid'] = $evasyscourseinfo['title'];
+                $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
+                $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
                 $surveys = array();
                 foreach ($rawsurveys as $rawsurvey) {
                     $survey = array();
                     $survey['formName'] = format_string($rawsurvey->formName);
                     $survey['surveystatus'] = get_string('surveystatus' . $rawsurvey->surveyStatus, 'block_evasys_sync');
                     $survey['amountOfCompleteForms'] = format_string($rawsurvey->amountOfCompletedForms);
+                    if (is_object($record) and $record->state == 2 and $rawsurvey->surveyStatus == 'open') {
+                        $data['warning'] = 'true';
+                        $data['startdisabled'] = "";
+                        $data['enddisabled'] = "";
+                    }
                     array_push($surveys, $survey);
                     $showcontrols = true;
                 }
@@ -107,103 +143,11 @@ class block_evasys_sync extends block_base{
             }
             $data['courses'] = $courses;
             $data['showcontrols'] = $showcontrols;
-            $return = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
-
-            $this->content->text .= "<form action='$href' method='post' id='evasys_block_form'>";
-            $this->content->text .= "<input type='hidden' name='sesskey' value='" . sesskey() . "'>";
-            $this->content->text .= "<input type='hidden' name='courseid' value='" . $this->page->course->id . "'>";
-
-            $i = 0;
-            // Output for each Evasys-course mapped to this moodle course.
-            foreach ($evasyscourseids as $evasyscourseid) {
-                $this->content->text .= html_writer::div(html_writer::span(
-                                                             get_string('evacoursename', 'block_evasys_sync'), 'emphasize') .
-                                                         ' <span title="' . $evasyscourseid['tooltip'] . '">' . $evasyscourseid['title'] . '</span>');
-                $this->content->text .= html_writer::div(html_writer::span(
-                                                             get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid['tooltip'])));
-                $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
-                $outputsurveys = array();
-                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid['tooltip']);
-
-                if (empty($surveys)) {
-                    $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
-                } else {
-                    $readonly = "readonly";
-                    foreach ($surveys as &$survey) {
-                        // Output for each of those surveys :D.
-                        $prefills = \block_evasys_sync\evaluationperiod_survey_allocation::get_record(array('survey' => $survey->id));
-                        // Find if dates have been defined before and should be prefilled.
-                        if (!$prefills) {
-                            $begin = "";
-                            $stop = "";
-                            $beginmin = $endmin = date("Y-m-d");
-                        } else {
-                            $begin = (int)$prefills->get("startdate");
-                            $stop = (int)$prefills->get("enddate");
-                            if ($begin < time()) {
-                                $beginmin = date("Y-m-d", $begin);
-                            } else {
-                                $beginmin = date("Y-m-d");
-                            }
-                            if ($stop < time()) {
-                                $endmin = date("Y-m-d", $stop);
-                            } else {
-                                $endmin = date("Y-m-d");
-                            }
-                            $begin = date("Y-m-d", $begin);
-                            $stop = date("Y-m-d", $stop);
-                        }
-                        if (!($survey->surveyStatus == "closed")) {
-                            $readonly = "";
-                        }
-                        $outputsurveys[] =
-                            '<span class="emphasize">' . format_string($survey->formName) . '</span> <br/>' .
-                            '<span class="emphasize">' . get_string('surveystatus', 'block_evasys_sync') . '</span> ' .
-                            get_string('surveystatus' . $survey->surveyStatus, 'block_evasys_sync') . '<br/>' .
-                            '<span class="emphasize">' . get_string('finishedforms', 'block_evasys_sync') . '</span> ' . format_string($survey->amountOfCompletedForms) . '<br/>';
-                        $i++;
-                    }
-                    $this->content->text .= html_writer::alist($outputsurveys, null, 'ol');
-                }
-            }
-            $this->content->text .= "<fieldset>" .
-                "<table cellpadding='2px'>".
-                '<tr>'.
-                '<td>'.
-                "<label for='startDate'>" . get_string('begin', 'block_evasys_sync') . "</label>" .
-                '</td><td>'.
-                '<input type="date" name="startDate" min="' . $beginmin . '" value="' . $begin . '" ' . $readonly . '/>' .
-                '</td><td>'.
-                '<input type="time" name="startTime" /><br/>'.
-                '</td></tr>'.
-                '<tr><td>'.
-                "<label for='endDate'>" . get_string('end', 'block_evasys_sync') . "</label>" .
-                '</td><td>'.
-                '<input type="date" name="endDate" min="' . $endmin . '" value="' . $stop . '" ' . $readonly . '/>' .
-                '</td><td>'.
-                '<input type="time" name="endTime" />'.
-                '</td></tr>'.
-                '</table>'.
-                '</fieldset>';
-            if ($i > 0) {
-                if (!$mode) {
-                    $this->content->text .= "<input type='submit' value='" .
-                        get_string('invitestudents', 'block_evasys_sync') . "'/> \n ";
-                } else {
-                    $this->content->text .= "<input type='submit' value='" .
-                        get_string('direct_invite', 'block_evasys_sync') . "'/> \n";
-                }
-            }
-            $this->content->text .= "</form>";
-            $addurl = new moodle_url('/blocks/evasys_sync/addcourse.php?', array('id' => $this->page->course->id));
-            $this->content->text .= $OUTPUT->single_button($addurl, get_string('change_mapping', 'block_evasys_sync'), 'get');
+            $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
             $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
             $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
         }
-
-        $this->content->text = $return;
         $this->content->footer = '';
         return $this->content;
     }
@@ -223,30 +167,6 @@ class block_evasys_sync extends block_base{
      */
     public function has_config() {
         return true;
-    }
-
-    /**
-     * @param $category
-     * @return bool wether the teacher may set dates for this survey himself.
-     * @throws dml_exception
-     * @throws moodle_exception
-     */
-    private function getmode($category) {
-        global $DB;
-        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
-        if ($mode) {
-            return (bool) $mode->category_mode;
-        } else {
-            $parents = \core_course_category::get($category)->get_parents();
-            for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                if ($mode) {
-                    return (bool) $mode->category_mode;
-                }
-            }
-        }
-        $default = get_config('block_evasys_sync', 'default_evasys_mode');
-        return $default;
     }
 }
 
