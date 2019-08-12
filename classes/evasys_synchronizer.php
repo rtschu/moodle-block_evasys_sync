@@ -75,7 +75,7 @@ class evasys_synchronizer {
             $courseinfo = get_course_by_veranstid(intval($course));
             $course = array(
                 'title' => $courseinfo->titel,
-                'tooltip' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
+                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
         }
         close_secondary_DB_connection();
         $this->evasyscourseids = $extras;
@@ -100,12 +100,12 @@ class evasys_synchronizer {
     private function get_course_information() {
         $result = [];
         foreach ($this->get_evasys_courseid() as $courseid) {
-            $soapresult = $this->soapclient->GetCourse($courseid['tooltip'], 'PUBLIC', true, true);
+            $soapresult = $this->soapclient->GetCourse($courseid['id'], 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
-            $result[$courseid['tooltip']] = $soapresult;
+            $result[$courseid['id']] = $soapresult;
         }
         return $result;
     }
@@ -115,15 +115,15 @@ class evasys_synchronizer {
      * @return array of surveys with additional information
      */
     public function get_surveys($courseid) {
-        $courseid = $courseid['tooltip'];
         if ($this->courseinformation[$courseid] === null) {
             return array();
         }
-
+        if (!isset($this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys)) {
+            return array();
+        }
         $rawsurveys = $this->courseinformation[$courseid]->m_oSurveyHolder->m_aSurveys->Surveys;
-
-        if(count((array)$rawsurveys) == 0){
-            // no surveys available
+        if (count((array)$rawsurveys) == 0) {
+            // No surveys available.
             return array();
         }
 
@@ -144,7 +144,7 @@ class evasys_synchronizer {
         // Gets all surveys from the associated evasys courses.
         $surveys = [];
         foreach ($this->evasyscourseids as $course) {
-            $surveys = array_merge($surveys, $this->get_surveys($course));
+            $surveys = array_merge($surveys, $this->get_surveys($course['id']));
         }
         return $surveys;
     }
@@ -298,12 +298,11 @@ class evasys_synchronizer {
                 }
             }
         }
-
         $ids = array();
-        foreach($surveys as $survey){
+        foreach ($surveys as $survey) {
             array_push($ids, $survey->id);
         }
-        if($status == "success") {
+        if ($status == "success") {
             $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
                 'userid' => $USER->id,
                 'courseid' => $this->courseid,
@@ -380,17 +379,18 @@ class evasys_synchronizer {
             "Bitte versenden Sie die TANs im EvaSys-Menü " .
             "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n\r\n";
 
+        $notiftext .= "Gewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . "\r\n\r\n";
+
         foreach ($this->courseinformation as $course) {
             $notiftext .= "Name: " . $course->m_sCourseTitle . "\r\n";
-            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId . "\r\n\r\n";
+            $notiftext .= "EvaSys-ID: " . $course->m_sPubCourseId ."\r\n";
             $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
 
             $surveys = $this->get_surveys($course->m_sPubCourseId);
             $i = 0;
             foreach ($surveys as &$survey) {
                 $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
-                $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n";
-                $notiftext .= "\tGewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . "\r\n\r\n";
+                $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n\r\n";
                 $i++;
             }
         }
@@ -407,6 +407,7 @@ class evasys_synchronizer {
             'userid' => $USER->id,
             'courseid' => $this->courseid
         ));
+        $event->trigger();
     }
 
     /**

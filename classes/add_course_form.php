@@ -27,6 +27,9 @@ require_once($CFG->dirroot . '/local/lsf_unification/class_pg_lite.php');
 
 class add_course_form extends moodleform {
 
+    // Todo make mustache form.
+    // Todo check if course has been started.
+
     protected function definition () {
     }
 
@@ -35,7 +38,7 @@ class add_course_form extends moodleform {
         global $pgDB, $USER, $COURSE; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
 
-        $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
+        $mform->addElement( 'html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
         global $DB;
