@@ -20,6 +20,7 @@
  * @package block_evasys_sync
  * @copyright 2019 Robin Tschudi
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated true
  */
 
 namespace block_evasys_sync;
@@ -31,8 +32,9 @@ use core\persistent;
 /**
  * Class for loading/storing user-category pairs in the DB.
  *
- * @copyright 2017 Tamara Gunkel
+ * @copyright 2019 Robin Tschudi
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated true
  */
 class evaluationperiod_survey_allocation extends persistent {
     const TABLE = 'block_evasys_sync_surveys';
