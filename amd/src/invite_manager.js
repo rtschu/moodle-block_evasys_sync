@@ -13,55 +13,52 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                if (this.responseText.includes("/")) {
-                    var status = this.responseText.split("/");
-                    if (status[0] === "success") {
-                        var params = {"sent": status[1], "total": status[2], "queued": status[3]};
-                        str.get_strings([
-                            {'key': 'title_send_success', component: 'block_evasys_sync'},
-                            {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
-                            {'key': 'ok'}
+                if (this.responseText === "success inviting") {
+                    str.get_strings([
+                        {'key': 'title_success', component: 'block_evasys_sync'},
+                        {'key': 'content_success_invite', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
                         ]).done(function (s) {
                             notification.alert(s[0], s[1], s[2]);
-                            updateForm(dates);
                         });
-                    } else if (status[0] === "warning") {
-                        params = {"sent": status[1], "total": status[2], "queued": status[3]};
-                        str.get_strings([
-                            {'key': 'title_send_invalid', component: 'block_evasys_sync'},
-                            {'key': 'content_send_invalid', component: 'block_evasys_sync'},
-                            {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
-                            {'key': 'ok'}
-                        ]).done(function (s) {
-                            notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
-                        });
-                    } else if (status[0] === "rejected") {
-                        params = {"sent": status[1], "total": status[2], "queued": status[3]};
-                        str.get_strings([
-                            {'key': 'title_send_rejected', component: 'block_evasys_sync'},
-                            {'key': 'content_send_rejected', component: 'block_evasys_sync'},
-                            {'key': 'content_send_success', component: 'block_evasys_sync', param: params},
-                            {'key': 'ok'}
-                        ]).done(function (s) {
-                            notification.alert(s[0], s[1] + "<br />" + s[2], s[3]);
-                        });
-                    } else {
-                        str.get_string('send_error', 'block_evasys_sync').done(function (s) {
-                            notification.alert("Error", s, "OK");
-                        });
-                    }
-                } else if (this.responseText === "up_to_date") {
+                    updateForm(dates);
+                } else if (this.responseText === "success") {
                     str.get_strings([
-                        {'key': 'direct_title_info', component: 'block_evasys_sync'},
-                        {'key': 'direct_already', component: 'block_evasys_sync'},
+                        {'key': 'title_success', component: 'block_evasys_sync'},
+                        {'key': 'content_success', component: 'block_evasys_sync'},
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                } else if (this.responseText === "not_enough_dates") {
+                    updateForm(dates);
+                } else if (this.responseText === "Start after end") {
                     str.get_strings([
-                        {'key': 'title_send_failure', component: 'block_evasys_sync'},
-                        {'key': 'not_enough_dates', component: 'block_evasys_sync'},
+                        {'key': 'title_date_invalid', component: 'block_evasys_sync'},
+                        {'key': 'coontent_start_after_end', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    });
+                } else if (this.responseText === "Start in the past") {
+                    str.get_strings([
+                        {'key': 'title_date_invalid', component: 'block_evasys_sync'},
+                        {'key': 'content_invalidstart', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    });
+                } else if (this.responseText === "End in the past") {
+                    str.get_strings([
+                        {'key': 'title_date_invalid', component: 'block_evasys_sync'},
+                        {'key': 'content_invalidend', component: 'block_evasys_sync'},
+                        {'key': 'ok'}
+                    ]).done(function (s) {
+                        notification.alert(s[0], s[1], s[2]);
+                    });
+                } else if (this.responseText === "wrong mode") {
+                    str.get_strings([
+                        {'key': 'title_wrong_mode', component: 'block_evasys_sync'},
+                        {'key': 'content_wrong_mode', component: 'block_evasys_sync'},
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
@@ -81,36 +78,13 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             }
         };
         var s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
+        notification.alert("", s.valueOf(), "");
         xhttp.open("GET", s);
         xhttp.send();
     };
 
     var ajax = function (dates) {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-        var yyyy = today.getFullYear();
-
-        today = yyyy + '-' + mm + '-' + dd;
-        var confirm = (dates['startDate'] === today);
-        // If the Evaluation would start today we directly invite students, therefore this action should be confirmed.
-        if (confirm) {
-            str.get_strings([
-                {'key': 'direct_invite', component: 'block_evasys_sync'},
-                {'key': 'content_confirm', component: 'block_evasys_sync'},
-                {'key': 'yes'},
-                {'key': 'no'},
-            ]).done(function (s) {
-                notification.confirm(s[0], s[1], s[2], s[3], function () {
-                    call(dates);
-                }, function () {
-                    // If they choose to abort we need to enable the submit button again.
-                    $('#evasys_block_form').find(':input[type=submit]').prop('disabled', false);
-                });
-            });
-        } else {
-            call(dates);
-        }
+        call(dates);
     };
 
     var init = function () {
