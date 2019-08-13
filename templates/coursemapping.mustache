@@ -1,3 +1,12 @@
+{{!
+@template block_evasys_sync/coursemapping
+Example context (json):
+{
+    { "sesskey": "123" },
+    { "courseid" : "4" },
+}
+}}
+
 <form action="../blocks/evasys_sync/addcourse.php">
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="id" value="{{courseid}}">

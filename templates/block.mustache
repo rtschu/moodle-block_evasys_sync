@@ -1,3 +1,15 @@
+{{!
+@template block_evasys_sync/block
+Example context (json):
+{
+    { "href": "http://172.17.0.1/moodle/blocks/evasys_sync/invite.php" },
+    { "sesskey": "123" },
+    { "courseid" : "4" },
+    { "courses: [] },
+    { "showcontrols": 0 },
+    { "direct": 1 },
+}}
+
 <form action="{{href}}" method="post" id="evasys_block_form">
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="courseid" value="{{courseid}}">
