@@ -21,8 +21,8 @@ Example context (json):
             <div title="Kennung: {{evasyscourseid}}&#13;Evasysinterne ID: {{technicalid}}"><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div><span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span> {{c_participants}}</div>
             <div class="emphasize">{{# str}}surveys, block_evasys_sync{{/str}}</div>
-            {{#surveys}}
-                <ol>
+            <ol>
+                {{#surveys}}
                     {{#.}}
                         <li>
                             <span class="emphasize">{{formName}}</span><br/>
@@ -30,8 +30,8 @@ Example context (json):
                             <span class="emphasize">{{# str}}finishedforms, block_evasys_sync{{/str}}</span> {{amountOfCompleteForms}} <br/>
                         </li>
                     {{/.}}
-                </ol>
-            {{/surveys}}
+                {{/surveys}}
+            </ol>
         {{/.}}
     {{/courses}}
 {{#warning}}<span style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</span>{{/warning}}
