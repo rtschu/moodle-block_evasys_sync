@@ -45,7 +45,7 @@ class block_evasys_sync extends block_base{
 
         $access = has_capability('block/evasys_sync:synchronize', context_course::instance($this->page->course->id));
         $inlsf = !empty($this->page->course->idnumber);
-        if (!$access || !$inlsf) {
+        if (!$access) {
             return $this->content;
         }
 
@@ -105,8 +105,6 @@ class block_evasys_sync extends block_base{
             }
             $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
             // Begin form.
-            // Todo evasysname is actually lsf name. change.
-            // Todo display error if some open surveys in closed state.
             $data = array(
                 'href' => $href,
                 'sesskey' => sesskey(),
@@ -121,7 +119,9 @@ class block_evasys_sync extends block_base{
             $showcontrols = false;
             foreach ($evasyscourseinfos as $evasyscourseinfo) {
                 $course = array();
-                $course['evasyscourseid'] = $evasyscourseinfo['title'];
+                $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
+                $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
+                $course['evasyscourseid'] = $evasyscourseinfo['id'];
                 $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
                 $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
                 $surveys = array();
@@ -145,8 +145,16 @@ class block_evasys_sync extends block_base{
             $data['showcontrols'] = $showcontrols;
             $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
-            $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
-            $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
+            $hasextras = \block_evasys_sync\course_evaluation_allocation::record_exists_select("course = {$this->page->course->id}");
+            if ($inlsf or $hasextras) {
+                $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
+                $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
+            } else {
+                $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/coursemapping", array(
+                    "courseid" => $this->page->course->id,
+                    "sesskey" => sesskey()
+                ));
+            }
         }
         $this->content->footer = '';
         return $this->content;

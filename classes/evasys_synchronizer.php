@@ -149,6 +149,20 @@ class evasys_synchronizer {
         return $surveys;
     }
 
+    public function get_course_name($coursekey) {
+        if (isset($this->courseinformation[$coursekey])) {
+            return $this->courseinformation[$coursekey]->m_sCourseTitle;
+        }
+        return "Unknown";
+    }
+
+    public function get_course_id($coursekey) {
+        if (isset($this->courseinformation[$coursekey])) {
+            return $this->courseinformation[$coursekey]->m_nCourseId;
+        }
+        return "Unknown";
+    }
+
     /**
      * Enriches Surveys with Information
      * @param \stdClass $rawsurvey Survey without additional information

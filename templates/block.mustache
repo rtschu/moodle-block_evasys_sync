@@ -4,7 +4,7 @@
     {{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
     {{#courses}}
         {{#.}}
-            <div><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscourseid}}</div>
+            <div title="Kennung: {{evasyscourseid}}&#13;Evasysinterne ID: {{technicalid}}"><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div><span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span> {{c_participants}}</div>
             <div class="emphasize">{{# str}}surveys, block_evasys_sync{{/str}}</div>
             {{#surveys}}
@@ -50,9 +50,5 @@
     {{/showcontrols}}
 </form>
 {{#coursemappingenabled}}
-<form action="../blocks/evasys_sync/addcourse.php">
-    <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <input type="hidden" name="id" value="{{courseid}}">
-    <input type="submit" value="{{# str}}change_mapping, block_evasys_sync{{/str}}" {{#disabled}}disabled{{/disabled}}>
-</form>
+    {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
