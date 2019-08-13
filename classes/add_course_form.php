@@ -48,7 +48,15 @@ class add_course_form extends moodleform {
         } else {
             $maincourse = null;
         }
-        $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
+        $veranstids = array();
+        if (!is_siteadmin()) {
+            $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
+        } else {
+            $teachers = get_users_by_capability(\context_course::instance($id), 'block/evasys_sync:modifymapping');
+            foreach ($teachers as $teacher) {
+                    $veranstids = array_merge($veranstids, get_veranstids_by_teacher(get_teachers_pid($teacher->username)));
+            }
+        }
         $courses = get_courses_by_veranstids($veranstids);
         $availablecourselist = array();
         foreach ($courses as $veranstid => $course) {
@@ -58,13 +66,13 @@ class add_course_form extends moodleform {
             $result['semestertxt'] = $course->semestertxt;
             $result['semester'] = $course->semester;
             $availablecourselist[$course->veranstid] = $result;
-            $sorter = function ($a, $b) {
-                if ($a['semester'] == $b['semester']) {
-                    return strcasecmp($a['info'], $b['info']);
-                }
-                return ($a['semester'] < $b['semester']) ? 1 : -1;
-            };
         }
+        $sorter = function ($a, $b) {
+            if ($a['semester'] == $b['semester']) {
+                return strcasecmp($a['info'], $b['info']);
+            }
+            return ($a['semester'] < $b['semester']) ? 1 : -1;
+        };
         unset($availablecourselist[$lsfid]);
         usort($availablecourselist, $sorter);
 

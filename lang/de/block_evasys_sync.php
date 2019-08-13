@@ -47,6 +47,7 @@ $string['selection_success'] = "Auswahl erfolgreich übermittelt";
 $string['add_course_header'] = "Wählen Sie die Veranstaltungen, die über diesen Learnweb-Kurs evaluiert werden sollen";
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";
+$string['forbidden'] = "Die Aktion ist im aktuellen Status des Kurses nicht zulässig";
 
 // Direct invite strings.
 

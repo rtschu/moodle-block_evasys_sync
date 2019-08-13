@@ -46,6 +46,7 @@ $string['selection_success'] = "Selection successful";
 $string['add_course_header'] = "Choose courses, that should be synchronized with this moodle course";
 $string['coursename'] = "Coursename";
 $string['associated'] = "associated";
+$string['forbidden'] = "This action is currently prohibited.";
 
 // Direct invite strings.
 

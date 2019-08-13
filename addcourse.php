@@ -21,8 +21,18 @@ $id = required_param('id', PARAM_INT);
 require_login();
 require_capability('block/evasys_sync:modifymapping', context_course::instance($id));
 
+global $OUTPUT;
+
 $PAGE->set_url('/blocks/evasys_sync/addcourse.php');
 $PAGE->set_context(context_course::instance($id));
+
+$record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $id));
+if ($record->state == 1 or $record->state == 2 and !is_siteadmin()) {
+    echo $OUTPUT->header();
+    echo get_string('forbidden', 'block_evasys_sync');
+    echo $OUTPUT->footer();
+    return;
+}
 
 $mform = new \block_evasys_sync\add_course_form();
 $mform->init($id);
