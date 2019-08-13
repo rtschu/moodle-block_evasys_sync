@@ -29,6 +29,7 @@ $mform->init($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
 $prefill = new stdClass();
+$pre = array();
 if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
@@ -50,6 +51,8 @@ if ($mform->is_validated()) {
     }
     $magicstring = '';
 
+    // Pop the submitbutton.
+    array_pop($data);
     foreach ($pre as $entry) {
         if (!is_course_of_teacher($entry, $USER->username) and !is_siteadmin()) {
             $magicstring .= $entry . "#";

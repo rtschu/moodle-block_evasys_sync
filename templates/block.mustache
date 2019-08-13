@@ -15,6 +15,7 @@ Example context (json):
     <input type="hidden" name="sesskey" value="{{sesskey}}">
     <input type="hidden" name="courseid" value="{{courseid}}">
     {{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
+    {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
     {{#courses}}
         {{#.}}
             <div title="Kennung: {{evasyscourseid}}&#13;Evasysinterne ID: {{technicalid}}"><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>

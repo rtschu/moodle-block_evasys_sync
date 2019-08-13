@@ -43,7 +43,11 @@ class add_course_form extends moodleform {
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
         global $DB;
         $lsfid = $DB->get_field('course', 'idnumber', array('id' => $id));
-        $maincourse = (array) get_course_by_veranstid($lsfid);
+        if ($lsfid) {
+            $maincourse = (array)get_course_by_veranstid($lsfid);
+        } else {
+            $maincourse = null;
+        }
         $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
         $courses = get_courses_by_veranstids($veranstids);
         $availablecourselist = array();
@@ -139,30 +143,32 @@ class add_course_form extends moodleform {
 
     private function addpubid($course) {
         $mform = $this->_form;
-        $mform->addElement('html', '<tr disabled="disabled">');
-        $mform->addElement('html', '<td class="cell c0"><div>' .
-                                 trim($course['titel']) .
-                                 '</div></td>');
-        $mform->addElement('html', '<td class="cell c1">');
+        if ($course) {
+            $mform->addElement('html', '<tr disabled="disabled">');
+            $mform->addElement('html', '<td class="cell c0"><div>' .
+                                     trim($course['titel']) .
+                                     '</div></td>');
+            $mform->addElement('html', '<td class="cell c1">');
 
-        $mform->addElement('html', '<div>' .
-                                 trim($course['semestertxt']) .
-                                 '</div></td>');
+            $mform->addElement('html', '<div>' .
+                                     trim($course['semestertxt']) .
+                                     '</div></td>');
 
-        $mform->addElement('html', '<td class="cell c2">');
+            $mform->addElement('html', '<td class="cell c2">');
 
-        $name = $course['veranstid'];
-        $mform->addElement('checkbox', $name);
-        $mform->setType($name, PARAM_BOOL);
-        $mform->setDefault($name, true);
-        $mform->addElement( 'checkbox', 'dummy');
-        $mform->setType('dummy', PARAM_BOOL);
-        $mform->setDefault('dummy', false);
-        // You can't directly declare a checkbox allways disabled so we have to create an artificial circle.
-        $mform->hideIf('dummy', $name, 'checked');
-        $mform->disabledIf($name, 'dummy');
+            $name = $course['veranstid'];
+            $mform->addElement('checkbox', $name);
+            $mform->setType($name, PARAM_BOOL);
+            $mform->setDefault($name, true);
+            $mform->addElement('checkbox', 'dummy');
+            $mform->setType('dummy', PARAM_BOOL);
+            $mform->setDefault('dummy', false);
+            // You can't directly declare a checkbox allways disabled so we have to create an artificial circle.
+            $mform->hideIf('dummy', $name, 'checked');
+            $mform->disabledIf($name, 'dummy');
 
-        $mform->addElement('html', '</td></tr>');
+            $mform->addElement('html', '</td></tr>');
+        }
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
         $mform->addElement('submit', 'submitbutton', get_string('submit', 'block_evasys_sync'));

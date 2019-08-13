@@ -104,6 +104,7 @@ class block_evasys_sync extends block_base{
                 }
             }
             $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
+            $nostudents = (count_enrolled_users(context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
             // Begin form.
             $data = array(
                 'href' => $href,
@@ -113,7 +114,8 @@ class block_evasys_sync extends block_base{
                 'startdisabled' => $startdisabled,
                 'enddisabled' => $enddisabled,
                 'startoption' => $enddisabled xor $startdisabled,
-                'coursemappingenabled' => !$startdisabled or is_siteadmin()
+                'coursemappingenabled' => !$startdisabled or is_siteadmin(),
+                'nostudents' => $nostudents
             );
             $courses = array();
             $showcontrols = false;
@@ -145,7 +147,7 @@ class block_evasys_sync extends block_base{
             $data['showcontrols'] = $showcontrols;
             $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
-            $hasextras = \block_evasys_sync\course_evaluation_allocation::record_exists_select("course = {$this->page->course->id}");
+            $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select("course = {$this->page->course->id} AND NOT evasyscourses = ''");
             if ($inlsf or $hasextras) {
                 $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
                 $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');

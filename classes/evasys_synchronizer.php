@@ -17,6 +17,7 @@
 namespace block_evasys_sync;
 
 use core_availability\result;
+use Horde\Socket\Client\Exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,14 +48,16 @@ class evasys_synchronizer {
         $course = get_course($this->courseid);
 
         // Fetch veranstnr from LSF view.
-        establish_secondary_DB_connection();
-        $lsfentry = get_course_by_veranstid(intval($course->idnumber));
-        close_secondary_DB_connection();
+        if ($course->idnumber) {
+            establish_secondary_DB_connection();
+            $lsfentry = get_course_by_veranstid(intval($course->idnumber));
+            close_secondary_DB_connection();
 
-        if (!is_object($lsfentry)) {
-            throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
+            if (!is_object($lsfentry)) {
+                throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
+            }
+            $maincourse = trim($lsfentry->veranstid);
         }
-        $maincourse = trim($lsfentry->veranstid);
         // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $this->courseid));
         // Get all associated courses.
@@ -65,8 +68,10 @@ class evasys_synchronizer {
             $extras = [];
         }
         // If noone has associated the course itself, we force that.
-        if (!in_array($maincourse, $extras)) {
-            array_unshift($extras, $maincourse);
+        if (isset($maincourse)) {
+            if (!in_array($maincourse, $extras) && !$maincourse == "") {
+                array_unshift($extras, $maincourse);
+            }
         }
         $extras = array_filter($extras);
         establish_secondary_DB_connection();
