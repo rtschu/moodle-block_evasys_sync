@@ -256,6 +256,7 @@ class evasys_inviter {
             // The Close Task has already been executed. This can happen if the Survey was reopened for some Reason.
             // Because of this, we'll still close the survey, however we can't send the result mail.
             // Also there might be another Error. In any Case we want to make sure the Survey gets closed.
+            // TODO alert evaluationsbeauftragten.
             $this->soapclient->CloseSurvey($surveyid);
         }
     }
