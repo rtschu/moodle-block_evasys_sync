@@ -25,7 +25,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 } else if (this.responseText === "success") {
                     str.get_strings([
                         {'key': 'title_success', component: 'block_evasys_sync'},
-                        {'key': 'content_success', component: 'block_evasys_sync'},
+                        {'key': 'content_success_direct', component: 'block_evasys_sync'},
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);

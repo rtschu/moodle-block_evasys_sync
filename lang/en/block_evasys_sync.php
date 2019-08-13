@@ -105,7 +105,7 @@ $string['content_confirm_reactivate'] = "Are you sure you want to reactivate the
 // New invite strings.
 $string['title_success'] = "Success";
 $string['content_success_invite'] = "Evaluation has been started";
-$string['content_success'] = "Evaluationperiod has been set";
+$string['content_success_direct'] = "Evaluationperiod has been set";
 $string['title_date_invalid'] = "Invalid Date";
 $string['content_invalidstart'] = "Start is in the past";
 $string['content_invalidend'] = "End is in the past";

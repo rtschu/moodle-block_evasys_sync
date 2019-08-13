@@ -74,7 +74,7 @@ $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie e
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
 $string['content_success_invite'] = "Die Evaluation wurd erfolgreich gestartet";
-$string['content_success'] = "Die Evaluationsperiode wurde erfolgreich gesetzt";
+$string['content_success_direct'] = "Die Evaluationsperiode wurde erfolgreich gesetzt";
 $string['title_date_invalid'] = "Unzulässiges Datum";
 $string['content_invalidstart'] = "Der Start ist in der Vergangenheit";
 $string['content_invalidend'] = "Das Ende ist in der Vergangenheit";
