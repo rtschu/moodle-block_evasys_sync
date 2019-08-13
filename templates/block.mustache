@@ -56,10 +56,10 @@ Example context (json):
             {{/block_evasys_sync/datetimepicker}}
         </fieldset>
         {{^direct}}
-            <input type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}"/>
+            <input type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{enddisabled}}/>
         {{/direct}}
         {{#direct}}
-            <input type="submit" value="{{# str}}direct_invite, block_evasys_sync{{/str}}"/>
+            <input type="submit" value="{{# str}}direct_invite, block_evasys_sync{{/str}}" {{enddisabled}}/>
         {{/direct}}
     {{/showcontrols}}
 </form>
