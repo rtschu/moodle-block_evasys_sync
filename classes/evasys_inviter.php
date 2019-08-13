@@ -124,7 +124,6 @@ class evasys_inviter {
         $surveys = array_unique($surveys);
 
         foreach ($surveys as $survey) {
-            // Todo log result.
             $result = $this->soapclient->sendInvitationToParticipants($survey);
         }
     }
@@ -196,7 +195,6 @@ class evasys_inviter {
             if (!is_soap_fault($soapresult) && $soapresult) {
                 $this->make_sure_enough_passwords_are_available($evasyscourse);
             } else {
-                // TODO implement logging call.
                 $soapresult = false;
             }
         }
