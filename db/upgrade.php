@@ -138,6 +138,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         $time = time();
         $DB->execute("UPDATE {block_evasys_sync_surveys} SET state=1 WHERE startdate <= $time");
         $DB->execute("UPDATE {block_evasys_sync_surveys} SET state=2 WHERE enddate <= $time");
+        upgrade_block_savepoint(true, 2019172402, 'evasys_sync');
     }
 
     if ($oldversion < 2019180500) {
@@ -166,10 +167,10 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         }
         $DB->execute("INSERT INTO {block_evasys_sync_courseeval} (course, startdate, enddate, usermodified, timecreated, timemodified)".
                              " SELECT DISTINCT ON (course) course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
+        upgrade_block_savepoint(true, 2019180500, 'evasys_sync');
     }
 
     // Evasys_sync savepoint reached.
-    upgrade_block_savepoint(true, 2019180500, 'evasys_sync');
 
     return true;
 }
