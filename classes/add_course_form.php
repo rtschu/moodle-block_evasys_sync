@@ -32,7 +32,7 @@ class add_course_form extends moodleform {
 
     public function init ($id) {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
-        global $pgDB, $USER, $COURSE; // phpcs:ignore // @codingStandardsIgnoreLine
+        global $pgDB, $USER; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
 
         $mform->addElement('html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
@@ -52,7 +52,10 @@ class add_course_form extends moodleform {
             $result['semester'] = $course->semester;
             $availablecourselist[$course->veranstid] = $result;
             $sorter = function ($a, $b) {
-                return $a['semester'] < $b['semester'];
+                if ($a['semester'] == $b['semester']) {
+                    return 0;
+                }
+                return ($a['semester'] < $b['semester']) ? 1 : -1;
             };
         }
         unset($availablecourselist[$lsfid]);
