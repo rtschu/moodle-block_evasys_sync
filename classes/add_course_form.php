@@ -60,7 +60,7 @@ class add_course_form extends moodleform {
             $availablecourselist[$course->veranstid] = $result;
             $sorter = function ($a, $b) {
                 if ($a['semester'] == $b['semester']) {
-                    return 0;
+                    return strcasecmp($a['info'], $b['info']);
                 }
                 return ($a['semester'] < $b['semester']) ? 1 : -1;
             };
