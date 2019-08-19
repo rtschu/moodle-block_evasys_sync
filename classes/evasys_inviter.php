@@ -103,16 +103,39 @@ class evasys_inviter {
     }
 
     public function close_evasys_surveys($courses) {
-        $surveys = array();
-        foreach ($courses as $course) {
+        foreach ($courses as $evasysid => $moodlecourse) {
+            $errorsurveys = array();
             // Get all open evasys Surveys.
-            $surveys = array_merge($surveys, $this->get_evasys_course_surveyids($course, false));
+            $surveys = $this->get_evasys_course_surveyids($evasysid, false);
+            foreach ($surveys as $survey) {
+                if (!$this->set_close_task($survey)) {
+                    array_push($errorsurveys, $evasysid);
+                }
+            }
+            if (count($errorsurveys) > 0) {
+                $this->send_failure_warning($moodlecourse, $evasysid, $errorsurveys);
+            }
         }
-        $surveys = array_unique($surveys);
+    }
 
-        foreach ($surveys as $survey) {
-            $this->set_close_task($survey);
+    public function send_failure_warning ($moodlecourse, $evasysid, $errorsurveys) {
+        global $USER;
+        $course = get_course($moodlecourse);
+        $userto = evasys_synchronizer::get_assigned_user($course);
+        $userfrom = $USER;
+        $subject = "Automatisches Senden der Evaluationsergebnisse für Moodlekurs $moodlecourse fehlgeschlagen!";
+        $message = "Sehr geehte/r Evaluationskoordinator/in \n\r\n\r";
+        $message .= "Leider gab es ein Problem beim automatischen Versand der Ergebnisse.\r\n";
+        $message .= "Bitte versenden sie die Evaluationsergebnisse für folgende Umfragen: \r\n\r\n";
+        $message .= "\tEvasysveranstaltung: $evasysid \r\n";
+        $message .= "\tEvasysumfrageids: \r\n";
+        foreach ($errorsurveys as $errorsurvey) {
+            $message .= "\t\t -$errorsurvey\r\n";
         }
+        $message .= "\r\n";
+        $message .= "Mit freundlichen Grüßen \r\n";
+        $message .= "Ihr Learnweb-Support.";
+        email_to_user($userfrom, $userto, $subject, $message);
     }
 
     public function open_evasys_surveys($courses) {
@@ -157,7 +180,9 @@ class evasys_inviter {
         $courses = array();
         foreach ($courseids as $courseid) {
             if (self::getmode(get_course($courseid)->category) == 1) {
-                $courses = array_merge($courses, self::get_evasysids($courseid));
+                foreach (self::get_evasysids($courseid) as $surveyid) {
+                    $courses[$surveyid] = $courseid;
+                }
             }
         }
         $this->close_evasys_surveys($courses);
@@ -256,9 +281,11 @@ class evasys_inviter {
             // The Close Task has already been executed. This can happen if the Survey was reopened for some Reason.
             // Because of this, we'll still close the survey, however we can't send the result mail.
             // Also there might be another Error. In any Case we want to make sure the Survey gets closed.
-            // TODO alert evaluationsbeauftragten.
+            // If this was called by the close survey method the evaluationkoordinator will be notified.
             $this->soapclient->CloseSurvey($surveyid);
+            return false;
         }
+        return true;
     }
 
     /**
