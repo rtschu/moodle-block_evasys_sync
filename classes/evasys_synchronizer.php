@@ -427,6 +427,8 @@ class evasys_synchronizer {
             'courseid' => $this->courseid
         ));
         $event->trigger();
+        global $DB;
+        $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 3 WHERE course={$this->courseid}");
     }
 
     /**
