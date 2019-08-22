@@ -25,7 +25,7 @@ $PAGE->set_url('/blocks/evasys_sync/addcourse.php');
 $PAGE->set_context(context_course::instance($id));
 
 $mform = new \block_evasys_sync\add_course_form();
-$mform->addid($id);
+$mform->init($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
 $prefill = new stdClass();
@@ -39,6 +39,7 @@ if (!$pid) {
     foreach ($pre as $value) {
         $prefill->$value = 1;
     }
+
 }
 
 if ($mform->is_validated()) {
