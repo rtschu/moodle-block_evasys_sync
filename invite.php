@@ -19,7 +19,6 @@ require_once('../../config.php');
 require_login();
 require_sesskey();
 
-$timezone = "Europe/Berlin";
 $decoder = array(
     get_string('January', 'block_evasys_sync') => 1,
     get_string('February', 'block_evasys_sync') => 2,
@@ -52,12 +51,12 @@ $endday = required_param('day_end', PARAM_TEXT);
 $endhour = required_param('hour_end', PARAM_TEXT);
 $endmin = required_param('minute_end', PARAM_TEXT);
 $enddate = new DateTime();
-$enddate->setTimezone(new DateTimeZone($timezone));
+$enddate->setTimezone(\core_date::get_server_timezone_object());
 $enddate->setDate($endyear, $decoder[$endmonth], $endday);
 $enddate->setTime($endhour, $endmin);
 $end = $enddate->getTimestamp();
 if ($invitedirect) {
-    $startdate = new DateTime();
+    $startdate = new \DateTime("now", \core_date::get_server_timezone_object());
     $start = $startdate->getTimestamp();
 } else {
     $startyear = required_param('year_start', PARAM_TEXT);
@@ -66,7 +65,7 @@ if ($invitedirect) {
     $starthour = required_param('hour_start', PARAM_TEXT);
     $startmin = required_param('minute_start', PARAM_TEXT);
     $startdate = new DateTime();
-    $startdate->setTimezone(new DateTimeZone($timezone));
+    $startdate->setTimezone(\core_date::get_server_timezone_object());
     $startdate->setDate($startyear, $decoder[$startmonth], $startday);
     $startdate->setTime($starthour, $startmin);
     $start = $startdate->getTimestamp();
