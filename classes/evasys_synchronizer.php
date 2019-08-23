@@ -69,15 +69,16 @@ class evasys_synchronizer {
         }
         $extras = array_filter($extras);
         establish_secondary_DB_connection();
-        // Fetch the Evasysids for the courses.
-        foreach ($extras as &$course) {
+        // Fetch metadata (id, title) for the courses.
+        $result = array();
+        foreach ($extras as $course) {
             $courseinfo = get_course_by_veranstid(intval($course));
-            $course = array(
+            $result[] = array(
                 'title' => $courseinfo->titel,
                 'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
         }
         close_secondary_DB_connection();
-        $this->lsfcourses = $extras;
+        $this->lsfcourses = $result;
         return $this->lsfcourses;
     }
 
@@ -128,7 +129,7 @@ class evasys_synchronizer {
         $enrichedsurveys = array();
 
         foreach ($rawsurveys as &$survey) {
-            array_push($enrichedsurveys, $this->enrich_survey($survey));
+            $enrichedsurveys[] = $this->enrich_survey($survey);
         }
         return $enrichedsurveys;
     }
