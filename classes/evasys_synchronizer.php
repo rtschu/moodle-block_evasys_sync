@@ -146,7 +146,7 @@ class evasys_synchronizer {
         // Gets all surveys from the associated evasys courses.
         $surveys = [];
         foreach ($this->lsfcourses as $course) {
-            $surveys[] = $this->get_surveys($course['id']);
+            $surveys = array_merge($surveys, $this->get_surveys($course['id']));
         }
         return $surveys;
     }
