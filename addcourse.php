@@ -21,8 +21,6 @@ $id = required_param('id', PARAM_INT);
 require_login();
 require_capability('block/evasys_sync:modifymapping', context_course::instance($id));
 
-global $OUTPUT;
-
 $PAGE->set_url('/blocks/evasys_sync/addcourse.php');
 $PAGE->set_context(context_course::instance($id));
 
