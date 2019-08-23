@@ -109,7 +109,6 @@ if ($invitedirect) {
     $inviter->open_moodle_courses(array($courseid));
 }
 
-global $USER, $PAGE;
 $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
         'userid' => $USER->id,
         'courseid' => $courseid,

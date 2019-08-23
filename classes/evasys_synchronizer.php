@@ -16,9 +16,6 @@
 
 namespace block_evasys_sync;
 
-use core_availability\result;
-use Horde\Socket\Client\Exception;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
@@ -67,9 +64,9 @@ class evasys_synchronizer {
             $extras = [];
         }
         // If noone has associated the course itself, we force that.
-        if (isset($maincourse)) {
-            if (!in_array($maincourse, $extras) && !$maincourse == "") {
-                array_unshift($extras, $maincourse);
+        if (isset($maincourse) && !empty($maincourse)) {
+            if (!in_array($maincourse, $extras)) {
+                $extras[] = $maincourse;
             }
         }
         $extras = array_filter($extras);
@@ -274,6 +271,12 @@ class evasys_synchronizer {
         return $soapresult;
     }
 
+    /**
+     * TODO: Method seems to be unused.
+     * @param $dates
+     * @return string
+     * @throws \coding_exception
+     */
     public function invite_all($dates) {
         global $USER;
         // Get all surveys of this moodle course.
@@ -283,9 +286,10 @@ class evasys_synchronizer {
         $reminders = 0;
         $status = "success";
         $today = date("Ymd");
-        for ($i = 0; $i < count($surveys); $i++) {
+        $surveycount = count($surveys);
+        for ($i = 0; $i < $surveycount; $i++) {
             $survey = $surveys[$i];
-            if (intval(str_replace("-", "", $dates["start"])) == $today) {
+            if (str_replace("-", "", $dates["start"]) == $today) {
                 // If the survey is set to start today we sent our the invites via evasys right away.
                 $id = $survey->id;
                 $soap = $this->soapclient->sendInvitationToParticipants($id);
@@ -293,7 +297,6 @@ class evasys_synchronizer {
                 $sent += intval(explode("/", $soap)[0]);
                 $total += intval(explode("/", $soap)[1]);
                 $start = time();
-                global $USER;
                 $event = \block_evasys_sync\event\evaluation_opened::create(array(
                     'courseid' => $this->courseid,
                     'other' => array('teacher' => $USER->id, 'evasysid' => $id, 'type' => "manual")
@@ -319,7 +322,7 @@ class evasys_synchronizer {
         }
         $ids = array();
         foreach ($surveys as $survey) {
-            array_push($ids, $survey->id);
+            $ids[] = $survey->id;
         }
         if ($status == "success") {
             $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
@@ -330,8 +333,8 @@ class evasys_synchronizer {
             ));
             $event->trigger();
         }
-        $soap = "$status/$sent/$total/$reminders";
-        return $soap;
+        $summary = "$status/$sent/$total/$reminders";
+        return $summary;
     }
 
     public function setstartandend ($id, $start, $end) {
@@ -356,7 +359,6 @@ class evasys_synchronizer {
             return true;
         } else {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
-            $return = false;
             $time = time();
             foreach ($data as $key => $value) {
                 if (($key == 'startdate' or $key == 'enddate')
@@ -427,7 +429,7 @@ class evasys_synchronizer {
         ));
         $event->trigger();
         global $DB;
-        $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 3 WHERE course={$this->courseid}");
+        $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 3 WHERE course = :courseid", ['courseid' => $this->courseid]);
     }
 
     /**
