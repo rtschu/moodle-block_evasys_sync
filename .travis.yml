@@ -17,12 +17,18 @@ addons:
 php:
  - 7.0
  - 7.1
+ - 7.2
+ - 7.3
 
 matrix:
   exclude:
     - env: DB=pgsql MOODLE_BRANCH=master
       php: 7.0
     - env: DB=mysqli MOODLE_BRANCH=master
+      php: 7.0
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+      php: 7.0
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       php: 7.0
   fast_finish: true
 
@@ -32,6 +38,8 @@ env:
  matrix:
   - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=master
+  - DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
 
@@ -52,8 +60,8 @@ jobs:
   include:
     # Prechecks against latest Moodle stable only.
     - stage: static
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+      php: 7.3
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       script:
       - moodle-plugin-ci phplint
       - moodle-plugin-ci phpcpd
@@ -66,8 +74,8 @@ jobs:
 
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+      php: 7.3
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat

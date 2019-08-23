@@ -67,7 +67,7 @@ class block_evasys_sync extends block_base{
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->__get('course')->id);
 
             try {
-                $evasyscourseinfos = $evasyssynchronizer->get_evasys_courseid();
+                $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
             } catch (Exception $exception) {
                 \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
                 $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
@@ -118,7 +118,7 @@ class block_evasys_sync extends block_base{
             );
             $courses = array();
             $showcontrols = false;
-            foreach ($evasyscourseinfos as $evasyscourseinfo) {
+            foreach ($evasyscourses as $evasyscourseinfo) {
                 $course = array();
                 $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
                 $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
