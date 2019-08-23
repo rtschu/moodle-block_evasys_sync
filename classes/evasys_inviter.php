@@ -57,23 +57,25 @@ class evasys_inviter {
         $extras = array_filter($extras);
         establish_secondary_DB_connection();
         // Fetch the Evasysids for the courses.
-        foreach ($extras as &$course) {
+        $relevantcourses = array();
+        foreach ($extras as $course) {
             $courseinfo = get_course_by_veranstid(intval($course));
             if (!is_object($courseinfo)) {
                 throw new \Exception('Cannot sync: Connection to LSF could not be established. Please try again later.');
             }
-            $course = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
+            $relevantcourses[] = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
         }
+        // Maybe add entry via the $course->idnumber.
         $course = get_course($courseid);
         if ($course->idnumber) {
             $courseinfo = get_course_by_veranstid(intval($course->idnumber));
             $maincourse = trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt);
         }
-        if (!in_array($maincourse, $extras)) {
-            array_unshift($extras, $maincourse);
+        if (!in_array($maincourse, $relevantcourses)) {
+            $relevantcourses[] = $maincourse;
         }
         close_secondary_DB_connection();
-        return $extras;
+        return $relevantcourses;
     }
 
     public function get_evasys_course_surveyids($evasyskennung, $all = true) {
