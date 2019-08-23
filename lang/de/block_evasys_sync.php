@@ -72,14 +72,14 @@ $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie e
 
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
-$string['content_success_invite'] = "Die Evaluation wurd erfolgreich gestartet";
+$string['content_success_invite'] = "Die Evaluation wurde erfolgreich gestartet";
 $string['content_success_direct'] = "Die Evaluationsperiode wurde erfolgreich gesetzt";
 $string['title_date_invalid'] = "Unzulässiges Datum";
 $string['content_invalidstart'] = "Der Start ist in der Vergangenheit";
 $string['content_invalidend'] = "Das Ende ist in der Vergangenheit";
 $string['content_start_after_end'] = "Der Start ist nach dem Ende";
-$string['title_wrong_mode'] = "Unzulässige operation";
-$string['content_wrong_mode'] = "Dieser Kurs ist nicht im angesprochenen modus!";
+$string['title_wrong_mode'] = "Unzulässige Operation";
+$string['content_wrong_mode'] = "Dieser Kurs ist nicht im angenommenen Modus. Bitte wenden Sie sich an das Support-Team.";
 
 // Form strings.
 
@@ -104,7 +104,7 @@ $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werd
                              "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
-$string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes setzen der Startzeit wird " .
+$string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes Setzen der Startzeit wird " .
                                 " die Evaluation in allen Evasysumfrage neu anstoßen, die mindestens einen neuen Teilnehmer haben. <br />" .
                                 "Sind Sie sicher, dass sie die Startzeit freigeben möchten?";
 

@@ -37,7 +37,7 @@ $string['end'] = 'end';
 $string['change_mapping'] = "Change mapping";
 $string['semester'] = "Semester";
 $string['direct_invite_checkbox'] = 'Start evaluation immediately';
-$string['reactivate_invite'] = 'Invite Students again';
+$string['reactivate_invite'] = 'Invite students again';
 $string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 
 // Multi allocation strings.
@@ -105,7 +105,7 @@ $string['content_confirm_reactivate'] = "Are you sure you want to reactivate the
 // New invite strings.
 $string['title_success'] = "Success";
 $string['content_success_invite'] = "Evaluation has been started";
-$string['content_success_direct'] = "Evaluationperiod has been set";
+$string['content_success_direct'] = "Evaluation period has been set";
 $string['title_date_invalid'] = "Invalid Date";
 $string['content_invalidstart'] = "Start is in the past";
 $string['content_invalidend'] = "End is in the past";
@@ -153,7 +153,7 @@ $string['invalidmode'] = 'Invalid category mode';
 $string['invalidcourse'] = "Invalid course";
 $string['invalidsurvey'] = "Invalid survey";
 $string['invaliddate'] = "Invalid date";
-$string['invalidstate'] = "Invalid statecode";
+$string['invalidstate'] = "Invalid state code";
 
 
 // Privacy API.
@@ -161,7 +161,7 @@ $string['privacy:metadata'] = 'Invite students to participate in course quality 
 $string['privacy:metadata:username'] = 'Usernames of students enrolled in a course (disguised as e-mail addresses to satisfy EvaSys requirements).';
 
 // Events.
-$string['eventevaluationperiod_set'] = 'Evaluationperiod has been set';
+$string['eventevaluationperiod_set'] = 'Evaluation period has been set';
 $string['eventevaluation_opened'] = 'Evaluation has been started';
 $string['eventevaluation_closed'] = 'Evaluation has been closed';
 $string['eventevaluation_requested'] = 'Evaluation has been requested';
