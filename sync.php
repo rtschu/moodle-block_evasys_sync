@@ -32,8 +32,9 @@ $startday = required_param('day_start', PARAM_TEXT);
 $starthour = required_param('hour_start', PARAM_TEXT);
 $startmin = required_param('minute_start', PARAM_TEXT);
 
-$start = "$startday $startmonth $startyear $starthour:$startmin";
-$end = "$endday $endmonth $endyear $endhour:$endmin";
+// Prepare formatted dates for email text.
+$start = "$startday. $startmonth $startyear $starthour:$startmin";
+$end = "$endday. $endmonth $endyear $endhour:$endmin";
 $dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
