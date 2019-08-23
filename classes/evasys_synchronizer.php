@@ -75,7 +75,7 @@ class evasys_synchronizer {
             $courseinfo = get_course_by_veranstid(intval($course));
             $course = array(
                 'title' => $courseinfo->titel,
-                'tooltip' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
+                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
         }
         close_secondary_DB_connection();
         $this->evasyscourseids = $extras;
@@ -100,12 +100,12 @@ class evasys_synchronizer {
     private function get_course_information() {
         $result = [];
         foreach ($this->get_evasys_courseid() as $courseid) {
-            $soapresult = $this->soapclient->GetCourse($courseid['tooltip'], 'PUBLIC', true, true);
+            $soapresult = $this->soapclient->GetCourse($courseid['id'], 'PUBLIC', true, true);
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
             }
-            $result[$courseid['tooltip']] = $soapresult;
+            $result[$courseid['id']] = $soapresult;
         }
         return $result;
     }
@@ -228,7 +228,7 @@ class evasys_synchronizer {
             array_push($students, $student);
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
-        $this->get_course_information();
+        $this->courseinformation = $this->get_course_information();
         foreach ($this->courseinformation as $course) {
             $soapresult = $this->soapclient->InsertParticipants($personlist, $course->m_sPubCourseId, 'PUBLIC', false);
             $course = $this->soapclient->GetCourse($course->m_sPubCourseId, 'PUBLIC', true, true); // Update usercount.

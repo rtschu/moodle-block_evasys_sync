@@ -90,13 +90,13 @@ class block_evasys_sync extends block_base{
             foreach ($evasyscourseids as $evasyscourseid) {
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('evacoursename', 'block_evasys_sync'), 'emphasize') .
-                                                         ' <span title="' . $evasyscourseid['tooltip'] . '">' . $evasyscourseid['title'] . '</span>');
+                                                         ' <span title="' . $evasyscourseid['id'] . '">' . $evasyscourseid['title'] . '</span>');
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid['tooltip'])));
+                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid['id'])));
                 $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
                 $outputsurveys = array();
-                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid['tooltip']);
+                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid['id']);
 
                 if (empty($surveys)) {
                     $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
