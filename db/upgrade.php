@@ -160,13 +160,16 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
             $dbman->create_table($coursetable);
         }
 
-        foreach ($coursetable->getFields() as $item) {
-            if (!$dbman->field_exists($coursetable, $item)) {
-                $dbman->add_field($coursetable, $item);
-            }
+
+        $oldtable = new xmldb_table('block_evasys_sync_surveys');
+        if ($dbman->table_exists($oldtable)) {
+            // Migrate data.
+            $DB->execute("INSERT INTO {block_evasys_sync_courseeval} (course, startdate, enddate, usermodified, timecreated, timemodified)".
+                " SELECT DISTINCT ON (course) course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
+
+            // Drop old table.
+            $dbman->drop_table($oldtable);
         }
-        $DB->execute("INSERT INTO {block_evasys_sync_courseeval} (course, startdate, enddate, usermodified, timecreated, timemodified)".
-                             " SELECT DISTINCT ON (course) course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
         upgrade_block_savepoint(true, 2019180500, 'evasys_sync');
     }
 
