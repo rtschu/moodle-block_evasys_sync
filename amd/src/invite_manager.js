@@ -1,4 +1,3 @@
-// Sorry Justus.
 define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
 
     var updateForm = function (dates) {
@@ -9,7 +8,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         }
     };
 
-    var call = function (dates) {
+    var submitInvitation = function (dates) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
@@ -34,7 +33,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                 } else if (this.responseText === "Start after end") {
                     str.get_strings([
                         {'key': 'title_date_invalid', component: 'block_evasys_sync'},
-                        {'key': 'coontent_start_after_end', component: 'block_evasys_sync'},
+                        {'key': 'content_start_after_end', component: 'block_evasys_sync'},
                         {'key': 'ok'}
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
@@ -82,10 +81,6 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
         xhttp.send();
     };
 
-    var ajax = function (dates) {
-        call(dates);
-    };
-
     var init = function () {
         // Overwrite standard submit function.
         $('#evasys_block_form').submit(function (e) {
@@ -98,12 +93,11 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             $('#evasys_block_form').serializeArray().forEach(function (param) {
                 data[param['name']] = param['value'];
             });
-            ajax(data);
+            submitInvitation(data);
         });
     };
 
     return {
-        ajax: ajax,
-        init: init,
+        init: init
     };
 });
