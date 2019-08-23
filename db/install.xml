@@ -35,7 +35,7 @@
                 <KEY NAME="survey" TYPE="foreign-unique" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="block_evasys_sync_courses" COMMENT="Mapps one moodle course to multiple EvaSys-courses">
+        <TABLE NAME="block_evasys_sync_courses" COMMENT="Maps one moodle course to multiple EvaSys-courses">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

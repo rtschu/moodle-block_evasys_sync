@@ -34,7 +34,6 @@ class block_evasys_sync extends block_base{
         global $OUTPUT;
         $evasyssynccheck = optional_param('evasyssynccheck', 0, PARAM_BOOL);
         $status = optional_param('status', "", PARAM_TEXT);
-        $mode = (bool) $this->getmode($this->page->course->category);
 
         if ($this->content !== null) {
             return $this->content;
@@ -49,20 +48,22 @@ class block_evasys_sync extends block_base{
             return $this->content;
         }
 
-        // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
-        if ($mode) {
-            $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
-        }
-
         if ($status === 'success') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_success');
         } else if ($status === 'uptodate') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_up_to_date');
+        } else if ($status === 'nostudents') {
+            $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_no_students');
         } else if ($status === 'failure') {
             $this->page->requires->js_call_amd('block_evasys_sync/post_dialog', 'show_dialog_failure');
         }
 
         if ($evasyssynccheck === 1) {
+            $mode = (bool) $this->getmode($this->page->course->category);
+            // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
+            if ($mode) {
+                $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
+            }
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
             try {
                 $evasyscourseids = $evasyssynchronizer->get_evasys_courseid();
@@ -72,7 +73,7 @@ class block_evasys_sync extends block_base{
                 return $this->content;
             }
 
-            if (!$this->getmode($this->page->course->category)) {
+            if (!$mode) {
                 $href = new moodle_url('/blocks/evasys_sync/sync.php');
             } else {
                 $href = new moodle_url('/course/view.php',
