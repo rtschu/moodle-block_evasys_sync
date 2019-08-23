@@ -66,7 +66,7 @@ class block_evasys_sync extends block_base{
             }
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
             try {
-                $evasyscourseids = $evasyssynchronizer->get_evasys_courseid();
+                $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
             } catch (Exception $exception) {
                 \core\notification::warning(get_string('syncnotpossible', 'block_evasys_sync'));
                 $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
@@ -87,16 +87,16 @@ class block_evasys_sync extends block_base{
 
             $i = 0;
             // Output for each Evasys-course mapped to this moodle course.
-            foreach ($evasyscourseids as $evasyscourseid) {
+            foreach ($evasyscourses as $evasyscourse) {
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('evacoursename', 'block_evasys_sync'), 'emphasize') .
-                                                         ' <span title="' . $evasyscourseid['id'] . '">' . $evasyscourseid['title'] . '</span>');
+                                                         ' <span title="' . $evasyscourse['id'] . '">' . $evasyscourse['title'] . '</span>');
                 $this->content->text .= html_writer::div(html_writer::span(
                                                              get_string('countparticipants', 'block_evasys_sync'), 'emphasize') . ' ' .
-                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourseid['id'])));
+                                                         format_string($evasyssynchronizer->get_amount_participants($evasyscourse['id'])));
                 $this->content->text .= html_writer::div(get_string('surveys', 'block_evasys_sync'), 'emphasize');
                 $outputsurveys = array();
-                $surveys = $evasyssynchronizer->get_surveys($evasyscourseid['id']);
+                $surveys = $evasyssynchronizer->get_surveys($evasyscourse['id']);
 
                 if (empty($surveys)) {
                     $this->content->text .= get_string('nosurveys', 'block_evasys_sync');
