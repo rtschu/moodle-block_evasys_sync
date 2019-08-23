@@ -64,8 +64,7 @@ class block_evasys_sync extends block_base{
             if ($mode) {
                 $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
             }
-            $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->__get('course')->id);
-
+            $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
             try {
                 $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();
             } catch (Exception $exception) {

@@ -16,8 +16,6 @@
 
 namespace block_evasys_sync;
 
-use core_availability\result;
-
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
 require_once($CFG->libdir . '/adminlib.php');
@@ -32,7 +30,6 @@ class evasys_inviter {
 
     public static $instance = null;
     private $soapclient;
-    private $statusmap = array();
 
     private function __construct() {
         $this->soapclient = self::init_soap_client();
@@ -51,7 +48,7 @@ class evasys_inviter {
         // Fetch persistent object id.
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
         // Get all associated courses.
-        if (!$pid === false) {
+        if ($pid !== false) {
             $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
             $extras = explode('#', $extras->get('evasyscourses'));
         } else {
