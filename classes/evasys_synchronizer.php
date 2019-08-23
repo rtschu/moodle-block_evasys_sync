@@ -353,7 +353,7 @@ class evasys_synchronizer {
             }
             $record = new \block_evasys_sync\evaluationperiod_survey_allocation(0, $data);
             $record->create();
-            $return = true;
+            return true;
         } else {
             $record = \block_evasys_sync\evaluationperiod_survey_allocation::get_record((array) $recordid);
             $return = false;
@@ -369,9 +369,8 @@ class evasys_synchronizer {
                 }
             }
             $record->update();
+            return false;
         }
-
-        return $return;
     }
 
     /**
