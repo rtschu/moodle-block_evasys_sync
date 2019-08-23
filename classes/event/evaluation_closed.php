@@ -33,8 +33,8 @@ class evaluation_closed extends \core\event\base {
      */
 
     protected function init() {
-        $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {

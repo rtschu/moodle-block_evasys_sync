@@ -33,8 +33,8 @@ class evaluationperiod_set extends \core\event\base {
      */
 
     protected function init() {
-        $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {
@@ -42,10 +42,8 @@ class evaluationperiod_set extends \core\event\base {
     }
 
     public function get_description() {
-        $return = "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid}".
-                    "to {$this->other['start']} - {$this->other['end']}";
-
-        return $return;
+        return "The user with ID {$this->userid} set the evaluationperiod for the course {$this->courseid}, ".
+                    "from {$this->other['start']} until {$this->other['end']}";
     }
 
     public function get_url() {
