@@ -23,6 +23,7 @@ $string['countparticipants'] = 'Anzahl Teilnehmer: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
 $string['finishedforms'] = 'Ausgefüllt:';
 $string['evacourseid'] = 'EvaSys-Kurs-ID:';
+$string['evainternalid'] = 'EvaSys-interne ID:';
 $string['evacoursename'] = 'Veranstaltungsname:';
 $string['surveys'] = 'Evaluationen: ';
 $string['nocourse'] = 'Kurs konnte zur Zeit nicht gefunden werden, bitte versuchen Sie es später erneut.';
@@ -174,3 +175,7 @@ $string['September'] = 'September';
 $string['October'] = 'Oktober';
 $string['November'] = 'November';
 $string['December'] = 'Dezember';
+
+// From...to
+$string['startondate'] = 'Evaluation findet statt von:';
+$string['endondate'] = 'bis';

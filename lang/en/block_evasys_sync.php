@@ -23,6 +23,7 @@ $string['countparticipants'] = 'Number of participants: ';
 $string['surveystatus'] = 'Survey status:';
 $string['finishedforms'] = 'Completed forms:';
 $string['evacourseid'] = 'EvaSys course ID:';
+$string['evainternalid'] = 'Internal EvaSys ID:';
 $string['evacoursename'] = 'Name:';
 $string['surveys'] = 'Surveys: ';
 $string['nocourse'] = 'Problem finding course, please try again later.';
@@ -179,3 +180,8 @@ $string['September'] = 'September';
 $string['October'] = 'October';
 $string['November'] = 'November';
 $string['December'] = 'December';
+
+
+// From...to
+$string['startondate'] = 'Evaluation period from:';
+$string['endondate'] = 'until';

@@ -18,7 +18,8 @@ Example context (json):
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
     {{#courses}}
         {{#.}}
-            <div title="Kennung: {{evasyscourseid}}&#13;Evasysinterne ID: {{technicalid}}"><span class="emphasize">{{# str}}evacourseid, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
+            <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}&#10;&#13;{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
+                <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div><span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span> {{c_participants}}</div>
             <div class="emphasize">{{# str}}surveys, block_evasys_sync{{/str}}</div>
             <ol>
@@ -38,7 +39,7 @@ Example context (json):
     {{#showcontrols}}
         <fieldset>
         {{#startoption}}<input type="checkbox" id="reactivate"> {{# str}}reactivate_invite, block_evasys_sync{{/str}} <br/>{{/startoption}}
-            Evaluieren von:
+            {{# str}}startondate, block_evasys_sync{{/str}}
             {{#direct}}
                 &nbsp;&nbsp; <input type="checkbox" name="direct_invite" value="true" {{startdisabled}}> {{# str}}direct_invite_checkbox, block_evasys_sync{{/str}}
             {{/direct}}
@@ -49,7 +50,7 @@ Example context (json):
             {{/block_evasys_sync/datetimepicker}}
             {{#direct}}
             {{/direct}}
-        <br/>bis<br/>
+        <br/>{{# str}}endondate, block_evasys_sync{{/str}}<br/>
             {{< block_evasys_sync/datetimepicker}}
                 {{$id}}end{{/id}}
                 {{$disabled}}{{enddisabled}}{{/disabled}}
