@@ -165,7 +165,7 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         if ($dbman->table_exists($oldtable)) {
             // Migrate data.
             $DB->execute("INSERT INTO {block_evasys_sync_courseeval} (course, startdate, enddate, usermodified, timecreated, timemodified)".
-                " SELECT DISTINCT ON (course) course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
+                " SELECT course, startdate, enddate, usermodified, timecreated, timemodified FROM {block_evasys_sync_surveys}");
 
             // Drop old table.
             $dbman->drop_table($oldtable);
