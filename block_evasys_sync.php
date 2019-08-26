@@ -136,8 +136,8 @@ class block_evasys_sync extends block_base{
                         $data['enddisabled'] = "";
                     }
                     if (!is_object($record) && $rawsurvey->surveyStatus == 'closed') {
-                        $data['startdisabled'] = true;
-                        $data['enddisabled'] = true;
+                        $data['startdisabled'] = 'disabled';
+                        $data['enddisabled'] = 'disabled';
                         $data['startoption'] = true;
                     }
 
