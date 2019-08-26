@@ -32,7 +32,7 @@ class evasys_inviter {
     private $soapclient;
 
     private function __construct() {
-        $this->soapclient = self::init_soap_client();
+        $this->soapclient = $this->init_soap_client();
     }
 
     public static function get_instance() {
@@ -49,8 +49,8 @@ class evasys_inviter {
         $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
         // Get all associated courses.
         if ($pid !== false) {
-            $extras = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-            $extras = explode('#', $extras->get('evasyscourses'));
+            $allocation = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+            $extras = explode('#', $allocation->get('evasyscourses'));
         } else {
             $extras = [];
         }
@@ -78,6 +78,12 @@ class evasys_inviter {
         return $relevantcourses;
     }
 
+    /**
+     * Get surveys for an Evasys course
+     * @param $evasyskennung Identifier of the course in EvaSys.
+     * @param bool $all if false, only surveys with OpenState != 0 are returned.
+     * @return array IDs of surveys
+     */
     public function get_evasys_course_surveyids($evasyskennung, $all = true) {
         $soapresult = $this->soapclient->GetCourse($evasyskennung, 'PUBLIC', true, false);
         $surveyids = $soapresult->m_oSurveyHolder->m_aSurveys;
@@ -87,14 +93,13 @@ class evasys_inviter {
         if (is_object($surveyids->Surveys)) {
             if ($all or $surveyids->Surveys->m_nOpenState != 0) {
                 return array($surveyids->Surveys->m_nSurveyId);
-            } else {
-                return array();
             }
+            return array();
         } else {
             $surveys = array();
             foreach ($surveyids->Surveys as $survey) {
                 if ($all or $survey->m_nOpenState != 0) {
-                    array_push($surveys, $survey->m_nSurveyId);
+                    $surveys[] = $survey->m_nSurveyId;
                 }
             }
             return $surveys;
@@ -108,7 +113,7 @@ class evasys_inviter {
             $surveys = $this->get_evasys_course_surveyids($evasysid, false);
             foreach ($surveys as $survey) {
                 if (!$this->set_close_task($survey)) {
-                    array_push($errorsurveys, $evasysid);
+                    $errorsurveys[] = $evasysid;
                 }
             }
             if (count($errorsurveys) > 0) {
@@ -146,26 +151,35 @@ class evasys_inviter {
         $surveys = array_unique($surveys);
 
         foreach ($surveys as $survey) {
-            $result = $this->soapclient->sendInvitationToParticipants($survey);
+            $this->soapclient->sendInvitationToParticipants($survey);
         }
     }
 
     public function open_moodle_courses($courseids) {
+        global $DB;
         $courses = array();
+        $usedcourseids = array();
+        // Push users into (viable) surveys.
         foreach ($courseids as $courseid) {
             if (self::getmode(get_course($courseid)->category)) {
                 if ($this->push_users_in_moodlecourse($courseid)) {
                     $courses = array_merge($courses, self::get_evasysids($courseid));
+                    $usedcourseids[] = $courseid;
                 }
             }
         }
-        $this->open_evasys_surveys($courses);
-        global $DB;
-        if (count($courseids) != 0) {
-            list($where, $params) = $DB->get_in_or_equal($courseids);
-            $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 1 WHERE course $where", $params);
+        if (count($usedcourseids) == 0) {
+            // There are no courses for which a survey could be opened.
+            return;
         }
-        foreach ($courseids as $courseid) {
+        $this->open_evasys_surveys($courses);
+
+        // Update state information for Moodle.
+        list($where, $params) = $DB->get_in_or_equal($usedcourseids);
+        $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 1 WHERE course $where", $params);
+
+        // Record that this has happened.
+        foreach ($usedcourseids as $courseid) {
             $event = event\evaluation_opened::create(array(
                 'context' => \context_course::instance($courseid),
                 'courseid' => $courseid,
@@ -176,21 +190,25 @@ class evasys_inviter {
     }
 
     public function close_moodle_course($courseids) {
+        global $DB;
         $courses = array();
+        $usedcourseids = array();
+        // Collect viable courses.
         foreach ($courseids as $courseid) {
-            if (self::getmode(get_course($courseid)->category) == 1) {
-                foreach (self::get_evasysids($courseid) as $surveyid) {
-                    $courses[$surveyid] = $courseid;
+            if (self::getmode(get_course($courseid)->category)) {
+                foreach (self::get_evasysids($courseid) as $evasysid) {
+                    $courses[$evasysid] = $courseid;
                 }
+                $usedcourseids[] = $courseid;
             }
         }
         $this->close_evasys_surveys($courses);
-        global $DB;
-        $courseidssql = implode(",", $courseids);
-        if ($courseidssql != "") {
+        // Update internal state for keeping track.
+        $courseidssql = implode(",", $usedcourseids);
+        if ($courseidssql !== '') {
             $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 2 WHERE course in ($courseidssql)");
         }
-        foreach ($courseids as $courseid) {
+        foreach ($usedcourseids as $courseid) {
             $event = event\evaluation_closed::create(array(
                 'context' => \context_course::instance($courseid),
                 'courseid' => $courseid
@@ -200,7 +218,6 @@ class evasys_inviter {
         }
     }
 
-
     public function push_users_in_moodlecourse($moodlecourse) {
         $evasyscourses = self::get_evasysids($moodlecourse);
         $emailadresses = self::get_enrolled_student_email_adresses_from_usernames($moodlecourse);
@@ -209,7 +226,7 @@ class evasys_inviter {
             $soapmsidentifier = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sIdentifier', null);
             $soapmsemail = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sEmail', null);
             $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
-            array_push($students, $student);
+            $students[] = $student;
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
 
@@ -217,6 +234,7 @@ class evasys_inviter {
         foreach ($evasyscourses as $evasyscourse) {
             $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourse, 'PUBLIC', false);
             if (!is_soap_fault($soapresult) && $soapresult) {
+                // Create enough passwords, then try again.
                 $this->make_sure_enough_passwords_are_available($evasyscourse);
             } else {
                 $soapresult = false;
@@ -236,22 +254,19 @@ class evasys_inviter {
         }
     }
 
-    /**
-     * @copyright 2018 Jan Dageförde
-     */
     public static function get_enrolled_student_email_adresses_from_usernames($moodlecourseid) {
         $emailadresses = array();
 
         $enrolledusers = get_users_by_capability(\context_course::instance($moodlecourseid), 'block/evasys_sync:mayevaluate');
 
         foreach ($enrolledusers as $user) {
-            array_push($emailadresses, $user->username . "@uni-muenster.de");
+            $emailadresses[] = $user->username . "@uni-muenster.de";
         }
 
         return $emailadresses;
     }
 
-    public static function init_soap_client() {
+    public function init_soap_client() {
         $soapclient = new \SoapClient(get_config('block_evasys_sync', 'evasys_wsdl_url'), [
             'trace' => 1,
             'exceptions' => 0,
@@ -308,6 +323,6 @@ class evasys_inviter {
             }
         }
         $default = get_config('block_evasys_sync', 'default_evasys_mode');
-        return $default;
+        return (bool)$default;
     }
 }
