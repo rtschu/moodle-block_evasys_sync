@@ -98,17 +98,17 @@ $string['title_failure']  = "Evaluation nicht beauftragt";
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
                              "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
                              "Sie müssen nichts weiter tun, ".
-                             "Ihr Evaluationsbeauftragter wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+                             "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
-$string['content_uptodate'] = "Ihr Evaluationsbeauftragter hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
-                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihren Evaluationsbeauftragten.";
+$string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
+                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
 
 $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
                              "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
 $string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes Setzen der Startzeit wird " .
-                                " die Evaluation in allen Evasysumfrage neu anstoßen, die mindestens einen neuen Teilnehmer haben. <br />" .
+                                " alle Evaluationen neu anstoßen, für die mindestens ein*e neue*r Teilnehmer*in vorhanden ist. <br />" .
                                 "Sind Sie sicher, dass sie die Startzeit freigeben möchten?";
 
 // Survey status.
