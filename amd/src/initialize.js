@@ -41,6 +41,9 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 if ($('#only_end').length > 0) {
                                     $('#only_end').prop("value", false);
                                 }
+                                if ($('#evasyssubmitbutton').length > 0) {
+                                    $('#evasyssubmitbutton').prop("disabled", false);
+                                }
                             },
                             function () {
                                 // User pressed no.
@@ -59,6 +62,9 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     }
                     if ($('#only_end').length > 0) {
                         $('#only_end').prop("value", true);
+                    }
+                    if ($('#evasyssubmitbutton').length > 0) {
+                        $('#evasyssubmitbutton').prop("disabled", true);
                     }
                 }
             });
