@@ -66,8 +66,8 @@ class add_course_form extends moodleform {
         foreach ($courses as $veranstid => $course) {
             $result = array();
             $result['veranstid'] = $course->veranstid;
-            $result['info'] = $course->titel;
-            $result['semestertxt'] = $course->semestertxt;
+            $result['info'] = utf8_encode($course->titel);
+            $result['semestertxt'] = utf8_encode($course->semestertxt);
             $result['semester'] = $course->semester;
             $availablecourselist[$course->veranstid] = $result;
         }
