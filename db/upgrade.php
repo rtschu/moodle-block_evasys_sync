@@ -173,7 +173,17 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019180500, 'evasys_sync');
     }
 
-    // Evasys_sync savepoint reached.
+    if ($oldversion < 2019190000) {
+        // Changing type of field evasyscourses on table block_evasys_sync_courses to text.
+        $table = new xmldb_table('block_evasys_sync_courses');
+        $field = new xmldb_field('evasyscourses', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'course');
+
+        // Launch change of type for field evasyscourses.
+        $dbman->change_field_type($table, $field);
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2019190000, 'evasys_sync');
+    }
 
     return true;
 }
