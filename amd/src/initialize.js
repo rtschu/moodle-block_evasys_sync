@@ -26,12 +26,12 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                         notification.confirm(s[0], s[1], s[2], s[3],
                             function () {
                                 // User pressed yes.
-                                $($('[name=minute_start]')[0]).prop("disabled", false);
-                                $($('[name=hour_start]')[0]).prop("disabled", false);
-                                $($('[name=day_start]')[0]).prop("disabled", false);
-                                $($('[name=month_start]')[0]).prop("disabled", false);
-                                $($('[name=year_start]')[0]).prop("disabled", false);
-                                $($('[name=direct_invite]')[0]).prop("disabled", false);
+                                $('[name=minute_start]')[0].disabled = false;
+                                $('[name=hour_start]')[0].disabled = false;
+                                $('[name=day_start]')[0].disabled = false;
+                                $('[name=month_start]')[0].disabled = false;
+                                $('[name=year_start]')[0].disabled = false;
+                                $('[name=direct_invite]')[0].disabled = false;
                                 $('#only_end').prop("value", false);
                             },
                             function () {
@@ -41,12 +41,12 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     });
                 } else {
                     // Disable all fields related to re-invitation.
-                    $($('[name=minute_start]')[0]).prop("disabled", true);
-                    $($('[name=hour_start]')[0]).prop("disabled", true);
-                    $($('[name=day_start]')[0]).prop("disabled", true);
-                    $($('[name=month_start]')[0]).prop("disabled", true);
-                    $($('[name=year_start]')[0]).prop("disabled", true);
-                    $($('[name=direct_invite]')[0]).prop("disabled", true);
+                    $('[name=minute_start]')[0].disabled = true;
+                    $('[name=hour_start]')[0].disabled = true;
+                    $('[name=day_start]')[0].disabled = true;
+                    $('[name=month_start]')[0].disabled = true;
+                    $('[name=year_start]')[0].disabled = true;
+                    $('[name=direct_invite]')[0].disabled = true;
                     $('#only_end').prop("value", true);
                 }
             });
