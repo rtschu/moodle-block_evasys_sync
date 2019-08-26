@@ -36,7 +36,7 @@ $mform = new \block_evasys_sync\add_course_form();
 $mform->init($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
-$prefill = new stdClass();
+$prefill = array();
 $pre = array();
 if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
@@ -46,9 +46,8 @@ if (!$pid) {
     // Last array value is allways an empty string...
     array_pop($pre);
     foreach ($pre as $value) {
-        $prefill->$value = 1;
+        $prefill[$value] = 1;
     }
-
 }
 
 if ($mform->is_validated()) {
@@ -57,19 +56,23 @@ if ($mform->is_validated()) {
     if (is_object($data)) {
         $data = (Array) $data;
     }
+    // Eventually, this string will contain the final mapping.
     $magicstring = '';
 
     // Pop the submitbutton.
     array_pop($data);
+
+    // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
     foreach ($pre as $entry) {
-        if (!is_course_of_teacher($entry, $USER->username) and !is_siteadmin()) {
+        if (!is_course_of_teacher($entry, $USER->username) && !is_siteadmin()) {
             $magicstring .= $entry . "#";
         }
     }
 
+    // Now add (selected) courses that the logged in user has authority over.
     foreach ($data as $key => $value) {
         if ($value) {
-            if (is_course_of_teacher($key, $USER->username) or is_siteadmin()) {
+            if (is_siteadmin() || is_course_of_teacher($key, $USER->username)) {
                 $magicstring .= $key . "#";
             }
         }

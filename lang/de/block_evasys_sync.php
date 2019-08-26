@@ -42,7 +42,7 @@ $string['semester'] = "Semester";
 
 // Multi allocation strings.
 
-$string['selection_success'] = "Auswahl erfolgreich übermittelt";
+$string['selection_success'] = "Die Kurse wurden erfolgreich zugeordnet";
 $string['add_course_header'] = "Wählen Sie die Veranstaltungen, die über diesen Learnweb-Kurs evaluiert werden sollen";
 $string['coursename'] = "Kursname";
 $string['associated'] = "zugeordnet";

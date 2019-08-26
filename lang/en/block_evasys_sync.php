@@ -42,7 +42,7 @@ $string['warning_inconsistent_states'] = "There are some open surveys, but all s
 
 // Multi allocation strings.
 
-$string['selection_success'] = "Selection successful";
+$string['selection_success'] = "Courses have been mapped successfully";
 $string['add_course_header'] = "Choose courses, that should be synchronized with this moodle course";
 $string['coursename'] = "Coursename";
 $string['associated'] = "associated";
