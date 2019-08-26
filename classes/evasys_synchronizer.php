@@ -226,7 +226,7 @@ class evasys_synchronizer {
         $enrolledusers = get_users_by_capability($this->blockcontext, 'block/evasys_sync:mayevaluate');
 
         foreach ($enrolledusers as $user) {
-            array_push($emailadresses, $user->username . "@uni-muenster.de");
+            $emailadresses[] = $user->username . "@uni-muenster.de";
         }
 
         return $emailadresses;
@@ -247,7 +247,7 @@ class evasys_synchronizer {
             $soapmsidentifier = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sIdentifier', null);
             $soapmsemail = new \SoapVar($emailadress, XSD_STRING, null, null, 'm_sEmail', null);
             $student = new \SoapVar(array($soapmsidentifier, $soapmsemail), SOAP_ENC_OBJECT, null, null, 'Persons', null);
-            array_push($students, $student);
+            $students[] = $student;
         }
         $personlist = new \SoapVar($students, SOAP_ENC_OBJECT, null, null, 'PersonList', null);
         $this->courseinformation = $this->get_course_information();
