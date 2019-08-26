@@ -35,13 +35,12 @@ class add_course_form extends moodleform {
 
     public function init ($id) {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
-        global $pgDB, $USER; // phpcs:ignore // @codingStandardsIgnoreLine
+        global $pgDB, $USER, $DB; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
 
         $mform->addElement( 'html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
-        global $DB;
         $lsfid = $DB->get_field('course', 'idnumber', array('id' => $id));
         if ($lsfid) {
             $maincourse = (array)get_course_by_veranstid($lsfid);
@@ -54,14 +53,15 @@ class add_course_form extends moodleform {
         } else {
             $teachers = get_users_by_capability(\context_course::instance($id), 'block/evasys_sync:modifymapping');
             foreach ($teachers as $teacher) {
-                    $personalid = get_teachers_pid($teacher->username);
-                    if (!$personalid) {
-                        continue;
-                    }
-                    $veranstids = array_merge($veranstids, get_veranstids_by_teacher($personalid));
+                $personalid = get_teachers_pid($teacher->username);
+                if (!$personalid) {
+                    continue;
+                }
+                $veranstids = array_merge($veranstids, get_veranstids_by_teacher($personalid));
             }
         }
         $courses = get_courses_by_veranstids($veranstids);
+        $pgDB->dispose(); // phpcs:ignore // @codingStandardsIgnoreLine
         $availablecourselist = array();
         foreach ($courses as $veranstid => $course) {
             $result = array();
@@ -169,15 +169,10 @@ class add_course_form extends moodleform {
             $mform->addElement('html', '<td class="cell c2">');
 
             $name = $course['veranstid'];
-            $mform->addElement('checkbox', $name);
+            $mform->addElement('checkbox', $name, '', '', ['disabled' => 'disabled']);
             $mform->setType($name, PARAM_BOOL);
             $mform->setDefault($name, true);
-            $mform->addElement('checkbox', 'dummy');
-            $mform->setType('dummy', PARAM_BOOL);
-            $mform->setDefault('dummy', false);
-            // You can't directly declare a checkbox allways disabled so we have to create an artificial circle.
-            $mform->hideIf('dummy', $name, 'checked');
-            $mform->disabledIf($name, 'dummy');
+            $mform->addHelpButton($name, 'maincoursepredefined', 'block_evasys_sync');
 
             $mform->addElement('html', '</td></tr>');
         }

@@ -48,6 +48,8 @@ $string['add_course_header'] = "Choose LSF courses that should be synchronized t
 $string['coursename'] = "Course name";
 $string['associated'] = "associated";
 $string['forbidden'] = "This action is currently prohibited.";
+$string['maincoursepredefined'] = 'Fixed association.';
+$string['maincoursepredefined_help'] = 'This LSF course is fixed, as it has been directly associated with this Moodle course. If you think that this is incorrect, please contact the support team.';
 
 // Direct invite strings.
 
