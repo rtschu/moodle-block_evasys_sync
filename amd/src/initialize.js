@@ -35,8 +35,12 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 $('[name=day_start]')[0].disabled = false;
                                 $('[name=month_start]')[0].disabled = false;
                                 $('[name=year_start]')[0].disabled = false;
-                                $('[name=direct_invite]')[0].disabled = false;
-                                $('#only_end').prop("value", false);
+                                if ($('[name=direct_invite]').length > 0) {
+                                    $('[name=direct_invite]')[0].disabled = false;
+                                }
+                                if ($('#only_end').length > 0) {
+                                    $('#only_end').prop("value", false);
+                                }
                             },
                             function () {
                                 // User pressed no.
@@ -50,8 +54,12 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     $('[name=day_start]')[0].disabled = true;
                     $('[name=month_start]')[0].disabled = true;
                     $('[name=year_start]')[0].disabled = true;
-                    $('[name=direct_invite]')[0].disabled = true;
-                    $('#only_end').prop("value", true);
+                    if ($('[name=direct_invite]').length > 0) {
+                        $('[name=direct_invite]')[0].disabled = true;
+                    }
+                    if ($('#only_end').length > 0) {
+                        $('#only_end').prop("value", true);
+                    }
                 }
             });
         }
