@@ -2,6 +2,10 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
     var init = function(starttime, endtime) {
         var start = new Date(starttime * 1000);
         var end = new Date(endtime * 1000);
+        if ($('[name=minute_start]').length == 0) {
+            // No form present.
+            return;
+        }
         $('[name=minute_start]')[0].selectedIndex = start.getMinutes();
         $('[name=hour_start]')[0].selectedIndex = start.getHours();
         $('[name=day_start]')[0].selectedIndex = start.getDate() - 1;
