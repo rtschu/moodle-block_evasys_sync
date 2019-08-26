@@ -16,6 +16,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
         if ($('#reactivate').length > 0) {
             $(document).on("change", "#reactivate", function() {
                 if (this.checked) {
+                    // Ask for confirmation, then enable all fields related to re-invitation.
                     str.get_strings([
                         {'key': 'confirm'},
                         {'key': 'content_confirm_reactivate', component: 'block_evasys_sync'},
@@ -24,6 +25,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     ]).done(function(s) {
                         notification.confirm(s[0], s[1], s[2], s[3],
                             function () {
+                                // User pressed yes.
                                 $($('[name=minute_start]')[0]).prop("disabled", false);
                                 $($('[name=hour_start]')[0]).prop("disabled", false);
                                 $($('[name=day_start]')[0]).prop("disabled", false);
@@ -33,10 +35,12 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 $('#only_end').prop("value", false);
                             },
                             function () {
+                                // User pressed no.
                                 $('#reactivate').prop("checked", false);
                             });
                     });
                 } else {
+                    // Disable all fields related to re-invitation.
                     $($('[name=minute_start]')[0]).prop("disabled", true);
                     $($('[name=hour_start]')[0]).prop("disabled", true);
                     $($('[name=day_start]')[0]).prop("disabled", true);
