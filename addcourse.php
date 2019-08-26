@@ -19,13 +19,13 @@ require_once('classes/add_course_form.php');
 $id = required_param('id', PARAM_INT);
 $course = get_course($id);
 
-require_login();
+require_login($id);
 require_capability('block/evasys_sync:modifymapping', context_course::instance($id));
 
 $PAGE->set_url('/blocks/evasys_sync/addcourse.php');
-$PAGE->set_title(get_string('add_course_header', 'block_evasys_sync'));
 $PAGE->set_course($course);
 $PAGE->set_context(context_course::instance($id));
+$PAGE->set_title(get_string('add_course_header', 'block_evasys_sync'));
 
 $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $id));
 if ($record !== false and ($record->state == 1 or $record->state == 2) and !is_siteadmin()) {
