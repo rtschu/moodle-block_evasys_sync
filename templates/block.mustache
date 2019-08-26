@@ -38,7 +38,7 @@ Example context (json):
 {{#warning}}<span style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</span>{{/warning}}
     {{#showcontrols}}
         <fieldset>
-        {{#startoption}}<input type="checkbox" id="reactivate"> {{# str}}reactivate_invite, block_evasys_sync{{/str}} <br/>{{/startoption}}
+            {{#startoption}}<label for="reactivate"><input type="checkbox" id="reactivate"> {{# str}}reactivate_invite, block_evasys_sync{{/str}}</label><br/>{{/startoption}}
             {{# str}}startondate, block_evasys_sync{{/str}}
             {{#direct}}
                 &nbsp;&nbsp; <input type="checkbox" name="direct_invite" value="true" {{startdisabled}}> {{# str}}direct_invite_checkbox, block_evasys_sync{{/str}}
