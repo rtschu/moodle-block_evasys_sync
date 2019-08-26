@@ -25,7 +25,7 @@ $PAGE->set_url('/blocks/evasys_sync/addcourse.php');
 $PAGE->set_context(context_course::instance($id));
 
 $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $id));
-if (($record->state == 1 or $record->state == 2) and !is_siteadmin()) {
+if ($record !== false and ($record->state == 1 or $record->state == 2) and !is_siteadmin()) {
     echo $OUTPUT->header();
     echo get_string('forbidden', 'block_evasys_sync');
     echo $OUTPUT->footer();
