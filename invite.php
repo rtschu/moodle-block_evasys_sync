@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This shouldn't be visited but accessed by ajax requests.
 require_once('../../config.php');
 require_login();
 require_sesskey();
+
+// This page shouldn't be visited by a user; instead, it is accessed using ajax requests.
 
 $decoder = array(
     get_string('January', 'block_evasys_sync') => 1,
@@ -38,10 +39,12 @@ $courseid = required_param('courseid', PARAM_INT);
 $course = get_course($courseid);
 if (\block_evasys_sync\evasys_inviter::getmode($course->category) == 0) {
     echo "wrong mode";
+    exit();
 }
-$DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
-$PAGE->set_context(context_course::instance($courseid));
-require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
+
+$coursecontext = context_course::instance($courseid);
+$PAGE->set_context($coursecontext);
+require_capability('block/evasys_sync:synchronize', $coursecontext);
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $invitedirect = optional_param("direct_invite", false, PARAM_BOOL);
 $onlyend = optional_param('only_end', false, PARAM_BOOL);
@@ -71,18 +74,18 @@ if ($invitedirect) {
     $start = $startdate->getTimestamp();
 }
 
-$time = time();
+$now = time();
 if ($start > $end) {
     echo "Start after end";
-    return;
+    exit();
 }
-if ($time > $end) {
+if ($now > $end) {
     echo "End in the past";
-    return;
+    exit();
 }
-if (!$invitedirect && !$onlyend && $time > $start) {
+if (!$invitedirect && !$onlyend && $now > $start) {
     echo "Start in the past";
-    return;
+    exit();
 }
 
 $persistentid = $DB->get_field("block_evasys_sync_courseeval", "id", array('course' => $courseid));
