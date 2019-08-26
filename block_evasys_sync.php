@@ -135,22 +135,22 @@ class block_evasys_sync extends block_base{
                         $data['startdisabled'] = "";
                         $data['enddisabled'] = "";
                     }
-                    array_push($surveys, $survey);
+                    $surveys[] = $survey;
                     $showcontrols = true;
                 }
                 $course['surveys'] = $surveys;
-                array_push($courses, $course);
+                $courses[] = $course;
             }
             $data['courses'] = $courses;
             $data['showcontrols'] = $showcontrols;
-            $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/block", $data);
+            $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select("course = {$this->page->course->id} AND NOT evasyscourses = ''");
             if ($inlsf or $hasextras) {
                 $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
                 $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
-                $this->content->text = $OUTPUT->render_from_template("block_evasys_sync/coursemapping", array(
+                $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/coursemapping", array(
                     "courseid" => $this->page->course->id,
                     "sesskey" => sesskey()
                 ));
