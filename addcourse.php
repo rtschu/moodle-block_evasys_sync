@@ -17,13 +17,11 @@
 require_once('../../config.php');
 require_once('classes/add_course_form.php');
 $id = required_param('id', PARAM_INT);
-$course = get_course($id);
 
-require_login($id);
+require_course_login($id);
 require_capability('block/evasys_sync:modifymapping', context_course::instance($id));
-
-$PAGE->set_url('/blocks/evasys_sync/addcourse.php');
-$PAGE->set_course($course);
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_url('/blocks/evasys_sync/addcourse.php', ['id' => $id]);
 $PAGE->set_context(context_course::instance($id));
 $PAGE->set_title(get_string('add_course_header', 'block_evasys_sync'));
 
@@ -54,6 +52,8 @@ if (!$pid) {
 }
 
 if ($mform->is_validated()) {
+    require_sesskey();
+
     global $DB, $USER;
     $data = $mform->get_data();
     if (is_object($data)) {
