@@ -54,7 +54,11 @@ class add_course_form extends moodleform {
         } else {
             $teachers = get_users_by_capability(\context_course::instance($id), 'block/evasys_sync:modifymapping');
             foreach ($teachers as $teacher) {
-                    $veranstids = array_merge($veranstids, get_veranstids_by_teacher(get_teachers_pid($teacher->username)));
+                    $personalid = get_teachers_pid($teacher->username);
+                    if (!$personalid) {
+                        continue;
+                    }
+                    $veranstids = array_merge($veranstids, get_veranstids_by_teacher($personalid));
             }
         }
         $courses = get_courses_by_veranstids($veranstids);
