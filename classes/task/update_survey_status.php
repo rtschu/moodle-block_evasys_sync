@@ -41,16 +41,16 @@ class update_survey_status extends \core\task\scheduled_task {
     // ...or to simply remove a record once the survey is closed.
     public function execute () {
         $time = time();
-        $startcourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("startdate <= $time AND state = 0");
-        $closecourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("enddate <= $time AND state < 2");
         $inviter = evasys_inviter::get_instance();
+        $startcourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("startdate <= $time AND state = 0");
         $startcourses = array();
         foreach ($startcourseobjects as $object) {
-            array_push($startcourses, $object->get("course"));
+            $startcourses[] = $object->get("course");
         }
+        $closecourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("enddate <= $time AND state < 2");
         $closecourses = array();
         foreach ($closecourseobjects as $object) {
-            array_push($closecourses, $object->get("course"));
+            $closecourses[] = $object->get("course");
         }
         $inviter->open_moodle_courses($startcourses);
         $inviter->close_moodle_course($closecourses);
