@@ -25,7 +25,8 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                         {'key': 'confirm'},
                         {'key': 'content_confirm_reactivate', component: 'block_evasys_sync'},
                         {'key': 'yes'},
-                        {'key': 'no'}
+                        {'key': 'no'},
+                        {'key': 'requestagain', component: 'block_evasys_sync'}
                     ]).done(function(s) {
                         notification.confirm(s[0], s[1], s[2], s[3],
                             function () {
@@ -43,6 +44,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 }
                                 if ($('#evasyssubmitbutton').length > 0) {
                                     $('#evasyssubmitbutton').prop("disabled", false);
+                                    $('#evasyssubmitbutton').val(s[4]);
                                 }
                             },
                             function () {
@@ -65,6 +67,18 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     }
                     if ($('#evasyssubmitbutton').length > 0) {
                         $('#evasyssubmitbutton').prop("disabled", true);
+                        str.get_strings([
+                            {'key': 'planorstartevaluation', component: 'block_evasys_sync'},
+                            {'key': 'invitestudents', component: 'block_evasys_sync'}
+                        ]).done(function(s) {
+                            if ($('#direct_invite').length > 0) {
+                                // User can start invitation herself.
+                                $('#evasyssubmitbutton').val(s[0]);
+                            } else {
+                                // User can only request evaluation from the coordinator.
+                                $('#evasyssubmitbutton').val(s[1]);
+                            }
+                        });
                     }
                 }
             });

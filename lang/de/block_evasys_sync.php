@@ -55,6 +55,7 @@ $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da 
 
 $string['planorstartevaluation'] = 'Evaluationszeitraum festlegen';
 $string['startevaluationnow'] = 'Evaluation sofort beginnen';
+$string['requestagain'] = 'Erneut einladen oder beauftragen';
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
                                   '{$a->queued} Evaluationsperioden wurden festgelegt.';
