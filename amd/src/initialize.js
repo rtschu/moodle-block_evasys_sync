@@ -35,8 +35,8 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 $('[name=day_start]')[0].disabled = false;
                                 $('[name=month_start]')[0].disabled = false;
                                 $('[name=year_start]')[0].disabled = false;
-                                if ($('[name=direct_invite]').length > 0) {
-                                    $('[name=direct_invite]')[0].disabled = false;
+                                if ($('#direct_invite').length > 0) {
+                                    $('#direct_invite').prop('disabled', false);
                                 }
                                 if ($('#only_end').length > 0) {
                                     $('#only_end').prop("value", false);
@@ -57,8 +57,8 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     $('[name=day_start]')[0].disabled = true;
                     $('[name=month_start]')[0].disabled = true;
                     $('[name=year_start]')[0].disabled = true;
-                    if ($('[name=direct_invite]').length > 0) {
-                        $('[name=direct_invite]')[0].disabled = true;
+                    if ($('#direct_invite').length > 0) {
+                        $('#direct_invite').prop('disabled', true);
                     }
                     if ($('#only_end').length > 0) {
                         $('#only_end').prop("value", true);
@@ -66,6 +66,26 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     if ($('#evasyssubmitbutton').length > 0) {
                         $('#evasyssubmitbutton').prop("disabled", true);
                     }
+                }
+            });
+        }
+        if ($('#direct_invite').length > 0) {
+            $(document).on("change", "#direct_invite", function () {
+                if (this.checked) {
+                    // Disable startdate as evaluation will start immediately.
+                    $('[name=minute_start]')[0].disabled = true;
+                    $('[name=hour_start]')[0].disabled = true;
+                    $('[name=day_start]')[0].disabled = true;
+                    $('[name=month_start]')[0].disabled = true;
+                    $('[name=year_start]')[0].disabled = true;
+                } else {
+                    // Allow user to set startdate.
+                    $('[name=minute_start]')[0].disabled = false;
+                    $('[name=hour_start]')[0].disabled = false;
+                    $('[name=day_start]')[0].disabled = false;
+                    $('[name=month_start]')[0].disabled = false;
+                    $('[name=year_start]')[0].disabled = false;
+
                 }
             });
         }
