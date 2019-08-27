@@ -53,9 +53,8 @@ $string['maincoursepredefined_help'] = 'This LSF course is fixed, as it has been
 
 // Direct invite strings.
 
-$string['direct_invite'] = "Invite participants directly";
-$string['content_confirm'] = "This will start the evaluations immediately!<br />" .
-    "Are you sure You want to send invites/reminders to all participants?";
+$string['planorstartevaluation'] = 'Set evaluation period';
+$string['startevaluationnow'] = 'Start evaluation now';
 $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
                                   '{$a->queued} jobs have been queued';
