@@ -276,7 +276,7 @@ class evasys_synchronizer {
      * @throws \Exception when e-mail request fails
      */
     public function notify_evaluation_responsible_person($dates) {
-        global $USER;
+        global $USER, $DB;
         $course = get_course($this->courseid);
 
         $userto = $this->get_assigned_user($course);
@@ -303,11 +303,9 @@ class evasys_synchronizer {
             $notiftext .= "Die Veranstaltung hat folgende Fragebögen:\r\n\r\n";
 
             $surveys = $this->get_surveys($course->m_sPubCourseId);
-            $i = 0;
             foreach ($surveys as &$survey) {
                 $notiftext .= "\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
                 $notiftext .= "\tFragebogenname: " . $survey->formName . "\r\n\r\n";
-                $i++;
             }
         }
 
@@ -325,7 +323,6 @@ class evasys_synchronizer {
             'context' => \context_course::instance($this->courseid),
         ));
         $event->trigger();
-        global $DB;
         $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 3 WHERE course = :courseid", ['courseid' => $this->courseid]);
     }
 
