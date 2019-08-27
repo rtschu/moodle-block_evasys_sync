@@ -250,7 +250,7 @@ class evasys_inviter {
             $usercount = $evasyscourse->m_nCountStud;
             $surveys = $this->get_evasys_course_surveyids($evasyscourseid);
             foreach ($surveys as $survey) {
-                $this->soapclient->GetPswdsBySurvey($survey, $usercount, 1, true, false);
+                $this->soapclient->GetPswdsBySurvey((string)$survey->m_nSurveyId, $usercount, 1, true, false);
             }
         }
     }
