@@ -79,7 +79,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             // We don't wanna get redirected.
             e.preventDefault();
             // Also we don't want someone to send another ajax because the first one didn't compvare yet.
-            $('#evasys_block_form').find(':input[type=submit]').prop('disabled', true);
+            $('#evasyssubmitbutton').prop('disabled', true);
             // Call to invite.php with data being passed to it.
             var data = {};
             $('#evasys_block_form').serializeArray().forEach(function (param) {
@@ -87,6 +87,21 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             });
             submitInvitation(data);
         });
+
+        if ($('#direct_invite').length > 0) {
+            str.get_strings([
+                {'key': 'planorstartevaluation', component: 'block_evasys_sync'},
+                {'key': 'startevaluationnow', component: 'block_evasys_sync'}
+            ]).done(function (s) {
+                $('#direct_invite').change(function() {
+                    if(this.checked) {
+                        $('#evasyssubmitbutton').val(s[1]);
+                    } else {
+                        $('#evasyssubmitbutton').val(s[0]);
+                    }
+                });
+            });
+        }
     };
 
     return {
