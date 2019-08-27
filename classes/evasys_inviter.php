@@ -127,18 +127,18 @@ class evasys_inviter {
         $course = get_course($moodlecourse);
         $userto = evasys_synchronizer::get_assigned_user($course);
         $userfrom = $USER;
-        $subject = "Automatisches Senden der Evaluationsergebnisse für Moodlekurs $moodlecourse fehlgeschlagen!";
-        $message = "Sehr geehte/r Evaluationskoordinator/in \n\r\n\r";
-        $message .= "Leider gab es ein Problem beim automatischen Versand der Ergebnisse.\r\n";
-        $message .= "Bitte versenden sie die Evaluationsergebnisse für folgende Umfragen: \r\n\r\n";
-        $message .= "\tEvasysveranstaltung: $evasysid \r\n";
-        $message .= "\tEvasysumfrageids: \r\n";
+        $subject = "Automatisches Senden der Evaluationsergebnisse fehlgeschlagen: $moodlecourse";
+        $message = "Sehr geehrte*r Evaluationskoordinator*in,\r\n\r\n";
+        $message .= "leider gab es ein Problem beim automatischen Versand der Ergebnisse nach geplantem Abschluss der Evaluation.\r\n";
+        $message .= "Bitte versenden Sie die Evaluationsergebnisse für folgende Umfragen (und schließen Sie diese gegebenenfalls): \r\n\r\n";
+        $message .= "\tEvaSys-Veranstaltung: $evasysid \r\n";
+        $message .= "\tFragebögen: \r\n";
         foreach ($errorsurveys as &$survey) {
             $message .= "\t\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
             $message .= "\t\tFragebogenname: " . $survey->formName . "\r\n\r\n";
         }
         $message .= "\r\n";
-        $message .= "Mit freundlichen Grüßen \r\n";
+        $message .= "Mit freundlichen Grüßen,\r\n";
         $message .= "Ihr Learnweb-Support.";
         email_to_user($userfrom, $userto, $subject, $message);
     }
