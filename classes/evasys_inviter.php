@@ -152,7 +152,7 @@ class evasys_inviter {
         $surveys = array_unique($surveys);
 
         foreach ($surveys as $survey) {
-            $surveyid =  strval($survey->m_nSurveyId);
+            $surveyid = (string)$survey->m_nSurveyId;
             $this->soapclient->SendInvitationToParticipants($surveyid);
         }
     }
