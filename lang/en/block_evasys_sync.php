@@ -185,5 +185,6 @@ $string['December'] = 'December';
 
 
 // From...to
-$string['startondate'] = 'Evaluation period from:';
+$string['evaluationperiod'] = 'Evaluation period:';
+$string['startondate'] = 'Planned period from';
 $string['endondate'] = 'until';
