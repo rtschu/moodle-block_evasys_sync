@@ -92,14 +92,14 @@ class evasys_inviter {
         }
         if (is_object($surveyids->Surveys)) {
             if ($all or $surveyids->Surveys->m_nOpenState != 0) {
-                return array($surveyids->Surveys->m_nSurveyId);
+                return array($surveyids->Surveys);
             }
             return array();
         } else {
             $surveys = array();
             foreach ($surveyids->Surveys as $survey) {
                 if ($all or $survey->m_nOpenState != 0) {
-                    $surveys[] = $survey->m_nSurveyId;
+                    $surveys[] = $survey;
                 }
             }
             return $surveys;
@@ -112,7 +112,7 @@ class evasys_inviter {
             // Get all open evasys Surveys.
             $surveys = $this->get_evasys_course_surveyids($evasysid, false);
             foreach ($surveys as $survey) {
-                if (!$this->set_close_task($survey)) {
+                if (!$this->set_close_task($survey->m_nSurveyId)) {
                     $errorsurveys[] = $survey;
                 }
             }
