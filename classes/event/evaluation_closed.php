@@ -42,7 +42,7 @@ class evaluation_closed extends \core\event\base {
     }
 
     public function get_description() {
-        $return = "Evaluation of the course with id {$this->courseid} has been endend.";
+        $return = "Evaluation of the course with id {$this->courseid} has been ended.";
         return $return;
     }
 
