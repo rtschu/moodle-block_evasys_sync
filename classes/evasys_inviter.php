@@ -163,10 +163,9 @@ class evasys_inviter {
         // Push users into (viable) surveys.
         foreach ($courseids as $courseid) {
             if (self::getmode(get_course($courseid)->category)) {
-                if ($this->push_users_in_moodlecourse($courseid)) {
-                    $courses = array_merge($courses, self::get_evasysids($courseid));
-                    $usedcourseids[] = $courseid;
-                }
+                $this->push_users_in_moodlecourse($courseid);
+                $courses = array_merge($courses, self::get_evasysids($courseid));
+                $usedcourseids[] = $courseid;
             }
         }
         if (count($usedcourseids) == 0) {
