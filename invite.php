@@ -61,7 +61,8 @@ $end = $enddate->getTimestamp();
 if ($invitedirect) {
     $startdate = new \DateTime("now", \core_date::get_server_timezone_object());
     $start = $startdate->getTimestamp();
-} else {
+} else if (!$onlyend) {
+    // If we are only changing the end date, start fields are ignored.
     $startyear = required_param('year_start', PARAM_TEXT);
     $startmonth = required_param('month_start', PARAM_TEXT);
     $startday = required_param('day_start', PARAM_TEXT);
