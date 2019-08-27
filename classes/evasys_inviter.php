@@ -92,14 +92,14 @@ class evasys_inviter {
         }
         if (is_object($surveyids->Surveys)) {
             if ($all or $surveyids->Surveys->m_nOpenState != 0) {
-                return array($surveyids->Surveys->m_nSurveyId);
+                return array($surveyids->Surveys);
             }
             return array();
         } else {
             $surveys = array();
             foreach ($surveyids->Surveys as $survey) {
                 if ($all or $survey->m_nOpenState != 0) {
-                    $surveys[] = $survey->m_nSurveyId;
+                    $surveys[] = $survey;
                 }
             }
             return $surveys;
@@ -112,8 +112,8 @@ class evasys_inviter {
             // Get all open evasys Surveys.
             $surveys = $this->get_evasys_course_surveyids($evasysid, false);
             foreach ($surveys as $survey) {
-                if (!$this->set_close_task($survey)) {
-                    $errorsurveys[] = $evasysid;
+                if (!$this->set_close_task($survey->m_nSurveyId)) {
+                    $errorsurveys[] = $survey;
                 }
             }
             if (count($errorsurveys) > 0) {
@@ -133,8 +133,9 @@ class evasys_inviter {
         $message .= "Bitte versenden sie die Evaluationsergebnisse für folgende Umfragen: \r\n\r\n";
         $message .= "\tEvasysveranstaltung: $evasysid \r\n";
         $message .= "\tEvasysumfrageids: \r\n";
-        foreach ($errorsurveys as $errorsurvey) {
-            $message .= "\t\t -$errorsurvey\r\n";
+        foreach ($errorsurveys as &$survey) {
+            $message .= "\t\tFragebogen-ID: " . $survey->formIdPub . " (" . $survey->formId . ")\r\n";
+            $message .= "\t\tFragebogenname: " . $survey->formName . "\r\n\r\n";
         }
         $message .= "\r\n";
         $message .= "Mit freundlichen Grüßen \r\n";
@@ -146,7 +147,7 @@ class evasys_inviter {
         $surveys = array();
         foreach ($courses as $course) {
             // Get all open evasys Surveys.
-                $surveys = array_merge($surveys, $this->get_evasys_course_surveyids($course, false));
+            $surveys = array_merge($surveys, $this->get_evasys_course_surveyids($course, false));
         }
         $surveys = array_unique($surveys);
 
