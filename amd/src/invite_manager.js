@@ -38,14 +38,6 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                } else if (this.responseText === "Start in the past") {
-                    str.get_strings([
-                        {'key': 'title_date_invalid', component: 'block_evasys_sync'},
-                        {'key': 'content_invalidstart', component: 'block_evasys_sync'},
-                        {'key': 'ok'}
-                    ]).done(function (s) {
-                        notification.alert(s[0], s[1], s[2]);
-                    });
                 } else if (this.responseText === "End in the past") {
                     str.get_strings([
                         {'key': 'title_date_invalid', component: 'block_evasys_sync'},

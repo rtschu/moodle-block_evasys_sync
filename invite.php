@@ -84,8 +84,9 @@ if ($now > $end) {
     exit();
 }
 if (!$invitedirect && !$onlyend && $now > $start) {
-    echo "Start in the past";
-    exit();
+    // If start is in the past, start immediately and record 'now' as the actual start date.
+    $startdate = new \DateTime('now', \core_date::get_server_timezone_object());
+    $start = $startdate->getTimestamp();
 }
 
 $persistentid = $DB->get_field("block_evasys_sync_courseeval", "id", array('course' => $courseid));
