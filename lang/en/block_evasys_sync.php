@@ -55,6 +55,7 @@ $string['maincoursepredefined_help'] = 'This LSF course is fixed, as it has been
 
 $string['planorstartevaluation'] = 'Set evaluation period';
 $string['startevaluationnow'] = 'Start evaluation now';
+$string['requestagain'] = 'Request or invite again';
 $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
                                   '{$a->queued} jobs have been queued';
