@@ -138,7 +138,6 @@ $string['submit'] = 'Save changes';
 $string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
-$string['cc_mode'] = 'evasys_cc_mode';
 $string['auto_mode'] = 'Automatic mode';
 
 // Settings - category table.

@@ -87,7 +87,7 @@ class admin_form extends moodleform {
         $mform->addElement('text', $name, $title);
         $mform->setType($name, PARAM_INT);
 
-        $name = get_string('cc_mode', 'block_evasys_sync');
+        $name = 'evasys_cc_mode';
         $title = get_string('auto_mode', 'block_evasys_sync');
         $mform->addElement('checkbox', $name, $title);
         $mform->setType($name, PARAM_BOOL);

@@ -133,7 +133,6 @@ $string['submit'] = 'Speichern';
 $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
-$string['cc_mode'] = 'evasys_cc_mode';
 $string['auto_mode'] = 'Automatischer Modus';
 
 
