@@ -35,7 +35,7 @@ $string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer, die evalui
 $string['taskname'] = 'EvaSys-Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
-$string['direct_invite_checkbox'] = 'Umfrage sofort starten';
+$string['direct_invite_checkbox'] = 'Evaluation sofort starten';
 $string['reactivate_invite'] = 'Einladung erneut durchführen';
 $string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
 $string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
@@ -179,5 +179,6 @@ $string['November'] = 'November';
 $string['December'] = 'Dezember';
 
 // From...to
-$string['startondate'] = 'Evaluation findet statt von:';
+$string['evaluationperiod'] = 'Evaluationszeitraum:';
+$string['startondate'] = 'Zeitraum planen von';
 $string['endondate'] = 'bis';

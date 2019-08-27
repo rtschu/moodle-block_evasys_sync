@@ -46,7 +46,7 @@ Example context (json):
                     </label>
                 </div>
             {{/startoption}}
-            {{# str}}startondate, block_evasys_sync{{/str}}
+            {{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />
             {{#direct}}
                 <div>
                     <label for="direct_invite">
@@ -55,7 +55,7 @@ Example context (json):
                     </label>
                 </div>
             {{/direct}}
-            <br />
+            {{# str}}startondate, block_evasys_sync{{/str}}<br />
             {{< block_evasys_sync/datetimepicker}}
                 {{$id}}start{{/id}}
                 {{$disabled}}{{startdisabled}}{{/disabled}}
