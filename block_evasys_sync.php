@@ -84,7 +84,9 @@ class block_evasys_sync extends block_base{
             $startdisabled = "";
             $enddisabled = "";
             $start = time();
-            $end = time();
+            $oneweeklater = $time = new \DateTime();
+            $oneweeklater->add(new \DateInterval("P7D"));
+            $end = $oneweeklater->getTimestamp();
             global $DB;
             $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $this->page->course->id));
             if (is_object($record)) {
