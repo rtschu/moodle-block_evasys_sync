@@ -321,7 +321,8 @@ class evasys_synchronizer {
         }
         $event = \block_evasys_sync\event\evaluation_requested::create(array(
             'userid' => $USER->id,
-            'courseid' => $this->courseid
+            'courseid' => $this->courseid,
+            'context' => \context_course::instance($this->courseid),
         ));
         $event->trigger();
         global $DB;
