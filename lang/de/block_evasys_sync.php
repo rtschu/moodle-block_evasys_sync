@@ -53,9 +53,8 @@ $string['maincoursepredefined_help'] = 'Dieser LSF-Kurs ist fest zugeordnet, da 
 
 // Direct invite strings.
 
-$string['direct_invite'] = "Teilnehmer direkt einladen";
-$string['content_confirm'] = "Eine Umfrage soll heute beginnen, diese Funktion versendet daher JETZT Einladungen!<br />" .
-                             "Sind Sie sicher, dass Sie jetzt an alle Teilnehmer Evaluationseinladungen/-erinnerungen versenden wollen?";
+$string['planorstartevaluation'] = 'Evaluationszeitraum festlegen';
+$string['startevaluationnow'] = 'Evaluation sofort beginnen';
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
                                   '{$a->queued} Evaluationsperioden wurden festgelegt.';
@@ -70,7 +69,7 @@ $string['title_send_rejected'] = "Unzulässiges Datum";
 $string['content_send_rejected'] = "Ein Datum wurde in die Vergangenheit geändert. <br />" .
     "Dies ist nicht zulässig! Es können einzelne Evaluationsperioden geändert worden sein.<br />";
 $string['title_send_invalid'] = "Fehlerhafter Zeitraum";
-$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem Sie endet! <br />" .
+$string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie endet! <br />" .
     "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
 
 // New invite strings.
@@ -135,7 +134,7 @@ $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 $string['cc_mode'] = 'evasys_cc_mode';
-$string['auto_mode'] = 'Automatischer modus';
+$string['auto_mode'] = 'Automatischer Modus';
 
 
 // Settings - category table.
