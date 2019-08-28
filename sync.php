@@ -34,10 +34,21 @@ $startday = required_param('day_start', PARAM_TEXT);
 $starthour = required_param('hour_start', PARAM_TEXT);
 $startmin = required_param('minute_start', PARAM_TEXT);
 
-// Prepare formatted dates for email text.
-$start = "$startday.$startmonth.$startyear $starthour:$startmin";
-$end = "$endday.$endmonth.$endyear $endhour:$endmin";
-$dates = ["start" => $start, "end" => $end];
+$startdate = new DateTime();
+$startdate->setTimezone(\core_date::get_server_timezone_object());
+$startdate->setDate($startyear, $startmonth, $startday);
+$startdate->setTime($starthour, $startmin);
+if (time() > $startdate->getTimestamp()) {
+    // Start date is in the past; change to now (just for the record).
+    $startdate = new \DateTime('now', \core_date::get_server_timezone_object());
+}
+
+$enddate = new DateTime();
+$enddate->setTimezone(\core_date::get_server_timezone_object());
+$enddate->setDate($endyear, $endmonth, $endday);
+$enddate->setTime($endhour, $endmin);
+
+$dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
