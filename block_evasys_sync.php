@@ -111,7 +111,7 @@ class block_evasys_sync extends block_base{
                 'direct' => $mode,
                 'startdisabled' => $startdisabled,
                 'enddisabled' => $enddisabled,
-                'startoption' => $enddisabled xor $startdisabled,
+                'startoption' => $state == course_evaluation_allocation::STATE_MANUAL || ($enddisabled xor $startdisabled),
                 'coursemappingenabled' => !$startdisabled or is_siteadmin(),
                 'nostudents' => $nostudents
             );
