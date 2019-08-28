@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use block_evasys_sync\date_decoder;
+
 require_once('../../config.php');
 
 require_login();
@@ -21,20 +23,20 @@ require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 
 $endyear = required_param('year_end', PARAM_TEXT);
-$endmonth = required_param('month_end', PARAM_TEXT);
+$endmonth = date_decoder::decode_from_localised_string(required_param('month_end', PARAM_TEXT));
 $endday = required_param('day_end', PARAM_TEXT);
 $endhour = required_param('hour_end', PARAM_TEXT);
 $endmin = required_param('minute_end', PARAM_TEXT);
 
 $startyear = required_param('year_start', PARAM_TEXT);
-$startmonth = required_param('month_start', PARAM_TEXT);
+$startmonth = date_decoder::decode_from_localised_string(required_param('month_start', PARAM_TEXT));
 $startday = required_param('day_start', PARAM_TEXT);
 $starthour = required_param('hour_start', PARAM_TEXT);
 $startmin = required_param('minute_start', PARAM_TEXT);
 
 // Prepare formatted dates for email text.
-$start = "$startday. $startmonth $startyear $starthour:$startmin";
-$end = "$endday. $endmonth $endyear $endhour:$endmin";
+$start = "$startday.$startmonth.$startyear $starthour:$startmin";
+$end = "$endday.$endmonth.$endyear $endhour:$endmin";
 $dates = ["start" => $start, "end" => $end];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');

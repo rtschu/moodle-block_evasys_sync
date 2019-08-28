@@ -14,26 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use block_evasys_sync\date_decoder;
+
 require_once('../../config.php');
 require_login();
 require_sesskey();
 
 // This page shouldn't be visited by a user; instead, it is accessed using ajax requests.
-
-$decoder = array(
-    get_string('January', 'block_evasys_sync') => 1,
-    get_string('February', 'block_evasys_sync') => 2,
-    get_string('March', 'block_evasys_sync') => 3,
-    get_string('April', 'block_evasys_sync') => 4,
-    get_string('May', 'block_evasys_sync') => 5,
-    get_string('June', 'block_evasys_sync') => 6,
-    get_string('July', 'block_evasys_sync') => 7,
-    get_string('August', 'block_evasys_sync') => 8,
-    get_string('September', 'block_evasys_sync') => 9,
-    get_string('October', 'block_evasys_sync') => 10,
-    get_string('November', 'block_evasys_sync') => 11,
-    get_string('December', 'block_evasys_sync') => 12,
-);
 
 $courseid = required_param('courseid', PARAM_INT);
 $course = get_course($courseid);
@@ -49,13 +36,13 @@ $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $invitedirect = optional_param("direct_invite", false, PARAM_BOOL);
 $onlyend = optional_param('only_end', false, PARAM_BOOL);
 $endyear = required_param('year_end', PARAM_TEXT);
-$endmonth = required_param('month_end', PARAM_TEXT);
+$endmonth = date_decoder::decode_from_localised_string(required_param('month_end', PARAM_TEXT));
 $endday = required_param('day_end', PARAM_TEXT);
 $endhour = required_param('hour_end', PARAM_TEXT);
 $endmin = required_param('minute_end', PARAM_TEXT);
 $enddate = new DateTime();
 $enddate->setTimezone(\core_date::get_server_timezone_object());
-$enddate->setDate($endyear, $decoder[$endmonth], $endday);
+$enddate->setDate($endyear, $endmonth, $endday);
 $enddate->setTime($endhour, $endmin);
 $end = $enddate->getTimestamp();
 if ($invitedirect) {
@@ -64,13 +51,13 @@ if ($invitedirect) {
 } else if (!$onlyend) {
     // If we are only changing the end date, start fields are ignored.
     $startyear = required_param('year_start', PARAM_TEXT);
-    $startmonth = required_param('month_start', PARAM_TEXT);
+    $startmonth = date_decoder::decode_from_localised_string(required_param('month_start', PARAM_TEXT));
     $startday = required_param('day_start', PARAM_TEXT);
     $starthour = required_param('hour_start', PARAM_TEXT);
     $startmin = required_param('minute_start', PARAM_TEXT);
     $startdate = new DateTime();
     $startdate->setTimezone(\core_date::get_server_timezone_object());
-    $startdate->setDate($startyear, $decoder[$startmonth], $startday);
+    $startdate->setDate($startyear, $startmonth, $startday);
     $startdate->setTime($starthour, $startmin);
     $start = $startdate->getTimestamp();
 }
