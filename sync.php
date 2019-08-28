@@ -25,7 +25,7 @@ $courseid = required_param('courseid', PARAM_INT);
 
 if (optional_param('only_end', false, PARAM_BOOL)) {
     // Existing start date should not be changed; just the end date. Fetch start date from record.
-    $record = course_evaluation_allocation::get_record_by_course($this->courseid);
+    $record = course_evaluation_allocation::get_record_by_course($courseid);
     $startdate = new \DateTime('@' . $record->get('start'), \core_date::get_server_timezone_object());
 } else {
     $startyear = required_param('year_start', PARAM_TEXT);
