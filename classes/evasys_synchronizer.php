@@ -299,7 +299,13 @@ class evasys_synchronizer {
             "Falls Sie für diesen Kurs bereits eine E-Mail erhalten haben, wurden gerade neue Teilnehmer*innen ".
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
-        $notiftext .= "Gewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . $textdatechanged . "\r\n\r\n";
+        $startdate = new \DateTime($dates["start"], \core_date::get_server_timezone_object());
+        $formattedstartdate = $startdate->format('d.m.Y H:i:s');
+        $enddate = new \DateTime($dates["end"], \core_date::get_server_timezone_object());
+        $formattedenddate = $enddate->format('d.m.Y H:i:s');
+
+        $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
+            $formattedenddate . $textdatechanged . "\r\n\r\n";
 
         if ($newparticipantsadded) {
             $notiftext .= "Der Evaluation wurden neue Teilnehmer*innen hinzugefügt.\r\n\r\n";

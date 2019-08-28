@@ -106,8 +106,8 @@ $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
         'courseid' => $courseid,
         'context' => \context_course::instance($courseid),
         'other' => array(
-            'start' => $startdate->format('d-m-Y H:i:s'),
-            'end' => $enddate->format('d-m-Y H:i:s'),
+            'start' => $startdate->format('d.m.Y H:i:s'),
+            'end' => $enddate->format('d.m.Y H:i:s'),
         )
     )
 );
