@@ -95,7 +95,7 @@ class block_evasys_sync extends block_base{
                 if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED) {
                     $startdisabled = "disabled";
                 }
-                if ($state >= course_evaluation_allocation::STATE_AUTO_CLOSED) {
+                if ($state == course_evaluation_allocation::STATE_AUTO_CLOSED) {
                     $enddisabled = "disabled";
                 }
                 $start = $record->get('startdate');
@@ -111,7 +111,7 @@ class block_evasys_sync extends block_base{
                 'direct' => $mode,
                 'startdisabled' => $startdisabled,
                 'enddisabled' => $enddisabled,
-                'startoption' => $state == course_evaluation_allocation::STATE_MANUAL || ($enddisabled xor $startdisabled),
+                'startoption' => $enddisabled xor $startdisabled,
                 'coursemappingenabled' => !$startdisabled or is_siteadmin(),
                 'nostudents' => $nostudents
             );
