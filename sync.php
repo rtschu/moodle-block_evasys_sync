@@ -50,19 +50,33 @@ $returnurl->param('id', $courseid);
 $returnurl->param('evasyssynccheck', 1);
 
 try {
+    if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') == 0) {
+        $returnurl->param('status', 'nostudents');
+        redirect($returnurl, get_string('syncnostudents', 'block_evasys_sync'), 0);
+        exit();
+    }
+
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-    if ($evasyssynchronizer->sync_students()) {
-        $evasyssynchronizer->notify_evaluation_responsible_person($dates);
+    $newparticipantsadded = $evasyssynchronizer->sync_students();
+    $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
+    if ($newparticipantsadded || $datechanged) {
+        $evasyssynchronizer->notify_evaluation_responsible_person($dates, $newparticipantsadded, $datechanged);
+
+        // Log event.
+        $event = \block_evasys_sync\event\evaluation_requested::create(array(
+            'userid' => $USER->id,
+            'courseid' => $courseid,
+            'context' => \context_course::instance($courseid),
+        ));
+        $event->trigger();
+
         $returnurl->param('status', 'success');
-        redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 1);
+        redirect($returnurl, get_string('syncsucessful', 'block_evasys_sync'), 0);
+        exit();
     } else {
-        if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') != 0) {
-            $returnurl->param('status', 'uptodate');
-            redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 1);
-        } else {
-            $returnurl->param('status', 'nostudents');
-            redirect($returnurl, get_string('syncnostudents', 'block_evasys_sync'), 1);
-        }
+        $returnurl->param('status', 'uptodate');
+        redirect($returnurl, get_string('syncalreadyuptodate', 'block_evasys_sync'), 0);
+        exit();
     }
 } catch (Exception $exception) {
     debugging($exception);

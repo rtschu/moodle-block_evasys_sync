@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use block_evasys_sync\course_evaluation_allocation;
+
 defined('MOODLE_INTERNAL') || die();
 
 class block_evasys_sync extends block_base{
@@ -87,21 +89,17 @@ class block_evasys_sync extends block_base{
             $oneweeklater = $time = new \DateTime();
             $oneweeklater->add(new \DateInterval("P7D"));
             $end = $oneweeklater->getTimestamp();
-            global $DB;
-            $record = $DB->get_record('block_evasys_sync_courseeval', array('course' => $this->page->course->id));
-            if (is_object($record)) {
-                if ($record->state > 0) {
+            $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
+            if ($record !== false) {
+                $state = $record->get('state');
+                if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED) {
                     $startdisabled = "disabled";
                 }
-                if ($record->state > 1) {
+                if ($state >= course_evaluation_allocation::STATE_AUTO_CLOSED) {
                     $enddisabled = "disabled";
                 }
-                if (isset($record->startdate)) {
-                    $start = $record->startdate;
-                }
-                if (isset($record->enddate)) {
-                    $end = $record->enddate;
-                }
+                $start = $record->get('startdate');
+                $end = $record->get('enddate');
             }
             $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
             $nostudents = (count_enrolled_users(context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
