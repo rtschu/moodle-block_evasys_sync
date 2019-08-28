@@ -30,7 +30,7 @@ class date_decoder {
     }
 
     private function __construct() {
-        self::$decoder = array(
+        $this->decoder = array(
             get_string('January', 'block_evasys_sync') => 1,
             get_string('February', 'block_evasys_sync') => 2,
             get_string('March', 'block_evasys_sync') => 3,
