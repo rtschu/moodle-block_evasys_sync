@@ -29,13 +29,17 @@ defined('MOODLE_INTERNAL') || die;
 class course_evaluation_allocation extends persistent{
     const TABLE = 'block_evasys_sync_courseeval';
 
+    const STATE_AUTO_NOTOPENED = 0;
+    const STATE_AUTO_OPENED = 1;
+    const STATE_AUTO_CLOSED = 2;
+    const STATE_MANUAL = 3;
+
     protected static function define_properties() {
         // State decoding:
         // 0: not opened.
         // 1: opened.
         // 2: closed.
         // 3: email sent.
-        // 4: manual weird shit.
         return array(
             'course' => array(
                 'type' => PARAM_INT,
@@ -51,9 +55,22 @@ class course_evaluation_allocation extends persistent{
             ),
             'state' => array(
                 'type' => PARAM_INT,
-                'default' => 0,
+                'required' => true,
                 'message' => new \lang_string('invalidstate', 'block_evasys_sync')
             )
         );
+    }
+
+    public static function get_record_by_course(int $course, $exception = true) {
+        global $DB;
+        if (!$record = $DB->get_record(self::TABLE, array('course' => $course))) {
+            if (!$exception) {
+                return false;
+            } else {
+                throw new \dml_missing_record_exception(self::TABLE);
+            }
+        }
+
+        return new static(0, $record);
     }
 }

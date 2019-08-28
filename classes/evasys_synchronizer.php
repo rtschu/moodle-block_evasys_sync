@@ -275,8 +275,8 @@ class evasys_synchronizer {
      * Sends an e-mail with the request to start a Evaluation for a course.
      * @throws \Exception when e-mail request fails
      */
-    public function notify_evaluation_responsible_person($dates) {
-        global $USER, $DB;
+    public function notify_evaluation_responsible_person($dates, $newparticipantsadded, $datechanged) {
+        global $USER;
         $course = get_course($this->courseid);
 
         $userto = $this->get_assigned_user($course);
@@ -288,14 +288,22 @@ class evasys_synchronizer {
 
         $notifsubject = "Evaluation für '" . $course->fullname . "' geöffnet";
 
-        $notiftext = "Sehr geehrte/r Evaluationskoordinator/in,\r\n\r\n";
-        $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein Dozent die Evaluation " .
-            "der nachfolgenden Veranstaltung aktiviert hat. \r\n".
-            "Bitte passen Sie die Evaluationszeiträume gemäß der Wünsche des Dozenten an. \r\n".
-            "Bitte versenden Sie die TANs im EvaSys-Menü " .
-            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n\r\n";
+        $textdatechanged = $datechanged ? ' (Zeitraum geändert!)' : '';
 
-        $notiftext .= "Gewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . "\r\n\r\n";
+        $notiftext = "Sehr geehrte*r Evaluationskoordinator*in,\r\n\r\n";
+        $notiftext .= "Dies ist eine automatisch generierte Mail, ausgelöst dadurch, dass ein*e Dozent*in die Evaluation " .
+            "der nachfolgenden Veranstaltung beantragt hat. \r\n".
+            "Bitte passen Sie die Evaluationszeiträume dem untenstehenden Wunsch an. \r\n".
+            "Bitte versenden Sie die TANs im EvaSys-Menü " .
+            "unter dem Menüpunkt 'TANs per E-Mail an Befragte versenden' für die Veranstaltungen.\r\n".
+            "Falls Sie für diesen Kurs bereits eine E-Mail erhalten haben, wurden gerade neue Teilnehmer*innen ".
+            "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
+
+        $notiftext .= "Gewünschter Evaluationszeitraum: " . $dates["start"] . " - " . $dates["end"] . $textdatechanged . "\r\n\r\n";
+
+        if ($newparticipantsadded) {
+            $notiftext .= "Der Evaluation wurden neue Teilnehmer*innen hinzugefügt.\r\n\r\n";
+        }
 
         foreach ($this->courseinformation as $course) {
             $notiftext .= "Name: " . $course->m_sCourseTitle . "\r\n";
@@ -317,13 +325,6 @@ class evasys_synchronizer {
         if (!$mailresult) {
             throw new \Exception('Could not send e-mail to person responsible for evaluation');
         }
-        $event = \block_evasys_sync\event\evaluation_requested::create(array(
-            'userid' => $USER->id,
-            'courseid' => $this->courseid,
-            'context' => \context_course::instance($this->courseid),
-        ));
-        $event->trigger();
-        $DB->execute("UPDATE {block_evasys_sync_courseeval} SET state = 3 WHERE course = :courseid", ['courseid' => $this->courseid]);
     }
 
     /**
@@ -358,5 +359,33 @@ class evasys_synchronizer {
             $userto = \core_user::get_user($user->userid);
         }
         return $userto;
+    }
+
+    /**
+     * Set time period for evaluation.
+     *
+     * @param array $dates expects keys `start' and `end' with timestamp values.
+     * @return bool true if the dates have changed or if the record is new.
+     * @throws \coding_exception
+     * @throws \dml_missing_record_exception
+     */
+    public function set_evaluation_period(array $dates) : bool {
+        $changed = false;
+        $data = course_evaluation_allocation::get_record_by_course($this->courseid, false);
+        if (!$data) {
+            $data = new course_evaluation_allocation(0);
+            $data->set('course', $this->courseid);
+            $data->set('state', course_evaluation_allocation::STATE_MANUAL);
+        }
+
+        if ($data->get('startdate') != $dates['start'] || $data->get('enddate') != $dates['end']) {
+            $changed = true;
+        }
+
+        $data->set('startdate', $dates['start']);
+        $data->set('enddate', $dates['end']);
+        $data->save();
+
+        return $changed;
     }
 }

@@ -40,6 +40,8 @@ class update_survey_status extends \core\task\scheduled_task {
     // My personal advice is to either move records that are in the past to another table, so you can still display the dates,
     // ...or to simply remove a record once the survey is closed.
     public function execute () {
+        // Obtain all moodle-controlled surveys and open and/or close them.
+        // This should never affect manual surveys (with state = 3).
         $time = time();
         $inviter = evasys_inviter::get_instance();
         $startcourseobjects = \block_evasys_sync\course_evaluation_allocation::get_records_select("startdate <= $time AND state = 0");
