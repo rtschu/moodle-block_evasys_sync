@@ -82,7 +82,7 @@ if ($persistentid) {
     $record = new \block_evasys_sync\course_evaluation_allocation($persistentid);
     if (!$onlyend) {
         $record->set('startdate', $start);
-        $record->set('state', 0);
+        $record->set('state', \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED);
     }
     $record->set('enddate', $end);
     $record->update();
@@ -91,7 +91,7 @@ if ($persistentid) {
     $data->course = $courseid;
     $data->startdate = $start;
     $data->enddate = $end;
-    $data->state = 0;
+    $data->state = \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED;
     $record = new \block_evasys_sync\course_evaluation_allocation(0, $data);
     $record->create();
 }

@@ -130,12 +130,12 @@ class block_evasys_sync extends block_base{
                     $survey['formName'] = format_string($rawsurvey->formName);
                     $survey['surveystatus'] = get_string('surveystatus' . $rawsurvey->surveyStatus, 'block_evasys_sync');
                     $survey['amountOfCompleteForms'] = format_string($rawsurvey->amountOfCompletedForms);
-                    if (is_object($record) && $record->state == 2 && $rawsurvey->surveyStatus == 'open') {
+                    if ($record !== false && $record->get('state') == course_evaluation_allocation::STATE_AUTO_CLOSED && $rawsurvey->surveyStatus == 'open') {
                         $data['warning'] = 'true';
                         $data['startdisabled'] = "";
                         $data['enddisabled'] = "";
                     }
-                    if (!is_object($record) && $rawsurvey->surveyStatus == 'closed') {
+                    if ($record === false && $rawsurvey->surveyStatus == 'closed') {
                         $data['startdisabled'] = 'disabled';
                         $data['enddisabled'] = 'disabled';
                         $data['startoption'] = true;
