@@ -1,18 +1,18 @@
 define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, notification, url, $) {
-
-    var updateForm = function (dates) {
-        var form = document.getElementById('evasys_block_form');
-        for (var i = 0; i < dates.count; i++) {
-            form.elements['startDate' + i].value = dates["startDate" + i];
-            form.elements['endDate' + i].value = dates["endDate" + i];
-        }
+    var updateParticipants = function(participants) {
+        var participantFields = $('.block_evasys_participants');
+        participantFields.each(function() {
+            this.innerHTML = participants;
+        });
     };
 
     var submitInvitation = function (dates) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                if (this.responseText === "success inviting") {
+                var responseParts = this.responseText.split('#');
+                if (responseParts[0] === "success inviting") {
+                    updateParticipants(responseParts[1]);
                     str.get_strings([
                         {'key': 'title_success', component: 'block_evasys_sync'},
                         {'key': 'content_success_invite', component: 'block_evasys_sync'},
@@ -20,8 +20,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                         ]).done(function (s) {
                             notification.alert(s[0], s[1], s[2]);
                         });
-                    updateForm(dates);
-                } else if (this.responseText === "success") {
+                } else if (responseParts[0] === "success") {
                     str.get_strings([
                         {'key': 'title_success', component: 'block_evasys_sync'},
                         {'key': 'content_success_direct', component: 'block_evasys_sync'},
@@ -29,8 +28,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                    updateForm(dates);
-                } else if (this.responseText === "Start after end") {
+                } else if (responseParts[0] === "Start after end") {
                     str.get_strings([
                         {'key': 'title_date_invalid', component: 'block_evasys_sync'},
                         {'key': 'content_start_after_end', component: 'block_evasys_sync'},
@@ -38,7 +36,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                } else if (this.responseText === "End in the past") {
+                } else if (responseParts[0] === "End in the past") {
                     str.get_strings([
                         {'key': 'title_date_invalid', component: 'block_evasys_sync'},
                         {'key': 'content_invalidend', component: 'block_evasys_sync'},
@@ -46,7 +44,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
                     ]).done(function (s) {
                         notification.alert(s[0], s[1], s[2]);
                     });
-                } else if (this.responseText === "wrong mode") {
+                } else if (responseParts[0] === "wrong mode") {
                     str.get_strings([
                         {'key': 'title_wrong_mode', component: 'block_evasys_sync'},
                         {'key': 'content_wrong_mode', component: 'block_evasys_sync'},

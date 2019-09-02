@@ -112,8 +112,11 @@ $event = \block_evasys_sync\event\evaluationperiod_set::create(array(
     )
 );
 $event->trigger();
+
+
 if ($invitedirect) {
-    echo "success inviting";
+    $invitedusers = count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate');
+    echo "success inviting#$invitedusers";
 } else {
     echo "success";
 }
