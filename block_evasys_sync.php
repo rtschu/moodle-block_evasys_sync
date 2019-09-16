@@ -61,9 +61,9 @@ class block_evasys_sync extends block_base{
         }
 
         if ($evasyssynccheck === 1) {
-            $mode = (bool) \block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
+            $ismodeautomated = (bool) \block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
             // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
-            if ($mode) {
+            if ($ismodeautomated) {
                 $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
             }
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
@@ -75,11 +75,11 @@ class block_evasys_sync extends block_base{
                 return $this->content;
             }
 
-            if (!$mode) {
-                $href = new moodle_url('/blocks/evasys_sync/sync.php');
-            } else {
+            if ($ismodeautomated) {
                 $href = new moodle_url('/course/view.php',
-                                       array('id' => $this->page->course->id, "evasyssynccheck" => true));
+                    array('id' => $this->page->course->id, "evasyssynccheck" => true));
+            } else {
+                $href = new moodle_url('/blocks/evasys_sync/sync.php');
             }
 
             // Get Status.
@@ -108,7 +108,7 @@ class block_evasys_sync extends block_base{
                 'href' => $href,
                 'sesskey' => sesskey(),
                 'courseid' => $this->page->course->id,
-                'direct' => $mode,
+                'direct' => $ismodeautomated,
                 'startdisabled' => $startdisabled,
                 'enddisabled' => $enddisabled,
                 'startoption' => $enddisabled xor $startdisabled,
@@ -116,7 +116,7 @@ class block_evasys_sync extends block_base{
                 'nostudents' => $nostudents
             );
             $courses = array();
-            $showcontrols = false;
+            $hassurveys = false;
             foreach ($evasyscourses as $evasyscourseinfo) {
                 $course = array();
                 $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
@@ -142,13 +142,18 @@ class block_evasys_sync extends block_base{
                     }
 
                     $surveys[] = $survey;
-                    $showcontrols = true;
+                    $hassurveys = true;
                 }
                 $course['surveys'] = $surveys;
                 $courses[] = $course;
             }
             $data['courses'] = $courses;
-            $data['showcontrols'] = $showcontrols;
+
+            /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
+             * In case of the automated workflow, we require surveys
+             * in order to be able to automatically trigger the evaluation. */
+            $data['showcontrols'] = $hassurveys || !$ismodeautomated;
+
             $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select("course = {$this->page->course->id} AND NOT evasyscourses = ''");
