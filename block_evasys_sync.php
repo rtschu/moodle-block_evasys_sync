@@ -152,7 +152,7 @@ class block_evasys_sync extends block_base{
             /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
              * In case of the automated workflow, we require surveys
              * in order to be able to automatically trigger the evaluation. */
-            $data['showcontrols'] = $hassurveys || !$ismodeautomated;
+            $data['showcontrols'] = ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0;
 
             $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
