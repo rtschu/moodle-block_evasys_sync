@@ -103,9 +103,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 $newvaluemodename = 'category_mode_' . $allocation->get('id');
                 // Checkboxex only get submitted if they're checked.
                 if (isset($data->$newvaluemodename) && $data->$newvaluemodename) {
-                    $newvaluemode = 1;
+                    $newvaluemode = 1; // Category uses automated mode.
                 } else {
-                    $newvaluemode = 0;
+                    $newvaluemode = 0; // Category uses manual mode.
                 }
                 try {
                     $oldvaluemode = $allocation->get('category_mode');

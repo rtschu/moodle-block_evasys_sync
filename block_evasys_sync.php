@@ -61,9 +61,9 @@ class block_evasys_sync extends block_base{
         }
 
         if ($evasyssynccheck === 1) {
-            $mode = (bool) \block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
+            $ismodeautomated = (bool) \block_evasys_sync\evasys_inviter::getmode($this->page->course->category);
             // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
-            if ($mode) {
+            if ($ismodeautomated) {
                 $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
             }
             $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
@@ -108,7 +108,7 @@ class block_evasys_sync extends block_base{
                 'href' => $href,
                 'sesskey' => sesskey(),
                 'courseid' => $this->page->course->id,
-                'direct' => $mode,
+                'direct' => $ismodeautomated,
                 'startdisabled' => $startdisabled,
                 'enddisabled' => $enddisabled,
                 'startoption' => $enddisabled xor $startdisabled,

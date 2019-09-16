@@ -304,10 +304,12 @@ class evasys_inviter {
     }
 
     /**
+     * Determines if the workflow used by the course category is automated or manual.
+     * If true, the category uses the automated mode. If false, the workflow is manual.
      * @param $category
      * @return bool wether the teacher may set dates for this survey himself.
-     * @throws dml_exception
-     * @throws moodle_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public static function getmode($category) {
         global $DB;
