@@ -117,6 +117,7 @@ class block_evasys_sync extends block_base{
             );
             $courses = array();
             $hassurveys = false;
+            $invalidcourses = false;
             foreach ($evasyscourses as $evasyscourseinfo) {
                 $course = array();
                 $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
@@ -144,6 +145,12 @@ class block_evasys_sync extends block_base{
                     $surveys[] = $survey;
                     $hassurveys = true;
                 }
+
+                // If any course has an unkown technical id, we don't want to allow synchronization.
+                if ($course['technicalid'] == "Unknown") {
+                    $invalidcourses = true;
+                }
+
                 $course['surveys'] = $surveys;
                 $courses[] = $course;
             }
@@ -152,7 +159,7 @@ class block_evasys_sync extends block_base{
             /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
              * In case of the automated workflow, we require surveys
              * in order to be able to automatically trigger the evaluation. */
-            $data['showcontrols'] = ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0;
+            $data['showcontrols'] = ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses;
 
             $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
