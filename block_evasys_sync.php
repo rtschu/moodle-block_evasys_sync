@@ -116,7 +116,7 @@ class block_evasys_sync extends block_base{
                 'nostudents' => $nostudents
             );
             $courses = array();
-            $showcontrols = false;
+            $hassurveys = false;
             foreach ($evasyscourses as $evasyscourseinfo) {
                 $course = array();
                 $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
@@ -142,13 +142,18 @@ class block_evasys_sync extends block_base{
                     }
 
                     $surveys[] = $survey;
-                    $showcontrols = true;
+                    $hassurveys = true;
                 }
                 $course['surveys'] = $surveys;
                 $courses[] = $course;
             }
             $data['courses'] = $courses;
-            $data['showcontrols'] = $showcontrols;
+
+            /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
+             * In case of the automated workflow, we require surveys
+             * in order to be able to automatically trigger the evaluation. */
+            $data['showcontrols'] = $hassurveys || !$ismodeautomated;
+
             $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         } else {
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select("course = {$this->page->course->id} AND NOT evasyscourses = ''");
