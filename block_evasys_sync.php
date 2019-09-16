@@ -75,11 +75,11 @@ class block_evasys_sync extends block_base{
                 return $this->content;
             }
 
-            if (!$mode) {
-                $href = new moodle_url('/blocks/evasys_sync/sync.php');
-            } else {
+            if ($ismodeautomated) {
                 $href = new moodle_url('/course/view.php',
-                                       array('id' => $this->page->course->id, "evasyssynccheck" => true));
+                    array('id' => $this->page->course->id, "evasyssynccheck" => true));
+            } else {
+                $href = new moodle_url('/blocks/evasys_sync/sync.php');
             }
 
             // Get Status.
