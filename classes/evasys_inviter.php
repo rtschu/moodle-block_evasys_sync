@@ -314,13 +314,13 @@ class evasys_inviter {
     public static function getmode($category) {
         global $DB;
         $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
-        if ($mode) {
+        if ($mode !== false) {
             return (bool) $mode->category_mode;
         } else {
             $parents = \core_course_category::get($category)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                if ($mode) {
+                if ($mode !== false) {
                     return (bool) $mode->category_mode;
                 }
             }
