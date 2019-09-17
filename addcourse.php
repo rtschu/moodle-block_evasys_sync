@@ -75,7 +75,7 @@ if ($mform->is_validated()) {
     foreach ($pre as $veranstid) {
         $iscourseofteacher = !empty($courses[$veranstid]);
         if (!$iscourseofteacher && !is_siteadmin()) {
-            $mapping[] = $entry;
+            $mapping[] = $veranstid;
         }
     }
 
@@ -84,7 +84,7 @@ if ($mform->is_validated()) {
         if ($value) {
             $iscourseofteacher = !empty($courses[$veranstid]);
             if (is_siteadmin() || $iscourseofteacher) {
-                $mapping[] = $key;
+                $mapping[] = $veranstid;
             }
         }
     }
