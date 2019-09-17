@@ -73,7 +73,7 @@ if ($mform->is_validated()) {
 
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
     foreach ($preexistingmappings as $veranstid) {
-        $iscourseofteacher = !empty($courses[$veranstid]);
+        $iscourseofteacher = !empty($coursesofteacher[$veranstid]);
         if (!$iscourseofteacher && !is_siteadmin()) {
             $mapping[] = $veranstid;
         }
@@ -82,7 +82,7 @@ if ($mform->is_validated()) {
     // Now add (selected) courses that the logged in user has authority over.
     foreach ($data as $veranstid => $value) {
         if ($value) {
-            $iscourseofteacher = !empty($courses[$veranstid]);
+            $iscourseofteacher = !empty($coursesofteacher[$veranstid]);
             if (is_siteadmin() || $iscourseofteacher) {
                 $mapping[] = $veranstid;
             }
