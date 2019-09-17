@@ -68,17 +68,22 @@ if ($mform->is_validated()) {
     // Connect to lsf database.
     $pgDB->connect();
 
+    // Once retrieve the teachers course list in order to search for its values later.
+    $coursesofteacher = get_teachers_course_list($username, false, true);
+
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
-    foreach ($pre as $entry) {
-        if (!is_course_of_teacher($entry, $USER->username) && !is_siteadmin()) {
+    foreach ($pre as $veranstid) {
+        $iscourseofteacher = !empty($courses[$veranstid]);
+        if (!$iscourseofteacher && !is_siteadmin()) {
             $mapping[] = $entry;
         }
     }
 
     // Now add (selected) courses that the logged in user has authority over.
-    foreach ($data as $key => $value) {
+    foreach ($data as $veranstid => $value) {
         if ($value) {
-            if (is_siteadmin() || is_course_of_teacher($key, $USER->username)) {
+            $iscourseofteacher = !empty($courses[$veranstid]);
+            if (is_siteadmin() || $iscourseofteacher) {
                 $mapping[] = $key;
             }
         }
