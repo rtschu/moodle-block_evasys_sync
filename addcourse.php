@@ -54,7 +54,7 @@ if (!$pid) {
 if ($mform->is_validated()) {
     require_sesskey();
 
-    global $DB, $USER;
+    global $DB, $USER, $pgDB;
     $data = $mform->get_data();
     if (is_object($data)) {
         $data = (Array) $data;
@@ -64,6 +64,9 @@ if ($mform->is_validated()) {
 
     // Pop the submitbutton.
     array_pop($data);
+
+    // Connect to lsf database.
+    $pgDB->connect();
 
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
     foreach ($pre as $entry) {
@@ -80,6 +83,9 @@ if ($mform->is_validated()) {
             }
         }
     }
+
+    // Dispose connection to lsf database.
+    $pgDB->dispose();
 
     $mappingstring = implode("#", $mapping);
 
