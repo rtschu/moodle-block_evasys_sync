@@ -54,7 +54,7 @@ if (!$pid) {
 if ($mform->is_validated()) {
     require_sesskey();
 
-    global $DB, $USER, $pgDB;
+    global $DB, $USER, $pgDB; // phpcs:ignore // @codingStandardsIgnoreLine
     $data = $mform->get_data();
     if (is_object($data)) {
         $data = (Array) $data;
@@ -66,7 +66,7 @@ if ($mform->is_validated()) {
     array_pop($data);
 
     // Connect to lsf database.
-    $pgDB->connect();
+    $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
 
     // Once retrieve the teachers course list in order to search for its values later.
     $coursesofteacher = get_teachers_course_list($USER->username, false, true);
@@ -90,7 +90,7 @@ if ($mform->is_validated()) {
     }
 
     // Dispose connection to lsf database.
-    $pgDB->dispose();
+    $pgDB->dispose(); // phpcs:ignore // @codingStandardsIgnoreLine
 
     $mappingstring = implode("#", $mapping);
 
