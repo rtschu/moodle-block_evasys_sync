@@ -69,7 +69,7 @@ if ($mform->is_validated()) {
     $pgDB->connect();
 
     // Once retrieve the teachers course list in order to search for its values later.
-    $coursesofteacher = get_teachers_course_list($username, false, true);
+    $coursesofteacher = get_teachers_course_list($USER->username, false, true);
 
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
     foreach ($pre as $veranstid) {
