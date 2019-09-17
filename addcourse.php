@@ -38,15 +38,15 @@ $mform->init($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
 $prefill = array();
-$pre = array();
+$preexistingmappings = array();
 if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-    $pre = explode('#', $persistent->get('evasyscourses'));
+    $preexistingmappings = explode('#', $persistent->get('evasyscourses'));
     // Last array value is allways an empty string...
-    array_pop($pre);
-    foreach ($pre as $value) {
+    array_pop($preexistingmappings);
+    foreach ($preexistingmappings as $value) {
         $prefill[$value] = 1;
     }
 }
@@ -72,7 +72,7 @@ if ($mform->is_validated()) {
     $coursesofteacher = get_teachers_course_list($USER->username, false, true);
 
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
-    foreach ($pre as $veranstid) {
+    foreach ($preexistingmappings as $veranstid) {
         $iscourseofteacher = !empty($courses[$veranstid]);
         if (!$iscourseofteacher && !is_siteadmin()) {
             $mapping[] = $veranstid;
