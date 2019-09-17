@@ -44,8 +44,6 @@ if (!$pid) {
 } else {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
     $preexistingmappings = explode('#', $persistent->get('evasyscourses'));
-    // Last array value is allways an empty string...
-    array_pop($preexistingmappings);
     foreach ($preexistingmappings as $value) {
         $prefill[$value] = 1;
     }
