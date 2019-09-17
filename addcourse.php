@@ -59,8 +59,8 @@ if ($mform->is_validated()) {
     if (is_object($data)) {
         $data = (Array) $data;
     }
-    // Eventually, this string will contain the final mapping.
-    $magicstring = '';
+    // Build mapping between moodle and evasys courses.
+    $mapping = [];
 
     // Pop the submitbutton.
     array_pop($data);
@@ -68,7 +68,7 @@ if ($mform->is_validated()) {
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
     foreach ($pre as $entry) {
         if (!is_course_of_teacher($entry, $USER->username) && !is_siteadmin()) {
-            $magicstring .= $entry . "#";
+            $mapping[] = $entry;
         }
     }
 
@@ -76,13 +76,15 @@ if ($mform->is_validated()) {
     foreach ($data as $key => $value) {
         if ($value) {
             if (is_siteadmin() || is_course_of_teacher($key, $USER->username)) {
-                $magicstring .= $key . "#";
+                $mapping[] = $key;
             }
         }
     }
 
+    $mappingstring = implode("#", $mapping);
+
     $persistent->set('course',  $id);
-    $persistent->set('evasyscourses', $magicstring);
+    $persistent->set('evasyscourses', $mappingstring);
     $persistent->save();
     $redirecturl = new moodle_url('/course/view.php', array('id' => $id, 'evasyssynccheck' => 1));
     redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
