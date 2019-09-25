@@ -183,7 +183,11 @@ $string['November'] = 'November';
 $string['December'] = 'December';
 
 
-// From...to
+// From...to.
 $string['evaluationperiod'] = 'Evaluation period:';
 $string['startondate'] = 'Planned period from';
 $string['endondate'] = 'until';
+
+// Notices.
+$string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
+$string['emailsentnotice'] = 'Evaluation has been requested';
