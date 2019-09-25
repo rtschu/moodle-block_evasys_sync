@@ -38,15 +38,13 @@ $mform->init($id);
 
 $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $id));
 $prefill = array();
-$pre = array();
+$preexistingmappings = array();
 if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-    $pre = explode('#', $persistent->get('evasyscourses'));
-    // Last array value is allways an empty string...
-    array_pop($pre);
-    foreach ($pre as $value) {
+    $preexistingmappings = explode('#', $persistent->get('evasyscourses'));
+    foreach ($preexistingmappings as $value) {
         $prefill[$value] = 1;
     }
 }
@@ -54,35 +52,48 @@ if (!$pid) {
 if ($mform->is_validated()) {
     require_sesskey();
 
-    global $DB, $USER;
+    global $DB, $USER, $pgDB; // phpcs:ignore // @codingStandardsIgnoreLine
     $data = $mform->get_data();
     if (is_object($data)) {
         $data = (Array) $data;
     }
-    // Eventually, this string will contain the final mapping.
-    $magicstring = '';
+    // Build mapping between moodle and evasys courses.
+    $mapping = [];
 
     // Pop the submitbutton.
     array_pop($data);
 
+    // Connect to lsf database.
+    $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
+
+    // Once retrieve the teachers course list in order to search for its values later.
+    $coursesofteacher = get_teachers_course_list($USER->username, false, true);
+
     // Add all courses that were already mapped prior to the current change (even if the logged in user does not own these courses herself).
-    foreach ($pre as $entry) {
-        if (!is_course_of_teacher($entry, $USER->username) && !is_siteadmin()) {
-            $magicstring .= $entry . "#";
+    foreach ($preexistingmappings as $veranstid) {
+        $iscourseofteacher = !empty($coursesofteacher[$veranstid]);
+        if (!$iscourseofteacher && !is_siteadmin()) {
+            $mapping[] = $veranstid;
         }
     }
 
     // Now add (selected) courses that the logged in user has authority over.
-    foreach ($data as $key => $value) {
+    foreach ($data as $veranstid => $value) {
         if ($value) {
-            if (is_siteadmin() || is_course_of_teacher($key, $USER->username)) {
-                $magicstring .= $key . "#";
+            $iscourseofteacher = !empty($coursesofteacher[$veranstid]);
+            if (is_siteadmin() || $iscourseofteacher) {
+                $mapping[] = $veranstid;
             }
         }
     }
 
+    // Dispose connection to lsf database.
+    $pgDB->dispose(); // phpcs:ignore // @codingStandardsIgnoreLine
+
+    $mappingstring = implode("#", $mapping);
+
     $persistent->set('course',  $id);
-    $persistent->set('evasyscourses', $magicstring);
+    $persistent->set('evasyscourses', $mappingstring);
     $persistent->save();
     $redirecturl = new moodle_url('/course/view.php', array('id' => $id, 'evasyssynccheck' => 1));
     redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
