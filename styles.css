@@ -1,7 +1,7 @@
-.in_box_button {
+input.in_box_button[type="submit"] {
     white-space: normal;
-    /* Important overrides standard button size of theme also i don't know why but 98% is the right setting for every size*/
-    width: 98% !important;
+    width: 100%;
+    margin: 2px 0;
 }
 
 .block_evasys_sync .emphasize {
