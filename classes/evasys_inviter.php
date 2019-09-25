@@ -84,7 +84,7 @@ class evasys_inviter {
      * @param bool $all if false, only surveys with OpenState != 0 are returned.
      * @return array IDs of surveys
      */
-    public function get_evasys_course_surveyids($evasyskennung, $all = true) {
+    public function get_evasys_course_surveys($evasyskennung, $all = true) {
         $soapresult = $this->soapclient->GetCourse($evasyskennung, 'PUBLIC', true, false);
         $surveyids = $soapresult->m_oSurveyHolder->m_aSurveys;
         if (is_soap_fault($soapresult)) {
@@ -110,7 +110,7 @@ class evasys_inviter {
         foreach ($courses as $evasysid => $moodlecourse) {
             $errorsurveys = array();
             // Get all open evasys Surveys.
-            $surveys = $this->get_evasys_course_surveyids($evasysid, false);
+            $surveys = $this->get_evasys_course_surveys($evasysid, false);
             foreach ($surveys as $survey) {
                 if (!$this->set_close_task($survey->m_nSurveyId)) {
                     $errorsurveys[] = $survey;
@@ -147,12 +147,15 @@ class evasys_inviter {
         $surveys = array();
         foreach ($courses as $course) {
             // Get all open evasys Surveys.
-            $surveys = array_merge($surveys, $this->get_evasys_course_surveyids($course, false));
+            $surveys = array_merge($surveys, $this->get_evasys_course_surveys($course, false));
         }
-        $surveys = array_unique($surveys);
-
+        $surveyids = array();
         foreach ($surveys as $survey) {
-            $surveyid = (string)$survey->m_nSurveyId;
+            $surveyids[] = (string)$survey->m_nSurveyId;
+        }
+        $surveyids = array_unique($surveyids);
+
+        foreach ($surveyids as $surveyid) {
             $this->soapclient->SendInvitationToParticipants($surveyid);
         }
     }
@@ -248,7 +251,7 @@ class evasys_inviter {
         $evasyscourse = $this->soapclient->GetCourse($evasyscourseid, 'PUBLIC' , false, false);
         if (!is_soap_fault($evasyscourse)) {
             $usercount = $evasyscourse->m_nCountStud;
-            $surveys = $this->get_evasys_course_surveyids($evasyscourseid);
+            $surveys = $this->get_evasys_course_surveys($evasyscourseid);
             foreach ($surveys as $survey) {
                 $this->soapclient->GetPswdsBySurvey((string)$survey->m_nSurveyId, $usercount, 1, true, false);
             }

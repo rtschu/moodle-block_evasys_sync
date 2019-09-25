@@ -67,6 +67,7 @@ define(['core/str', 'core/notification', 'core/url', 'jquery'], function (str, n
             }
         };
         var s = url.relativeUrl("/blocks/evasys_sync/invite.php", dates, true);
+        notification.alert(s.valueOf());
         xhttp.open("GET", s);
         xhttp.send();
     };
