@@ -1,3 +1,9 @@
+.in_box_button {
+    white-space: normal;
+    /* Important overrides standard button size of theme also i don't know why but 98% is the right setting for every size*/
+    width: 98% !important;
+}
+
 .block_evasys_sync .emphasize {
     font-weight: bold;
 }
