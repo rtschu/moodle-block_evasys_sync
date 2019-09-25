@@ -91,8 +91,16 @@ class block_evasys_sync extends block_base{
             $oneweeklater->add(new \DateInterval("P7D"));
             $end = $oneweeklater->getTimestamp();
             $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
+            $emailsentnotice = false;
+            $periodsetnotice = false;
             if ($record !== false) {
                 $state = $record->get('state');
+                if ($state == course_evaluation_allocation::STATE_MANUAL) {
+                    $emailsentnotice = true;
+                }
+                if ($state == course_evaluation_allocation::STATE_AUTO_NOTOPENED) {
+                    $periodsetnotice = true;
+                }
                 if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
                     $startdisabled = "disabled";
                 }
@@ -113,7 +121,9 @@ class block_evasys_sync extends block_base{
                 'enddisabled' => $enddisabled,
                 'startoption' => $enddisabled xor $startdisabled,
                 'coursemappingenabled' => !$startdisabled or is_siteadmin(),
-                'nostudents' => $nostudents
+                'nostudents' => $nostudents,
+                'emailsentnotice' => $emailsentnotice,
+                'evaluationperiodsetnotice' => $periodsetnotice
             );
             $courses = array();
             $hassurveys = false;
@@ -137,6 +147,7 @@ class block_evasys_sync extends block_base{
                         $data['enddisabled'] = "";
                     }
                     if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) && $rawsurvey->surveyStatus == 'closed') {
+                        $data['emailsentnotice'] = false;
                         $data['startdisabled'] = 'disabled';
                         $data['enddisabled'] = 'disabled';
                         $data['startoption'] = true;
