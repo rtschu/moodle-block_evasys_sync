@@ -43,7 +43,10 @@ if (!$pid) {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
 } else {
     $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-    $preexistingmappings = explode('#', $persistent->get('evasyscourses'));
+    $evasyscourses = $persistent->get('evasyscourses');
+    if (!empty($persistent->get('evasyscourses'))) {
+        $preexistingmappings = explode('#', $evasyscourses);
+    }
     foreach ($preexistingmappings as $value) {
         $prefill[$value] = 1;
     }
@@ -92,9 +95,16 @@ if ($mform->is_validated()) {
 
     $mappingstring = implode("#", $mapping);
 
-    $persistent->set('course',  $id);
-    $persistent->set('evasyscourses', $mappingstring);
-    $persistent->save();
+    // If the mapping is empty, remove it.
+    if (empty($mappingstring) && $persistent->get('id') != 0) {
+        $persistent->delete();
+    }
+    // Only save the mapping, if the mapping string is not empty.
+    if (!empty($mappingstring)) {
+        $persistent->set('course', $id);
+        $persistent->set('evasyscourses', $mappingstring);
+        $persistent->save();
+    }
     $redirecturl = new moodle_url('/course/view.php', array('id' => $id, 'evasyssynccheck' => 1));
     redirect($redirecturl, get_string('selection_success', 'block_evasys_sync'));
 }
