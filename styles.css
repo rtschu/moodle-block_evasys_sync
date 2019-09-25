@@ -1,3 +1,9 @@
+input.in_box_button[type="submit"] {
+    white-space: normal;
+    width: 100%;
+    margin: 2px 0;
+}
+
 .block_evasys_sync .emphasize {
     font-weight: bold;
 }
