@@ -83,6 +83,7 @@ class block_evasys_sync extends block_base{
             }
 
             // Get Status.
+            $nostudents = (count_enrolled_users(context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
             $startdisabled = "";
             $enddisabled = "";
             $start = time();
@@ -92,17 +93,16 @@ class block_evasys_sync extends block_base{
             $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
             if ($record !== false) {
                 $state = $record->get('state');
-                if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED) {
+                if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
                     $startdisabled = "disabled";
                 }
-                if ($state == course_evaluation_allocation::STATE_AUTO_CLOSED) {
+                if ($state == course_evaluation_allocation::STATE_AUTO_CLOSED || $nostudents) {
                     $enddisabled = "disabled";
                 }
                 $start = $record->get('startdate');
                 $end = $record->get('enddate');
             }
             $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
-            $nostudents = (count_enrolled_users(context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
             // Begin form.
             $data = array(
                 'href' => $href,
@@ -136,7 +136,7 @@ class block_evasys_sync extends block_base{
                         $data['startdisabled'] = "";
                         $data['enddisabled'] = "";
                     }
-                    if ($record === false && $rawsurvey->surveyStatus == 'closed') {
+                    if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) && $rawsurvey->surveyStatus == 'closed') {
                         $data['startdisabled'] = 'disabled';
                         $data['enddisabled'] = 'disabled';
                         $data['startoption'] = true;
