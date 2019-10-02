@@ -9,5 +9,6 @@ Example context (json):
 
 <form action="../blocks/evasys_sync/addcourse.php">
     <input type="hidden" name="id" value="{{courseid}}">
-    <input type="submit" class="in_box_button" value="{{# str}}change_mapping, block_evasys_sync{{/str}}" {{#disabled}}disabled{{/disabled}}>
+    <input type="submit" class="in_box_button" value="{{# str}}change_mapping, block_evasys_sync{{/str}}
+        {{#optional}}{{# str}}optional, block_evasys_sync{{/str}}{{/optional}}" {{#disabled}}disabled{{/disabled}}>
 </form>

@@ -214,6 +214,8 @@ class block_evasys_sync extends block_base{
             'nostudents' => $nostudents,
             'emailsentnotice' => $emailsentnotice,
             'evaluationperiodsetnotice' => $periodsetnotice,
+            // Defines if an lsf course is already mapped to the moodle course.
+            'optional' => !empty($evasyscourses),
             // Outputs a warning that there are open course when there shouldn't.
             'warning' => $warning
         );
