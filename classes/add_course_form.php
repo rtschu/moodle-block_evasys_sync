@@ -33,7 +33,15 @@ class add_course_form extends moodleform {
     protected function definition () {
     }
 
-    public function init ($id) {
+    /**
+     * Initializes the table.
+     * It loads all courses from the lsf to display them in a table,
+     * from which a teacher can select the evasys courses mapped to this moodle course.
+     * @param int $courseid Id of the moodle course.
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function init ($courseid) {
         // Variable violates moodle codestyle but this is required by the lsf-plugin.
         global $pgDB, $USER, $DB; // phpcs:ignore // @codingStandardsIgnoreLine
         $mform = $this->_form;
@@ -41,7 +49,7 @@ class add_course_form extends moodleform {
         $mform->addElement( 'html', '<h3>'. get_string('add_course_header', 'block_evasys_sync') .'</h3>');
         $pgDB = new \pg_lite(); // phpcs:ignore // @codingStandardsIgnoreLine
         $pgDB->connect(); // phpcs:ignore // @codingStandardsIgnoreLine
-        $lsfid = $DB->get_field('course', 'idnumber', array('id' => $id));
+        $lsfid = $DB->get_field('course', 'idnumber', array('id' => $courseid));
         if ($lsfid) {
             $maincourse = (array)get_course_by_veranstid($lsfid);
         } else {
@@ -51,7 +59,7 @@ class add_course_form extends moodleform {
         if (!is_siteadmin()) {
             $veranstids = get_veranstids_by_teacher(get_teachers_pid($USER->username));
         } else {
-            $teachers = get_users_by_capability(\context_course::instance($id), 'block/evasys_sync:modifymapping');
+            $teachers = get_users_by_capability(\context_course::instance($courseid), 'block/evasys_sync:modifymapping');
             foreach ($teachers as $teacher) {
                 $personalid = get_teachers_pid($teacher->username);
                 if (!$personalid) {
@@ -84,7 +92,7 @@ class add_course_form extends moodleform {
         $mform->addElement('html', $this->tablehead());
         $this->table_body($availablecourselist);
         $this->addpubid($maincourse);
-        $this->addid($id);
+        $this->addid($courseid);
     }
 
     private function addid($id) {
