@@ -38,6 +38,9 @@ Example context (json):
             </ol>
         {{/.}}
     {{/courses}}
+{{#coursemappingenabled}}
+    {{> block_evasys_sync/coursemapping}}
+{{/coursemappingenabled}}
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
@@ -81,6 +84,3 @@ Example context (json):
         {{/direct}}
     {{/showcontrols}}
 </form>
-{{#coursemappingenabled}}
-    {{> block_evasys_sync/coursemapping}}
-{{/coursemappingenabled}}
