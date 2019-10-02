@@ -40,6 +40,7 @@ $string['reactivate_invite'] = 'Einladung erneut durchführen';
 $string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
 $string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
 $string['semester'] = "Semester";
+$string['optional'] = "(Optional)";
 
 // Multi allocation strings.
 
