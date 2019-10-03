@@ -38,7 +38,7 @@ $string['end'] = 'Ende';
 $string['direct_invite_checkbox'] = 'Evaluation sofort starten';
 $string['reactivate_invite'] = 'Einladung erneut durchführen';
 $string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
-$string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
+$string['change_mapping'] = "Weitere Veranstaltungen zuordnen";
 $string['semester'] = "Semester";
 $string['optional'] = "(Optional)";
 
