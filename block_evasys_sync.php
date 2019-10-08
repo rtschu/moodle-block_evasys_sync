@@ -138,25 +138,11 @@ class block_evasys_sync extends block_base{
         // This javascript module sets the start and end fields to the correct values.
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
 
-        // Create the data object for the mustache table.
-        $data = array(
-            'href' => $href,
-            'sesskey' => sesskey(),
-            'courseid' => $this->page->course->id,
-            // Choose mode.
-            'direct' => $ismodeautomated,
-            'startdisabled' => $startdisabled,
-            'enddisabled' => $enddisabled,
-            // If the evaluation hasn't ended yet, disply option to restart it.
-            'startoption' => $enddisabled xor $startdisabled,
-            // Only allow coursemapping before starting an evaluation.
-            'coursemappingenabled' => !$startdisabled or is_siteadmin(),
-            'nostudents' => $nostudents,
-            'emailsentnotice' => $emailsentnotice,
-            'evaluationperiodsetnotice' => $periodsetnotice
-        );
+        // Initialize variables to pass to mustache.
         $courses = array();
         $hassurveys = false;
+        $startoption = ($startdisabled xor $enddisabled);
+        $warning = false;
         $invalidcourses = false;
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
@@ -184,17 +170,16 @@ class block_evasys_sync extends block_base{
                     $rawsurvey->surveyStatus == 'closed') {
                     // In case of a manual evaluation get the status of the evaluation by...
                     // checking whether the evaluations are closed.
-                    $data['emailsentnotice'] = false;
-                    $data['startdisabled'] = 'disabled';
-                    $data['enddisabled'] = 'disabled';
-                    $data['startoption'] = true;
+                    $emailsentnotice = false;
+                    $startdisabled = true;
+                    $enddisabled = true;
+                    $startoption = true;
                 }
 
                 // Append this survey.
                 $surveys[] = $survey;
                 $hassurveys = true;
             }
-
             // If any course has an unkown technical id, we don't want to allow synchronization.
             if ($course['technicalid'] == "Unknown") {
                 $invalidcourses = true;
@@ -204,12 +189,30 @@ class block_evasys_sync extends block_base{
             // Append this course.
             $courses[] = $course;
         }
-        $data['courses'] = $courses;
-
-        /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
-         * In case of the automated workflow, we require surveys
-         * in order to be able to automatically trigger the evaluation. */
-        $data['showcontrols'] = ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses;
+        // Create the data object for the mustache table.
+        $data = array(
+            'href' => $href,
+            'sesskey' => sesskey(),
+            'courseid' => $this->page->course->id,
+            'courses' => $courses,
+            /* In case of the manual workflow, we can start synchronisation also, if no surveys are registered, yet.
+            * In case of the automated workflow, we require surveys
+            * in order to be able to automatically trigger the evaluation. */
+            'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
+            // Choose mode.
+            'direct' => $ismodeautomated,
+            'startdisabled' => $startdisabled,
+            'enddisabled' => $enddisabled,
+            // If the evaluation hasn't ended yet, display option to restart it.
+            'startoption' => $startoption,
+            // Only allow coursemapping before starting an evaluation.
+            'coursemappingenabled' => !$startdisabled or is_siteadmin(),
+            'nostudents' => $nostudents,
+            'emailsentnotice' => $emailsentnotice,
+            'evaluationperiodsetnotice' => $periodsetnotice,
+            // Outputs a warning that there are open course when there shouldn't.
+            'warning' => $warning
+        );
 
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         $this->content->footer = '';
