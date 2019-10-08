@@ -68,6 +68,11 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 $record->category_mode = 0;
             }
+            if (isset($data->evasys_standard_time_mode) && $data->evasys_cc_mode == 1) {
+                $record->standard_time = 1;
+            } else {
+                $record->standard_time = 0;
+            }
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();
 
@@ -107,15 +112,30 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 } else {
                     $newvaluemode = 0; // Category uses manual mode.
                 }
+                $newvaluestandardmodename = 'standard_time_mode_' . $allocation->get('id');
+                if (isset($data->$newvaluestandardmodename) && $data->$newvaluestandardmodename) {
+                    $newstandardvaluemode = 1; // Category uses automated mode.
+                } else {
+                    $newstandardvaluemode = 0; // Category uses manual mode.
+                }
                 try {
                     $oldvaluemode = $allocation->get('category_mode');
                 } catch (coding_exception $e) {
                     $oldvaluemode = $newvaluemode + 1; // Make the below if statement execute.
                 }
+                try {
+                    $oldstandardvaluemode = $allocation->get('standard_time');
+                } catch (coding_exception $e) {
+                    $oldstandardvaluemode = $newstandardvaluemode + 1; // Make the below if statement execute.
+                }
                 // Update db entry.
-                if ($data->$newvalue != $oldvalue || $newvaluemode != $oldvaluemode) {
+                if ($data->$newvalue != $oldvalue ||
+                    $newvaluemode != $oldvaluemode ||
+                    $newstandardvaluemode != $oldstandardvaluemode) {
+
                     $allocation->set('userid', $data->$newvalue);
                     $allocation->set('category_mode', $newvaluemode);
+                    $allocation->set('standard_time_mode', $newstandardvaluemode);
                     $allocation->update();
                 }
             }

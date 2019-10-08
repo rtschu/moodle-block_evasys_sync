@@ -148,6 +148,7 @@ $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 $string['auto_mode'] = 'Automatischer Modus';
+$string['standard_time_mode'] = "Standardzeitraum anbieten";
 
 
 // Settings - category table.
@@ -165,6 +166,7 @@ $string['invalidcourse'] = 'Ungültiger Kurs';
 $string['invalidsurvey'] = "Ungültige Umfrage";
 $string['invaliddate'] = "Ungültiges Datum";
 $string['invalidstate'] = "Ungültiger Statuscode";
+$string['invalid_standard_time_mode'] = "Ungültige Angabe ob Standardzeiten vorhanden sind";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

@@ -185,5 +185,13 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019190000, 'evasys_sync');
     }
 
+    if ($oldversion < 2019200800) {
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('standard_time_mode', XMLDB_TYPE_INTEGER, '10', null, false, null, 0);
+        $dbman->add_field($table, $field);
+
+        upgrade_block_savepoint(true, 2019200800, 'evasys_sync');
+    }
+
     return true;
 }
