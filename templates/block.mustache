@@ -63,14 +63,14 @@ Example context (json):
             {{# str}}startondate, block_evasys_sync{{/str}}<br />
             {{< block_evasys_sync/datetimepicker}}
                 {{$id}}start{{/id}}
-                {{$disabled}}{{startdisabled}}{{/disabled}}
+                {{$disabled}}{{#startdisabled}}disabled{{/startdisabled}}{{/disabled}}
             {{/block_evasys_sync/datetimepicker}}
             {{#direct}}
             {{/direct}}
         <br/>{{# str}}endondate, block_evasys_sync{{/str}}<br/>
             {{< block_evasys_sync/datetimepicker}}
                 {{$id}}end{{/id}}
-                {{$disabled}}{{enddisabled}}{{/disabled}}
+                {{$disabled}}{{#enddisabled}}disabled{{/enddisabled}}{{/disabled}}
             {{/block_evasys_sync/datetimepicker}}
         </fieldset>
         {{^direct}}

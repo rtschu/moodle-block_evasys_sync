@@ -92,8 +92,8 @@ class block_evasys_sync extends block_base{
         }
 
         // Initialize data for mustache template.
-        $startdisabled = "";
-        $enddisabled = "";
+        $startdisabled = false;
+        $enddisabled = false;
         $emailsentnotice = false;
         $periodsetnotice = false;
 
@@ -124,11 +124,11 @@ class block_evasys_sync extends block_base{
             }
             if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
                 // If the course was already opened, disable the start date. If there are no students disable all controls.
-                $startdisabled = "disabled";
+                $startdisabled = true;
             }
             if ($state == course_evaluation_allocation::STATE_AUTO_CLOSED || $nostudents) {
                 // If the course was already closed, disable the end date. If there are no students disable all controls.
-                $enddisabled = "disabled";
+                $enddisabled = true;
             }
             // If there is a record the period has been set at least once.
             // Set start and end to match the period that had been set.
@@ -162,9 +162,9 @@ class block_evasys_sync extends block_base{
                     $rawsurvey->surveyStatus == 'open') {
                     // If the evaluation has ended as far as we know, but there are still open evaluations output a warning...
                     // and enable all controls.
-                    $data['warning'] = 'true';
-                    $data['startdisabled'] = "";
-                    $data['enddisabled'] = "";
+                    $warning = true;
+                    $startdisabled = false;
+                    $enddisabled = false;
                 }
                 if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) &&
                     $rawsurvey->surveyStatus == 'closed') {
