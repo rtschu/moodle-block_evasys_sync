@@ -331,4 +331,29 @@ class evasys_inviter {
         $default = get_config('block_evasys_sync', 'default_evasys_mode');
         return (bool)$default;
     }
+
+    /**
+     * Alerts the Evaluation-coordinator of a given course, that a teacher has set a timeframe for the evaluation.
+     * @param $courseid int
+     * @param $startdate \DateTime Startdate
+     * @param $enddate \DateTime
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function alert_coordinator($courseid, $startdate, $enddate) {
+        global $USER;
+        $course = get_course($courseid);
+        $usercoordinator = evasys_synchronizer::get_assigned_user($course);
+        $data = array(
+            'name' => $course->fullname,
+            'teacher' => $USER->firstname . " " . $USER->lastname,
+            'start' => $startdate->format('d.m.Y H:i:s'),
+            'end' => $enddate->format('d.m.Y H:i:s'),
+        );
+        $subject = get_string("alert_email_subject", "block_evasys_sync", $course->fullname);
+        $message = get_string("alert_email_body", "block_evasys_sync", $data);
+
+        email_to_user($usercoordinator, $USER, $subject, $message, '', '' , '',
+                                    true, $USER->email, $USER->firstname . " " . $USER->lastname);
+    }
 }
