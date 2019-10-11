@@ -77,6 +77,8 @@ class block_evasys_sync extends block_base{
         // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
+        } else {
+            $hasstandardtime = self::getstandardtimemode($this->page->course->category);
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
@@ -193,6 +195,7 @@ class block_evasys_sync extends block_base{
             // Append this course.
             $courses[] = $course;
         }
+
         // Create the data object for the mustache table.
         $data = array(
             'href' => $href,
@@ -203,6 +206,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
+            'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime),
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled,
@@ -258,6 +262,24 @@ class block_evasys_sync extends block_base{
      */
     public function has_config() {
         return true;
+    }
+
+    public static function getstandardtimemode($category) {
+        global $DB;
+        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
+        if ($mode !== false) {
+            return (bool) $mode->standard_time_mode;
+        } else {
+            $parents = \core_course_category::get($category)->get_parents();
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                if ($mode !== false) {
+                    return (bool) $mode->standard_time_mode;
+                }
+            }
+        }
+        $default = false;
+        return (bool)$default;
     }
 }
 

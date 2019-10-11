@@ -41,6 +41,7 @@ $string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber a
 $string['change_mapping'] = "Weitere Veranstaltungen zuordnen";
 $string['semester'] = "Semester";
 $string['optional'] = "(Optional)";
+$string['activate_nonstandard_time'] = "Vom Standard abweichenden Zeitraum verwenden.";
 
 // Multi allocation strings.
 
