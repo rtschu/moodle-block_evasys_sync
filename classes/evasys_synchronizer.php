@@ -305,9 +305,11 @@ class evasys_synchronizer {
         if ($dates != "Standard") {
             $notifsubject .= ' (ABWEICHENDER ZEITRAUM!)';
             $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
-            $formattedstartdate = $startdate->format('d.m.Y H:i:s');
+            $startdate->setTimezone(\core_date::get_user_timezone_object($userto));
+            $formattedstartdate = $startdate->format('d.m.Y H:i');
             $enddate = new \DateTime('@' . $dates["end"], \core_date::get_server_timezone_object());
-            $formattedenddate = $enddate->format('d.m.Y H:i:s');
+            $enddate->setTimezone(\core_date::get_user_timezone_object($userto));
+            $formattedenddate = $enddate->format('d.m.Y H:i');
 
             $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
                 $formattedenddate . $textdatechanged . "\r\n\r\n";
