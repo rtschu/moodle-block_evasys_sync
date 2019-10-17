@@ -116,6 +116,10 @@ $string['content_start_after_end'] = "Start is after end";
 $string['title_wrong_mode'] = "Invalid operation";
 $string['content_wrong_mode'] = "This course is not in the requested mode!";
 
+// Sync date problems.
+$string['syncendinthepast'] = 'Participants were not synchronised: The requested end date has already passed.';
+$string['syncstartafterend'] = 'Participants were not synchronised: The start date must be before the end date.';
+
 // Survey status.
 $string['surveystatusopen'] = 'open';
 $string['surveystatusclosed'] = 'closed';

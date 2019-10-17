@@ -84,8 +84,11 @@ $string['content_start_after_end'] = "Der Start ist nach dem Ende";
 $string['title_wrong_mode'] = "Unzulässige Operation";
 $string['content_wrong_mode'] = "Dieser Kurs ist nicht im angenommenen Modus. Bitte wenden Sie sich an das Support-Team.";
 
-// Form strings.
+// Sync date problems.
+$string['syncendinthepast'] = 'Teilnehmer*innen nicht übertragen: Das gewünschte Enddatum liegt in der Vergangenheit.';
+$string['syncstartafterend'] = 'Teilnehmer*innen nicht übertragen: Das Startdatum muss vor dem Enddatum liegen.';
 
+// Form strings.
 $string['startplaceholder'] = "Startdatum für die Evaluation";
 $string['endplaceholder'] = "Enddatum für die Evaluation";
 

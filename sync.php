@@ -67,6 +67,15 @@ $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
 $returnurl->param('id', $courseid);
 $returnurl->param('evasyssynccheck', 1);
 
+if ($dates['start'] > $dates['end']) {
+    redirect($returnurl, get_string('syncstartafterend', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
+    exit();
+}
+if (time() > $dates['end']) {
+    redirect($returnurl, get_string('syncendinthepast', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
+    exit();
+}
+
 try {
     if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') == 0) {
         $returnurl->param('status', 'nostudents');
