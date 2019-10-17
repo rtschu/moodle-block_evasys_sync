@@ -303,9 +303,11 @@ class evasys_synchronizer {
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
-        $formattedstartdate = userdate($startdate->getTimestamp(), get_string('strftimedatetimeshort', 'langconfig'));
+        $startdate->setTimezone(\core_date::get_user_timezone_object($userto));
+        $formattedstartdate = $startdate->format('d.m.Y H:i');
         $enddate = new \DateTime('@' . $dates["end"], \core_date::get_server_timezone_object());
-        $formattedenddate = userdate($enddate->getTimestamp(), get_string('strftimedatetimeshort', 'langconfig'));
+        $enddate->setTimezone(\core_date::get_user_timezone_object($userto));
+        $formattedenddate = $enddate->format('d.m.Y H:i');
 
         $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
             $formattedenddate . $textdatechanged . "\r\n\r\n";
