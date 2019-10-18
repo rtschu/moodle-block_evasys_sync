@@ -79,6 +79,7 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
             $hasstandardtime = self::getstandardtimemode($this->page->course->category);
+            $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {

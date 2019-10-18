@@ -68,8 +68,14 @@ Example context (json):
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
+{{#usestandardtimelayout}}
+        <div>
+            <input type="checkbox" id="activate_standard" name="activate_standard" checked>
+            <label for="activate_standard">{{#str}}activate_standard_time, block_evasys_sync{{/str}}</label>
+        </div>
+{{/usestandardtimelayout}}
     {{#showcontrols}}
-        <fieldset{{#usestandardtimelayout}} hidden {{/usestandardtimelayout}}>
+        <fieldset{{#usestandardtimelayout}} id="inputfieldset" hidden {{/usestandardtimelayout}}>
             {{#startoption}}
                 <div>
                     <label for="reactivate">
@@ -100,12 +106,6 @@ Example context (json):
                 {{$disabled}}{{#enddisabled}}disabled{{/enddisabled}}{{/disabled}}
             {{/block_evasys_sync/datetimepicker}}
         </fieldset>
-        {{#usestandardtimelayout}}
-            <div>
-                <input type="checkbox" id="activate_nonstandard" name="activate_nonstandard">
-                <label for="activate_nonstandard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
-            </div>
-        {{/usestandardtimelayout}}
         {{^direct}}
             <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#enddisabled}}disabled{{/enddisabled}}/>
         {{/direct}}

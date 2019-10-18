@@ -23,39 +23,53 @@ require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 
-if (optional_param('only_end', false, PARAM_BOOL)) {
-    // Existing start date should not be changed; just the end date. Fetch start date from record.
-    $record = course_evaluation_allocation::get_record_by_course($courseid);
-    $startdate = new \DateTime('@' . $record->get('startdate'), \core_date::get_server_timezone_object());
-} else {
-    $startyear = required_param('year_start', PARAM_TEXT);
-    $startmonth = date_decoder::decode_from_localised_string(required_param('month_start', PARAM_TEXT));
-    $startday = required_param('day_start', PARAM_TEXT);
-    $starthour = required_param('hour_start', PARAM_TEXT);
-    $startmin = required_param('minute_start', PARAM_TEXT);
+if (!optional_param('activate_standard', false, PARAM_BOOL)) {
+    if (optional_param('only_end', false, PARAM_BOOL)) {
+        // Existing start date should not be changed; just the end date. Fetch start date from record.
+        $record = course_evaluation_allocation::get_record_by_course($courseid);
+        $startdate = new \DateTime('@' . $record->get('startdate'), \core_date::get_server_timezone_object());
+    } else {
+        $startyear = required_param('year_start', PARAM_TEXT);
+        $startmonth = date_decoder::decode_from_localised_string(required_param('month_start', PARAM_TEXT));
+        $startday = required_param('day_start', PARAM_TEXT);
+        $starthour = required_param('hour_start', PARAM_TEXT);
+        $startmin = required_param('minute_start', PARAM_TEXT);
 
-    $startdate = new DateTime();
-    $startdate->setTimezone(\core_date::get_server_timezone_object());
-    $startdate->setDate($startyear, $startmonth, $startday);
-    $startdate->setTime($starthour, $startmin);
-    if (time() > $startdate->getTimestamp()) {
-        // Start date is in the past; change to now (just for the record).
-        $startdate = new \DateTime('now', \core_date::get_server_timezone_object());
+        $startdate = new DateTime();
+        $startdate->setTimezone(\core_date::get_server_timezone_object());
+        $startdate->setDate($startyear, $startmonth, $startday);
+        $startdate->setTime($starthour, $startmin);
+        if (time() > $startdate->getTimestamp()) {
+            // Start date is in the past; change to now (just for the record).
+            $startdate = new \DateTime('now', \core_date::get_server_timezone_object());
+        }
     }
+
+    $endyear = required_param('year_end', PARAM_TEXT);
+    $endmonth = date_decoder::decode_from_localised_string(required_param('month_end', PARAM_TEXT));
+    $endday = required_param('day_end', PARAM_TEXT);
+    $endhour = required_param('hour_end', PARAM_TEXT);
+    $endmin = required_param('minute_end', PARAM_TEXT);
+
+    $enddate = new DateTime();
+    $enddate->setTimezone(\core_date::get_server_timezone_object());
+    $enddate->setDate($endyear, $endmonth, $endday);
+    $enddate->setTime($endhour, $endmin);
+
+    $dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
+    try {
+        $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
+    } catch (\dml_missing_record_exception $e) {
+        debugging($exception);
+        $returnurl->param('status', 'failure');
+        notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
+        exit();
+    }
+} else {
+    $dates = "Standard";
+    // We can't detect that anyways since we don't know the dates.
+    $datechanged = false;
 }
-
-$endyear = required_param('year_end', PARAM_TEXT);
-$endmonth = date_decoder::decode_from_localised_string(required_param('month_end', PARAM_TEXT));
-$endday = required_param('day_end', PARAM_TEXT);
-$endhour = required_param('hour_end', PARAM_TEXT);
-$endmin = required_param('minute_end', PARAM_TEXT);
-
-$enddate = new DateTime();
-$enddate->setTimezone(\core_date::get_server_timezone_object());
-$enddate->setDate($endyear, $endmonth, $endday);
-$enddate->setTime($endhour, $endmin);
-
-$dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
 $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
@@ -76,7 +90,6 @@ try {
 
     $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
     $newparticipantsadded = $evasyssynchronizer->sync_students();
-    $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
     if ($newparticipantsadded || $datechanged) {
         $evasyssynchronizer->notify_evaluation_responsible_person($dates, $newparticipantsadded, $datechanged);
 

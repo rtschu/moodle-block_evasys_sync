@@ -42,6 +42,7 @@ $string['change_mapping'] = "Weitere Veranstaltungen zuordnen";
 $string['semester'] = "Semester";
 $string['optional'] = "(Optional)";
 $string['activate_nonstandard_time'] = "Vom Standard abweichenden Zeitraum verwenden.";
+$string['activate_standard_time'] = "Standardzeitraum verwenden";
 
 // Multi allocation strings.
 
