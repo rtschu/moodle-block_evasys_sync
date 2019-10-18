@@ -58,6 +58,7 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
 
     $dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
     try {
+        $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
         $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
     } catch (\dml_missing_record_exception $e) {
         debugging($exception);

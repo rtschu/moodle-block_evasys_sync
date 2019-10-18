@@ -289,7 +289,7 @@ class evasys_synchronizer {
         }
         $userfrom =& $USER;
 
-        $notifsubject = "Evaluation für '" . $course->fullname . "' geöffnet";
+        $notifsubject = "Evaluation für '" . $course->fullname . "' beauftragt";
 
         $textdatechanged = $datechanged ? ' (Zeitraum geändert!)' : '';
 
@@ -303,6 +303,7 @@ class evasys_synchronizer {
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         if ($dates != "Standard") {
+            $notifsubject .= ' (ABWEICHENDER ZEITRAUM!)';
             $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
             $formattedstartdate = $startdate->format('d.m.Y H:i:s');
             $enddate = new \DateTime('@' . $dates["end"], \core_date::get_server_timezone_object());
