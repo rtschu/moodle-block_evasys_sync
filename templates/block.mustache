@@ -11,36 +11,36 @@ Example context (json):
 }
 }}
 
-<form action="{{href}}" method="post" id="evasys_block_form">
-    <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <input type="hidden" name="courseid" value="{{courseid}}">
-    {{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
-    {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
-    {{#courses}}
-        {{#.}}
-            <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}&#13;&#10;{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
-                <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
-            <div>
-                <span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span>
-                <span class="block_evasys_participants">{{c_participants}}</span>
-            </div>
-            <div class="emphasize">{{# str}}surveys, block_evasys_sync{{/str}}</div>
-            <ol>
-                {{#surveys}}
-                    {{#.}}
-                        <li>
-                            <span class="emphasize">{{formName}}</span><br/>
-                            <span class="emphasize">{{# str}}surveystatus, block_evasys_sync{{/str}}</span> {{surveystatus}} <br/>
-                            <span class="emphasize">{{# str}}finishedforms, block_evasys_sync{{/str}}</span> {{amountOfCompleteForms}} <br/>
-                        </li>
-                    {{/.}}
-                {{/surveys}}
-            </ol>
-        {{/.}}
-    {{/courses}}
+{{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
+{{#courses}}
+    {{#.}}
+        <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}&#13;&#10;{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
+            <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
+        <div>
+            <span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span>
+            <span class="block_evasys_participants">{{c_participants}}</span>
+        </div>
+        <div class="emphasize">{{# str}}surveys, block_evasys_sync{{/str}}</div>
+        <ol>
+            {{#surveys}}
+                {{#.}}
+                    <li>
+                        <span class="emphasize">{{formName}}</span><br/>
+                        <span class="emphasize">{{# str}}surveystatus, block_evasys_sync{{/str}}</span> {{surveystatus}} <br/>
+                        <span class="emphasize">{{# str}}finishedforms, block_evasys_sync{{/str}}</span> {{amountOfCompleteForms}} <br/>
+                    </li>
+                {{/.}}
+            {{/surveys}}
+        </ol>
+    {{/.}}
+{{/courses}}
 {{#coursemappingenabled}}
     {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
+<form action="{{href}}" method="post" id="evasys_block_form">
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
+    <input type="hidden" name="courseid" value="{{courseid}}">
+{{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
