@@ -4,10 +4,33 @@ Example context (json):
 {
     "href": "http://172.17.0.1/moodle/blocks/evasys_sync/invite.php",
     "sesskey": "123",
-    "courseid" : "4",
-    "courses": [],
-    "showcontrols": 0,
-    "direct": 1
+    "courseid": "4",
+    "courses": [
+        {
+            "evasyscoursetitle": "Informatik I",
+            "technicalid": "12345678",
+            "evasyscourseid": "431234 SS 2019",
+            "c_participants": 8,
+            "surveys": [
+                    {
+                    "fromName": "Umfrage zur Vorlesung",
+                    "surveystatus": "Evaluationsstatus: offen",
+                    "amountOfCompleteForms": 3
+                    }
+                ]
+            }
+        ],
+    "showcontrols": true,
+    "direct": false,
+    "startdisabled": false,
+    "enddisabled": false,
+    "startoption": false,
+    "coursemappingenabled": true,
+    "nostudents": false,
+    "emailsentnotice": true,
+    "evaluationperiodsetnotice": false,
+    "optional": true,
+    "warning": false
 }
 }}
 
@@ -18,7 +41,8 @@ Example context (json):
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
     {{#courses}}
         {{#.}}
-            <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}&#13;&#10;{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
+            <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}
+{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
                 <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div>
                 <span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span>
