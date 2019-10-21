@@ -54,15 +54,18 @@ class block_evasys_sync extends block_base{
         // If there has been a status in the url, show the prompt.
         $this->display_status($status);
 
+        // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
             $inlsf = !empty($this->page->course->idnumber);
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select(
                 "course = {$this->page->course->id} AND NOT evasyscourses = ''");
 
+            // Display the check status button.
             if ($inlsf or $hasextras) {
                 $href = new moodle_url('/course/view.php', array('id' => $this->page->course->id, "evasyssynccheck" => true));
                 $this->content->text .= $OUTPUT->single_button($href, get_string('checkstatus', 'block_evasys_sync'), 'get');
             } else {
+                // Display the course mapping.
                 $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/coursemapping", array(
                     "courseid" => $this->page->course->id,
                     "sesskey" => sesskey()
@@ -119,7 +122,8 @@ class block_evasys_sync extends block_base{
                 $emailsentnotice = true;
             }
             if ($state == course_evaluation_allocation::STATE_AUTO_NOTOPENED) {
-                // If the persistenceclass exists and the state is manual an email must have been sent.
+                // If the persistenceclass exists and the state is automatic and not opened
+                // the period must have been set.
                 $periodsetnotice = true;
             }
             if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
