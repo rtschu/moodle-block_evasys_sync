@@ -7,11 +7,10 @@ Example context (json):
 }
 }}
 
-<form action="../blocks/evasys_sync/addcourse.php">
-    <input type="hidden" name="id" value="{{courseid}}">
-    <button type="submit" class="iconsmall link-button" {{#disabled}}disabled{{/disabled}}>
+<div class="pl-1">
+    <a class="iconsmall" title="{{# str}}change_mapping, block_evasys_sync{{/str}}" href="../blocks/evasys_sync/addcourse.php?courseid={{courseid}}">
         {{#pix}}i/edit, core{{/pix}}
         {{# str}}change_mapping, block_evasys_sync{{/str}}
-        {{#optional}}{{# str}}optional, block_evasys_sync{{/str}}{{/optional}}
-    </button>
-</form>
+    {{#optional}}{{# str}}optional, block_evasys_sync{{/str}}{{/optional}}
+    </a>
+</div>
