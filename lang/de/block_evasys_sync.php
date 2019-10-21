@@ -177,7 +177,11 @@ $string['October'] = 'Oktober';
 $string['November'] = 'November';
 $string['December'] = 'Dezember';
 
-// From...to
+// From...to.
 $string['evaluationperiod'] = 'Evaluationszeitraum:';
 $string['startondate'] = 'Zeitraum planen von';
 $string['endondate'] = 'bis';
+
+// Notices.
+$string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
+$string['emailsentnotice'] = 'Evaluation beauftragt';
