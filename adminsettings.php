@@ -68,10 +68,10 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             } else {
                 $record->category_mode = 0;
             }
-            if (isset($data->evasys_standard_time_mode) && $data->evasys_cc_mode == 1) {
-                $record->standard_time = 1;
+            if (isset($data->evasys_standard_time_mode) && $data->evasys_standard_time_mode == 1 && $record->category_mode == 0) {
+                $record->standard_time_mode = 1;
             } else {
-                $record->standard_time = 0;
+                $record->standard_time_mode = 0;
             }
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();

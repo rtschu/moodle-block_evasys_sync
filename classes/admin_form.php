@@ -96,6 +96,7 @@ class admin_form extends moodleform {
         $title = get_string('standard_time_mode', 'block_evasys_sync');
         $mform->addElement('checkbox', $name, $title);
         $mform->setType($name, PARAM_BOOL);
+        $mform->disabledIf($name, 'evasys_cc_mode', 'checked');
 
         // Add Button.
         $mform->addElement('submit', 'addcatbutton', get_string('addcat', 'block_evasys_sync'));
