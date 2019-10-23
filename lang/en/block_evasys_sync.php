@@ -111,7 +111,8 @@ $string['alert_email_body'] = 'Dear Evaluationcoordinator, ' . "\n" .
     'The Evaluationtimeframe for Course {$a->name} has been set to:' . "\n\n" .
     "\t" . 'Start: {$a->start}' . "\n" .
     "\t" . 'Ende: {$a->end}' . "\n" .
-    "\t" . 'by {$a->teacher} ' . "\n\n" .
+    "\t" . 'by {$a->teacher} ' . "\n" .
+    "\t".  'evasysids: {$a->evasyscourses}' . "\n\n" .
     'Sincerely Learnweb-Support';
 
 // New invite strings.

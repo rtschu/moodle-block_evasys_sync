@@ -343,12 +343,18 @@ class evasys_inviter {
     public static function alert_coordinator($courseid, $startdate, $enddate) {
         global $USER;
         $course = get_course($courseid);
+        $evacourses = course_evasys_courses_allocation::raw_get_evasyscourses($courseid);
+        $coursestring = '';
+        if ($evacourses) {
+            $coursestring = implode(',', $evacourses);
+        }
         $usercoordinator = evasys_synchronizer::get_assigned_user($course);
         $data = array(
             'name' => $course->fullname,
             'teacher' => $USER->firstname . " " . $USER->lastname,
             'start' => $startdate->format('d.m.Y H:i:s'),
             'end' => $enddate->format('d.m.Y H:i:s'),
+            'evasyscourses' => $coursestring
         );
         $subject = get_string("alert_email_subject", "block_evasys_sync", $course->fullname);
         $message = get_string("alert_email_body", "block_evasys_sync", $data);

@@ -79,7 +79,8 @@ $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n
     'Sie erhalten diese Email da im Kurs {$a->name} der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
     "\t".'Start: {$a->start}' . "\n" .
     "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortlicher: {$a->teacher}' . "\n\n" .
+    "\t".'Verantwortlicher: {$a->teacher}' . "\n" .
+    "\t".'Evasysids: {$a->evasyscourses}' . "\n\n" .
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
 
