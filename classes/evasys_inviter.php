@@ -345,8 +345,9 @@ class evasys_inviter {
         $course = get_course($courseid);
         $evacourses = course_evasys_courses_allocation::raw_get_evasyscourses($courseid);
         $coursestring = '';
-        if ($evacourses) {
-            $coursestring = implode(',', $evacourses);
+        foreach ($evacourses as $evacourse) {
+            // Add courses with two tabulators.
+            $coursestring .= "\t\t". $evacourse . "\n";
         }
         $usercoordinator = evasys_synchronizer::get_assigned_user($course);
         $data = array(

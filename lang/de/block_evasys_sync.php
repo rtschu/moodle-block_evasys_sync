@@ -76,11 +76,12 @@ $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie e
 // Alert Coordinator mail.
 $string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
 $string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
-    'Sie erhalten diese Email da im Kurs {$a->name} der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
+    'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
     "\t".'Start: {$a->start}' . "\n" .
     "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortlicher: {$a->teacher}' . "\n" .
-    "\t".'Evasysids: {$a->evasyscourses}' . "\n\n" .
+    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
+    "\t".'EvaSys-IDs:' . "\n" .
+    '{$a->evasyscourses}' . "\n" .
     'Mit freundlichen Grüßen' . "\n" .
     'Ihr Learnweb-Support';
 
