@@ -151,6 +151,7 @@ $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 $string['auto_mode'] = 'Automatischer Modus';
 $string['standard_time_mode'] = "Standardzeitraum anbieten";
+$string['edit_time'] = "Standardzeitraum bearbeiten";
 
 
 // Settings - category table.

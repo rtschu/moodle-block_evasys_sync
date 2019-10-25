@@ -158,6 +158,7 @@ class admin_form extends moodleform {
 
         $mform->addElement('html', '<tbody>');
         $records = $this->getrecords();
+        $i = 0;
         foreach ($records as $record) {
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' .
@@ -193,19 +194,23 @@ class admin_form extends moodleform {
                 $mode = false;
             }
             $name = 'standard_time_mode_' . $record->get('id');
-            $mform->addElement('checkbox', $name);
-            $mform->setType($name, PARAM_BOOL);
+            $timeeditlink = 'javascript:void(0)';
+            $timeediturl = new \moodle_url($timeeditlink, array('id' => $record->get('id')));
+            $text = get_string('edit_time', 'block_evasys_sync');
+            $htmlurl = "<a id='timeediturl_{$i}' href='{$timeediturl->out()}'>$text</a>";
+            $mform->addElement('html', $htmlurl);
             $mform->disabledIf($name, $namecatmode, 'checked');
-            $mform->setDefault($name, $mode);
 
             $mform->addElement('html', '</td><td class="cell c4 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $record->get('id')));
             $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
+            $i++;
         }
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
+        return $i;
     }
 
     /**

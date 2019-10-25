@@ -155,6 +155,7 @@ $string['delete_confirm'] = 'Are you sure you want to delete the user for this c
 $string['auto_mode'] = 'Automatic mode';
 $string['standard_time_mode'] = "Offer standard period of time";
 $string['activate_standard_time'] = "Use standard timeframe.";
+$string['edit_time'] = "Edit standard timeframe";
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
