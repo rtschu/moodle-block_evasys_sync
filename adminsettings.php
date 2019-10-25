@@ -157,9 +157,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     $entry->evasys_wsdl_url = get_config('block_evasys_sync', 'evasys_wsdl_url');
     $entry->default_evasys_moodleuser = get_config('block_evasys_sync', 'default_evasys_moodleuser');
 
-    global $PAGE;
-    $PAGE->requires->js_call_amd('block_evasys_sync/edit_timeframe', 'init');
-
     $mform->set_data($entry);
     $mform->display();
     echo $OUTPUT->footer();

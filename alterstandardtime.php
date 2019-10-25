@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Moodle plugin block_evasys_sync
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,14 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once('../../config.php');
 
-defined('MOODLE_INTERNAL') || die();
+require_login();
+require_sesskey();
+if (!is_siteadmin()) {
+    header('HTTP/1.0 403 Forbidden');
+    echo '403 Forbidden';
+    return;
+}
+$starttime = optional_param('starttime', 'NULL', PARAM_INT);
+$endtime = optional_param('endtime', 'NULL', PARAM_INT);
+$cat = required_param('category', PARAM_INT);
 
-$plugin->component = 'block_evasys_sync';
-$plugin->version = 2019201400;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2017111300; // YYYmoYMMDDHH (This is the release version for Moodle 2.0).
-$plugin->maturity = MATURITY_RC;
-
-$plugin->dependencies = array(
-    'local_lsf_unification' => 2013090304,   // The lsf_unification module is needed for retrieving the lsf id.
-);
+global $DB;
+$sql = "UPDATE {block_evasys_sync_categories} SET standard_time_start = $starttime, standard_time_end = $endtime " .
+    "WHERE id = $cat";
+$DB->execute($sql);

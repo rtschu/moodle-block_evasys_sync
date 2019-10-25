@@ -4,7 +4,7 @@ Example context (json):
 {
 }
 }}
-
+<div class="inline-block">
 <select name="day_{{$id}}id{{/id}}" {{$disabled}}{{/disabled}}>
         <option {{$day_1}}{{/day_1}}>1</option>
         <option {{$day_2}}{{/day_2}}>2</option>
@@ -107,7 +107,8 @@ Example context (json):
         <option {{$year_2049}}{{/year_2049}}>2049</option>
         <option {{$year_2050}}{{/year_2050}}>2050</option>
 </select>
-<br/>
+</div>
+<div class="inline-block">
 <select name="hour_{{$id}}id{{/id}}" {{$disabled}}{{/disabled}}>
     <option>00</option>
     <option>01</option>
@@ -197,3 +198,4 @@ Example context (json):
     <option>58</option>
     <option>59</option>
 </select>
+</div>

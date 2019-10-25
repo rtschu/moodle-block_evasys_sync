@@ -159,6 +159,8 @@ class admin_form extends moodleform {
         $mform->addElement('html', '<tbody>');
         $records = $this->getrecords();
         $i = 0;
+        $startdates = [];
+        $enddates = [];
         foreach ($records as $record) {
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' .
@@ -206,8 +208,12 @@ class admin_form extends moodleform {
             $editurl = new \moodle_url($link, array('d' => $record->get('id')));
             $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
+            $startdates[] = $record->get('standard_time_start');
+            $enddates[] = $record->get('standard_time_end');
             $i++;
         }
+        global $PAGE;
+        $PAGE->requires->js_call_amd('block_evasys_sync/edit_timeframe', 'initialize', array($startdates, $enddates));
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
     }

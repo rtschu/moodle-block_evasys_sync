@@ -57,7 +57,11 @@ class user_cat_allocation extends persistent {
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalidmode', 'block_evasys_sync')
             ),
-            'standard_time_mode' => array (
+            'standard_time_start' => array (
+                'type' => PARAM_INT,
+                'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync')
+            ),
+            'standard_time_end' => array (
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invalid_standard_time_mode', 'block_evasys_sync')
             )
