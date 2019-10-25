@@ -123,11 +123,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                 } catch (coding_exception $e) {
                     $oldvaluemode = $newvaluemode + 1; // Make the below if statement execute.
                 }
-                try {
-                    $oldstandardvaluemode = $allocation->get('standard_time');
-                } catch (coding_exception $e) {
-                    $oldstandardvaluemode = $newstandardvaluemode + 1; // Make the below if statement execute.
-                }
                 // Update db entry.
                 if ($data->$newvalue != $oldvalue ||
                     $newvaluemode != $oldvaluemode ||
@@ -135,7 +130,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
 
                     $allocation->set('userid', $data->$newvalue);
                     $allocation->set('category_mode', $newvaluemode);
-                    $allocation->set('standard_time_mode', $newstandardvaluemode);
                     $allocation->update();
                 }
             }
