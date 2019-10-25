@@ -210,7 +210,6 @@ class admin_form extends moodleform {
         }
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
-        return $i;
     }
 
     /**
