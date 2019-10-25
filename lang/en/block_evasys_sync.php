@@ -40,6 +40,7 @@ $string['semester'] = "Semester";
 $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['reactivate_invite'] = 'Invite students again';
 $string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
+$string['optional'] = '(optional)';
 
 // Multi allocation strings.
 
