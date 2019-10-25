@@ -73,6 +73,18 @@ $string['title_send_invalid'] = "Fehlerhafter Zeitraum";
 $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie endet! <br />" .
     "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
 
+// Alert Coordinator mail.
+$string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
+$string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
+    'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
+    "\t".'Start: {$a->start}' . "\n" .
+    "\t".'Ende:  {$a->end}' . "\n" .
+    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
+    "\t".'EvaSys-IDs:' . "\n" .
+    '{$a->evasyscourses}' . "\n" .
+    'Mit freundlichen Grüßen' . "\n" .
+    'Ihr Learnweb-Support';
+
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
 $string['content_success_invite'] = "Die Evaluation wurde erfolgreich gestartet";

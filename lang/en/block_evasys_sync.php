@@ -105,6 +105,18 @@ $string['content_send_rejected'] = "One or more dates have been set to a date in
     "This is not allowed. Some evaluationperiods may have been altered.<br />";
 $string['content_confirm_reactivate'] = "Are you sure you want to reactivate the invite options? This will restart all surveys with at least one new participant";
 
+// Alert Coordinator mail.
+$string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
+$string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
+    'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
+    "\t".'Start: {$a->start}' . "\n" .
+    "\t".'Ende:  {$a->end}' . "\n" .
+    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
+    "\t".'EvaSys-IDs:' . "\n" .
+    '{$a->evasyscourses}' . "\n" .
+    'Mit freundlichen Grüßen' . "\n" .
+    'Ihr Learnweb-Support';
+
 // New invite strings.
 $string['title_success'] = "Success";
 $string['content_success_invite'] = "Evaluation has been started";

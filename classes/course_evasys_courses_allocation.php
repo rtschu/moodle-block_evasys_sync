@@ -44,4 +44,26 @@ class course_evasys_courses_allocation  extends persistent {
             ),
         );
     }
+
+    /** Returns array of evasysids that belong to this course.
+     * @param $courseid int id of moodle course
+     * @return array of evasysids
+     * @throws \dml_exception
+     */
+    public static function raw_get_evasyscourses($courseid) {
+        global $DB;
+        $courses = $DB->get_field(self::TABLE, 'evasyscourses', array('course' => $courseid));
+        $idcourse = $DB->get_field('course', 'idnumber', array('id' => $courseid));
+        $coursearray = array();
+        if ($courses) {
+            $coursearray = explode('#', $courses);
+        }
+        if ($idcourse) {
+            if (!in_array($idcourse, $coursearray)) {
+                $coursearray[] = $idcourse;
+            }
+        }
+        array_unique($coursearray);
+        return $coursearray;
+    }
 }
