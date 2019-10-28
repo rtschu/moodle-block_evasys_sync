@@ -303,19 +303,19 @@ class evasys_synchronizer {
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         if ($dates != "Standard") {
-            $notifsubject .= ' (ABWEICHENDER ZEITRAUM!)';
-            $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
-            $startdate->setTimezone(\core_date::get_user_timezone_object($userto));
-            $formattedstartdate = $startdate->format('d.m.Y H:i');
-            $enddate = new \DateTime('@' . $dates["end"], \core_date::get_server_timezone_object());
-            $enddate->setTimezone(\core_date::get_user_timezone_object($userto));
-            $formattedenddate = $enddate->format('d.m.Y H:i');
-
-            $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
-                $formattedenddate . $textdatechanged . "\r\n\r\n";
+            $notifsubject .= '<b>SONDERWUNSCH</b>';
         } else {
-            $notiftext .= "Gewünschter Evaluationszeitraum: Fachbereichspezifischer Standardzeitraum \r\n\r\n";
+            $dates = self::getstandardtimemode($course->category);
         }
+        $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
+        $startdate->setTimezone(\core_date::get_user_timezone_object($userto));
+        $formattedstartdate = $startdate->format('d.m.Y H:i');
+        $enddate = new \DateTime('@' . $dates["end"], \core_date::get_server_timezone_object());
+        $enddate->setTimezone(\core_date::get_user_timezone_object($userto));
+        $formattedenddate = $enddate->format('d.m.Y H:i');
+
+        $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
+            $formattedenddate . $textdatechanged . "\r\n\r\n";
         if ($newparticipantsadded) {
             $notiftext .= "Der Evaluation wurden neue Teilnehmer*innen hinzugefügt.\r\n\r\n";
         }
@@ -402,5 +402,31 @@ class evasys_synchronizer {
         $data->save();
 
         return $changed;
+    }
+
+    public static function getstandardtimemode($category) {
+        global $DB;
+        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
+        if ($mode !== false) {
+            if ($mode->standard_time_start != null) {
+                return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+            } else {
+                return false;
+            }
+        } else {
+            $parents = \core_course_category::get($category)->get_parents();
+            for ($i = count($parents) - 1; $i >= 0; $i--) {
+                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
+                if ($mode !== false) {
+                    if ($mode->standard_time_start != null) {
+                        return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        $default = false;
+        return $default;
     }
 }

@@ -24,6 +24,7 @@ define(['jquery'], function($) {
         $('[name=day_end]')[0].disabled = true;
         $('[name=month_end]')[0].disabled = true;
         $('[name=year_end]')[0].disabled = true;
+        $('#only_end').val(false);
     };
 
     var enable = function() {
