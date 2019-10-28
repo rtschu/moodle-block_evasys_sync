@@ -20,8 +20,33 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
         }
     };
 
+    var pad = function pad(num, size) {
+        var s = num + "";
+        while (s.length < size) {
+            s = "0" + s;
+        }
+        return s;
+    };
+
+    var get_time_as_string = function (key) {
+        var startmin = $('[name=minute_' + key + ']').last()[0].selectedIndex;
+        var starthour = $('[name=hour_' + key + ']').last()[0].selectedIndex;
+        var startday = $('[name=day_' + key + ']').last()[0].selectedIndex + 1;
+        var startmonth = $('[name=month_' + key + ']').last()[0].selectedIndex + 1;
+        var startyear = $('[name=year_' + key + ']').last()[0].selectedIndex + 2000;
+
+        return pad(startday, 2) + '.' + pad(startmonth, 2) + '.' + pad(startyear, 2) + ' '
+            + pad(starthour, 2) + ':' + pad(startmin, 2);
+    };
+
     var ready = function () {
-        // If you ever need a callback.
+        if (this.readyState === 4 && this.status >= 200 && !(this.responseText == "")) {
+            require(['core/notification', ], function (notification) {
+                str.get_string('save_failure', 'block_evasys_sync').done(function (s) {
+                    notification.alert('Error', s, 'OK');
+                });
+            });
+        }
     };
 
     var initialize = function (startdates, enddates) {
@@ -43,7 +68,10 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                             var root = modal.getRoot();
                             root.on('modal-save-cancel:save', function () {
                                 var saveid = new URL(clickedLink.prop('href')).searchParams.get("id");
-                                var times = get_timestamp();
+                                var times = {};
+                                if (document.getElementById("standardtimecheck").checked) {
+                                    times = get_timestamp();
+                                }
                                 times.category = saveid;
                                 var xhttp = new XMLHttpRequest();
                                 xhttp.onreadystatechange = ready;
@@ -53,17 +81,20 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                                 var elementNo = clickedLink.prop('id').split("_")[1];
                                 startdates[elementNo] = times.starttime;
                                 enddates[elementNo] = times.endtime;
+                                document.getElementById('timehint_' + elementNo).innerHTML =
+                                    get_time_as_string('start') + " - " + get_time_as_string('end');
                             });
                             modal.show();
-                            require(['block_evasys_sync/initialize'], function(timesetter){
+                            require(['block_evasys_sync/initialize'], function(timesetter) {
                                 var elementNo = clickedLink.prop('id').split("_")[1];
-                                if(startdates[elementNo] == null || startdates[elementNo] == undefined) {
+                                if (startdates[elementNo] == null || startdates[elementNo] == undefined) {
                                     startdates[elementNo] = Date.now() / 1000;
                                     enddates[elementNo] = Date.now() / 1000;
+                                } else {
+                                    document.getElementById("standardtimecheck").checked = true;
                                 }
                                 timesetter.init(startdates[elementNo], enddates[elementNo]);
                             });
-
                         });
                 });
                 i++;

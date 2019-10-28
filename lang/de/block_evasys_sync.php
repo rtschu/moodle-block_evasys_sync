@@ -152,6 +152,8 @@ $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskat
 $string['auto_mode'] = 'Automatischer Modus';
 $string['standard_time_mode'] = "Standardzeitraum anbieten";
 $string['edit_time'] = "Standardzeitraum bearbeiten";
+$string['save_failure'] = "Fehler beim speichern";
+$string['usetimecheckbox'] = "Standardzeitraum verwenden";
 
 
 // Settings - category table.

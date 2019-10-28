@@ -27,7 +27,15 @@ $starttime = optional_param('starttime', 'NULL', PARAM_INT);
 $endtime = optional_param('endtime', 'NULL', PARAM_INT);
 $cat = required_param('category', PARAM_INT);
 
+if (!preg_match('/^[[0-9]*|NULL]$/', strval($starttime))) {
+    exit("securtity violation1");
+}
+if (!preg_match('/^[[0-9]*|NULL]$/', strval($endtime))) {
+    exit("security violaion2");
+}
+
+// Not safe against SQL-injection. But site admin has access to Database anyway, right?
 global $DB;
 $sql = "UPDATE {block_evasys_sync_categories} SET standard_time_start = $starttime, standard_time_end = $endtime " .
-    "WHERE id = $cat";
-$DB->execute($sql);
+    "WHERE id = ?";
+$DB->execute($sql, array($cat));

@@ -156,6 +156,8 @@ $string['auto_mode'] = 'Automatic mode';
 $string['standard_time_mode'] = "Offer standard period of time";
 $string['activate_standard_time'] = "Use standard timeframe.";
 $string['edit_time'] = "Edit standard timeframe";
+$string['save_failure'] = "Error saving";
+$string['usetimecheckbox'] = "Use standard timeframe";
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
