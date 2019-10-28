@@ -141,6 +141,11 @@ class block_evasys_sync extends block_base{
             // Set start and end to match the period that had been set.
             $start = $record->get('startdate');
             $end = $record->get('enddate');
+        } else {
+            if (!$ismodeautomated && $hasstandardtime) {
+                $start = $hasstandardtime['start'];
+                $end = $hasstandardtime['end'];
+            }
         }
         // This javascript module sets the start and end fields to the correct values.
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
@@ -210,8 +215,8 @@ class block_evasys_sync extends block_base{
             'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime),
             // Choose mode.
             'direct' => $ismodeautomated,
-            'startdisabled' => $startdisabled,
-            'enddisabled' => $enddisabled,
+            'startdisabled' => $startdisabled || (!$ismodeautomated && $hasstandardtime && !$record),
+            'enddisabled' => $enddisabled || (!$ismodeautomated && $hasstandardtime && !$record),
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.
@@ -269,18 +274,26 @@ class block_evasys_sync extends block_base{
         global $DB;
         $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
         if ($mode !== false) {
-            return (bool) $mode->standard_time_mode;
+            if ($mode->standard_time_start != null) {
+                return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+            } else {
+                return false;
+            }
         } else {
             $parents = \core_course_category::get($category)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
                 if ($mode !== false) {
-                    return (bool) $mode->standard_time_mode;
+                    if ($mode->standard_time_start != null) {
+                        return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
         $default = false;
-        return (bool)$default;
+        return $default;
     }
 }
 
