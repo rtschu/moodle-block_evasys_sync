@@ -17,7 +17,7 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
         return {
             'starttime': startdate.getTime() / 1000,
             'endtime': enddate.getTime() / 1000
-        }
+        };
     };
 
     var pad = function pad(num, size) {
@@ -52,9 +52,11 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
     var initialize = function (startdates, enddates) {
         var i = 0;
         str.get_string('edit_time', 'block_evasys_sync').done(function (s) {
-            while (true) {
+            var dummy  = true;
+            while (dummy) {
                 var element = $("#timeediturl_" + i);
                 if (element.length <= 0) {
+                    dummy = false;
                     break;
                 }
                 element.on('click', function (e) {
@@ -87,7 +89,7 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                             modal.show();
                             require(['block_evasys_sync/initialize'], function(timesetter) {
                                 var elementNo = clickedLink.prop('id').split("_")[1];
-                                if (startdates[elementNo] == null || startdates[elementNo] == undefined) {
+                                if (startdates[elementNo] === null || startdates[elementNo] === undefined) {
                                     startdates[elementNo] = Date.now() / 1000;
                                     enddates[elementNo] = Date.now() / 1000;
                                 } else {
@@ -103,5 +105,5 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
     };
     return {
         initialize: initialize,
-    }
+    };
 });

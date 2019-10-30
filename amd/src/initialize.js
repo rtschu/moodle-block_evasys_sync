@@ -5,7 +5,6 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
         var endenabled;
         if ($('[name=minute_start]').length == 0) {
             // No form present.
-            console.log("Is there no form?");
             return;
         }
         $('[name=minute_start]').last()[0].selectedIndex = start.getMinutes();
