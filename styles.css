@@ -14,12 +14,15 @@ input.in_box_button[type="submit"] {
     margin-left: 0;
 }
 
+.linedrawer {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 2px solid #bec6c8;
+}
+
 .flexmargin {
     display: flex;
     margin-bottom: 3px;
-    margin-top: 7px;
-    padding-top: 5px;
-    border-top: 2px solid #bec6c8;
 }
 
 .margin {
