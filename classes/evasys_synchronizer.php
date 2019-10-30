@@ -303,7 +303,7 @@ class evasys_synchronizer {
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         if ($dates != "Standard") {
-            $notifsubject .= '<b>SONDERWUNSCH</b>';
+            $notifsubject .= ' SONDERWUNSCH';
         } else {
             $dates = self::getstandardtimemode($course->category);
         }
@@ -384,7 +384,11 @@ class evasys_synchronizer {
      * @throws \coding_exception
      * @throws \dml_missing_record_exception
      */
-    public function set_evaluation_period(array $dates) : bool {
+    public function set_evaluation_period($dates) : bool {
+        if ($dates == 'Standard') {
+            $course = get_course($this->courseid);
+            $dates = self::getstandardtimemode($course->category);
+        }
         $changed = false;
         $data = course_evaluation_allocation::get_record_by_course($this->courseid, false);
         if (!$data) {

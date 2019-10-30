@@ -202,6 +202,8 @@ class block_evasys_sync extends block_base{
             $courses[] = $course;
         }
 
+        $standardttimemode = (!$ismodeautomated && $hasstandardtime && !$record);
+
         // Create the data object for the mustache table.
         $data = array(
             'href' => $href,
@@ -215,8 +217,9 @@ class block_evasys_sync extends block_base{
             'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime),
             // Choose mode.
             'direct' => $ismodeautomated,
-            'startdisabled' => $startdisabled || (!$ismodeautomated && $hasstandardtime && !$record),
-            'enddisabled' => $enddisabled || (!$ismodeautomated && $hasstandardtime && !$record),
+            'startdisabled' => $startdisabled || $standardttimemode,
+            'enddisabled' => $enddisabled || $standardttimemode,
+            'onlyend' => $startdisabled && !$standardttimemode,
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.

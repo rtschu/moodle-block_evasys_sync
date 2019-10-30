@@ -57,19 +57,20 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
     $enddate->setTime($endhour, $endmin);
 
     $dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
-    try {
-        $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
-        $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
-    } catch (\dml_missing_record_exception $e) {
-        debugging($exception);
-        $returnurl->param('status', 'failure');
-        notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
-        exit();
-    }
 } else {
     $dates = "Standard";
     // We can't detect that anyways since we don't know the dates.
     $datechanged = false;
+}
+
+try {
+    $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($courseid);
+    $datechanged = $evasyssynchronizer->set_evaluation_period($dates);
+} catch (\dml_missing_record_exception $e) {
+    debugging($exception);
+    $returnurl->param('status', 'failure');
+    notice(get_string('syncnotpossible', 'block_evasys_sync'), $returnurl);
+    exit();
 }
 
 $PAGE->set_url('/blocks/evasys_sync/sync.php');
