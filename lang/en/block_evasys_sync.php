@@ -44,6 +44,7 @@ $string['optional'] = '(optional)';
 $string['standard_period'] = "Standard evaluationperiod:";
 $string['different_period'] = "Exceptional evaluationperiod:";
 $string['activate_nonstandard_time'] = "Alter evaluationperiod for special courses";
+$string['time_set'] = "Standard evaluationperiod set";
 
 // Multi allocation strings.
 

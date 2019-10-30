@@ -45,6 +45,7 @@ $string['activate_nonstandard_time'] = "Evaluationszeitraum wegen Sonderveransta
 $string['activate_standard_time'] = "Standardzeitraum verwenden";
 $string['standard_period'] = "Standard-Evaluationszeitraum:";
 $string['different_period'] = "Abweichender Evaluationszeitraum:";
+$string['time_set'] = "Standard-Evaluationszeitraum gesetzt";
 
 // Multi allocation strings.
 
