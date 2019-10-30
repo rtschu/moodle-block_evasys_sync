@@ -78,7 +78,7 @@ class block_evasys_sync extends block_base{
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
-            $hasstandardtime = self::getstandardtimemode($this->page->course->category);
+            $hasstandardtime = \block_evasys_sync\evasys_synchronizer::getstandardtimemode($this->page->course->category);
             $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
@@ -271,32 +271,6 @@ class block_evasys_sync extends block_base{
      */
     public function has_config() {
         return true;
-    }
-
-    public static function getstandardtimemode($category) {
-        global $DB;
-        $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
-        if ($mode !== false) {
-            if ($mode->standard_time_start != null) {
-                return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
-            } else {
-                return false;
-            }
-        } else {
-            $parents = \core_course_category::get($category)->get_parents();
-            for ($i = count($parents) - 1; $i >= 0; $i--) {
-                $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                if ($mode !== false) {
-                    if ($mode->standard_time_start != null) {
-                        return array('start' => $mode->standard_time_start, 'end' => $mode->standard_time_end);
-                    } else {
-                        return false;
-                    }
-                }
-            }
-        }
-        $default = false;
-        return $default;
     }
 }
 
