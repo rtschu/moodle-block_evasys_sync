@@ -20,25 +20,6 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
         };
     };
 
-    var pad = function pad(num, size) {
-        var s = num + "";
-        while (s.length < size) {
-            s = "0" + s;
-        }
-        return s;
-    };
-
-    var get_time_as_string = function (key) {
-        var startmin = $('[name=minute_' + key + ']').last()[0].selectedIndex;
-        var starthour = $('[name=hour_' + key + ']').last()[0].selectedIndex;
-        var startday = $('[name=day_' + key + ']').last()[0].selectedIndex + 1;
-        var startmonth = $('[name=month_' + key + ']').last()[0].selectedIndex + 1;
-        var startyear = $('[name=year_' + key + ']').last()[0].selectedIndex + 2000;
-
-        return pad(startday, 2) + '.' + pad(startmonth, 2) + '.' + pad(startyear, 2) + ' '
-            + pad(starthour, 2) + ':' + pad(startmin, 2);
-    };
-
     var ready = function () {
         if (this.readyState === 4 && this.status >= 200 && !(this.responseText == "")) {
             require(['core/notification', ], function (notification) {
@@ -71,7 +52,7 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                             root.on('modal-save-cancel:save', function () {
                                 var saveid = new URL(clickedLink.prop('href')).searchParams.get("id");
                                 var times = {};
-                                var settime = document.getElementById("standardtimecheck").checked;
+                                var settime = $('[name=use_standardtime]').last()[0].checked;
                                 if (settime) {
                                     times = get_timestamp();
                                 }
@@ -85,7 +66,7 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                                 startdates[elementNo] = times.starttime;
                                 enddates[elementNo] = times.endtime;
                                 if (settime) {
-                                    str.get_string('time_set', 'block_evasys_sync', function (s) {
+                                    str.get_string('time_set', 'block_evasys_sync').done(function (s) {
                                         document.getElementById('timehint_' + elementNo).innerHTML = s;
                                     });
                                 } else {
@@ -99,7 +80,7 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                                     startdates[elementNo] = Date.now() / 1000;
                                     enddates[elementNo] = Date.now() / 1000;
                                 } else {
-                                    document.getElementById("standardtimecheck").checked = true;
+                                    $('[name=use_standardtime]').last()[0].checked = true;
                                 }
                                 timesetter.init(startdates[elementNo], enddates[elementNo]);
                             });
