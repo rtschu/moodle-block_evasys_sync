@@ -25,6 +25,8 @@ Example context (json):
     "startdisabled": false,
     "enddisabled": false,
     "startoption": false,
+    "onlyend": false,
+    "disablesubmit": false,
     "coursemappingenabled": true,
     "nostudents": false,
     "emailsentnotice": true,
@@ -41,7 +43,7 @@ Example context (json):
     {{#courses}}
         {{#.}}
             <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}
-{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
+                {{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
                 <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div>
                 <span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span>
@@ -64,10 +66,6 @@ Example context (json):
 {{#coursemappingenabled}}
     {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
-<form action="{{href}}" method="post" id="evasys_block_form">
-    <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <input type="hidden" name="courseid" value="{{courseid}}">
-{{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
@@ -110,10 +108,10 @@ Example context (json):
             {{/block_evasys_sync/datetimepicker}}
         </fieldset>
         {{^direct}}
-            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#enddisabled}}disabled{{/enddisabled}}/>
+            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
         {{#direct}}
-            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#enddisabled}}disabled{{/enddisabled}}/>
+            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
     {{/showcontrols}}
 </form>

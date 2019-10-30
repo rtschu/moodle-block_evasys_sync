@@ -220,6 +220,7 @@ class block_evasys_sync extends block_base{
             'startdisabled' => $startdisabled || $standardttimemode,
             'enddisabled' => $enddisabled || $standardttimemode,
             'onlyend' => $startdisabled && !$standardttimemode,
+            'disablesubmit' => $enddisabled,
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.

@@ -302,9 +302,11 @@ class evasys_synchronizer {
             "Falls Sie für diesen Kurs bereits eine E-Mail erhalten haben, wurden gerade neue Teilnehmer*innen ".
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
+        $standardtime = false;
         if ($dates != "Standard") {
             $notifsubject .= ' SONDERWUNSCH';
         } else {
+            $standardtime = true;
             $dates = self::getstandardtimemode($course->category);
         }
         $startdate = new \DateTime('@' . $dates["start"], \core_date::get_server_timezone_object());
@@ -315,7 +317,7 @@ class evasys_synchronizer {
         $formattedenddate = $enddate->format('d.m.Y H:i');
 
         $notiftext .= "Gewünschter Evaluationszeitraum: " . $formattedstartdate . " bis " .
-            $formattedenddate . $textdatechanged . "\r\n\r\n";
+            $formattedenddate . $textdatechanged . ($standardtime ? " (Standardzeitraum)" : "") . "\r\n\r\n";
         if ($newparticipantsadded) {
             $notiftext .= "Der Evaluation wurden neue Teilnehmer*innen hinzugefügt.\r\n\r\n";
         }
@@ -395,10 +397,11 @@ class evasys_synchronizer {
             $data = new course_evaluation_allocation(0);
             $data->set('course', $this->courseid);
             $data->set('state', course_evaluation_allocation::STATE_MANUAL);
-        }
-
-        if ($data->get('startdate') != $dates['start'] || $data->get('enddate') != $dates['end']) {
-            $changed = true;
+        } else {
+            // Don't display date changed warning on first sync.
+            if ($data->get('startdate') != $dates['start'] || $data->get('enddate') != $dates['end']) {
+                $changed = true;
+            }
         }
 
         $data->set('startdate', $dates['start']);
