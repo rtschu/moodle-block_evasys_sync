@@ -43,7 +43,7 @@ $string['semester'] = "Semester";
 $string['optional'] = "(Optional)";
 $string['activate_nonstandard_time'] = "Evaluationszeitraum wegen Sonderveranstaltung ändern";
 $string['activate_standard_time'] = "Standardzeitraum verwenden";
-$string['standard_period'] = "Standard Evaluationszeitraum:";
+$string['standard_period'] = "Standard-Evaluationszeitraum:";
 $string['different_period'] = "Abweichender Evaluationszeitraum:";
 
 // Multi allocation strings.

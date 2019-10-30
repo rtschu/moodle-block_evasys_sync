@@ -70,9 +70,9 @@ Example context (json):
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
 {{#usestandardtimelayout}}
-        <div>
+        <div class="flexmargin">
             <input type="hidden" id="activate_standard" name="activate_standart" value="true">
-            <input type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
+            <input class="margin" type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
             <label for="activate_standard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
         </div>
 {{/usestandardtimelayout}}
