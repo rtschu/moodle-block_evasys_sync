@@ -1,13 +1,22 @@
-define(['jquery'], function($) {
+define(['jquery', 'core/str'], function($, str) {
     var init = function() {
-        if ($('#activate_standard').length > 0) {
-            $(document).on("change", "#activate_standard", function () {
+        if ($('#deactivate_standard').length > 0) {
+            $('#deactivate_standard').prop("disabled", false);
+            $(document).on("change", "#deactivate_standard", function () {
                 if (this.checked) {
-                    $('#inputfieldset').prop("disabled", true);
-                    disable();
-                } else {
                     $('#inputfieldset').prop("disabled", false);
+                    $('#activate_standard').prop("value", false);
+                    str.get_string('different_period', 'block_evasys_sync').done(function (s) {
+                        $('#evaluationperiod').text(s);
+                    });
                     enable();
+                } else {
+                    $('#inputfieldset').prop("disabled", true);
+                    $('#activate_standard').prop("value", true);
+                    str.get_string('standard_period', 'block_evasys_sync').done(function (s) {
+                        $('#evaluationperiod').text(s);
+                    });
+                    disable();
                 }
             });
         }

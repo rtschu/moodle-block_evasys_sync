@@ -41,6 +41,10 @@ $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['reactivate_invite'] = 'Invite students again';
 $string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 $string['optional'] = '(optional)';
+$string['standard_period'] = "standard evaluationperiod:";
+$string['different_period'] = "non standard evaluationperiod:";
+$string['activate_nonstandard_time'] = "standard evaluationperiod:";
+$string['activate_standard_time'] = "non standard evaluationperiod:";
 
 // Multi allocation strings.
 

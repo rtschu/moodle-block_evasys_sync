@@ -71,8 +71,9 @@ Example context (json):
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
 {{#usestandardtimelayout}}
         <div>
-            <input type="checkbox" id="activate_standard" name="activate_standard" checked>
-            <label for="activate_standard">{{#str}}activate_standard_time, block_evasys_sync{{/str}}</label>
+            <input type="hidden" id="activate_standard" name="activate_standart" value="true">
+            <input type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
+            <label for="activate_standard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
         </div>
 {{/usestandardtimelayout}}
     {{#showcontrols}}
@@ -85,7 +86,10 @@ Example context (json):
                     </label>
                 </div>
             {{/startoption}}
-            {{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />
+            {{^usestandardtimelayout}}{{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />{{/usestandardtimelayout}}
+            {{#usestandardtimelayout}}<span id="evaluationperiod">
+                {{# str}}standard_period, block_evasys_sync{{/str}}
+            </span><br/>{{/usestandardtimelayout}}
             {{#direct}}
                 <div>
                     <label for="direct_invite">
