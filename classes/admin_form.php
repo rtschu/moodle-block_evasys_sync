@@ -191,14 +191,9 @@ class admin_form extends moodleform {
             $mform->addElement('html', $htmlurl);
             $startdate = $record->get('standard_time_start');
             $enddate = $record->get('standard_time_end');
-            if ($startdate && $enddate) {
-                $startdate = usertime($startdate);
-                $enddate = usertime($enddate);
-            }
             if ($startdate) {
-                $mform->addElement('html', "<br/><div id='timehint_$i'>" . date('d.m.Y H:i', $startdate)
-                                         . ' - ' .
-                                         date('d.m.Y H:i', $enddate) . "</div>");
+                $mform->addElement('html', "<br/><div id='timehint_$i'>" .
+                                         get_string('time_set', 'block_evasys_sync'). "</div>");
             } else {
                 $mform->addElement('html', "<br/><div id='timehint_$i'></div>");
             }

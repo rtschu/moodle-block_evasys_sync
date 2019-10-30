@@ -85,8 +85,9 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                                 startdates[elementNo] = times.starttime;
                                 enddates[elementNo] = times.endtime;
                                 if (settime) {
-                                    document.getElementById('timehint_' + elementNo).innerHTML =
-                                        get_time_as_string('start') + " - " + get_time_as_string('end');
+                                    str.get_string('time_set', 'block_evasys_sync', function (s) {
+                                        document.getElementById('timehint_' + elementNo).innerHTML = s;
+                                    });
                                 } else {
                                     document.getElementById('timehint_' + elementNo).innerHTML = "";
                                 }
