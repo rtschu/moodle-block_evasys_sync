@@ -184,21 +184,17 @@ class admin_form extends moodleform {
             $mform->setDefault($namecatmode, $mode);
 
             $mform->addElement('html', '</td><td class="cell c3">');
-            try {
-                $mode = $record->get('standard_time_mode');
-            } catch (\coding_exception $e) {
-                // Backwards compatibility.
-                $mode = false;
-            }
-            $name = 'standard_time_mode_' . $record->get('id');
             $timeeditlink = 'javascript:void(0)';
             $timeediturl = new \moodle_url($timeeditlink, array('id' => $record->get('id')));
             $text = get_string('edit_time', 'block_evasys_sync');
             $htmlurl = "<a id='timeediturl_{$i}' href='{$timeediturl->out()}'>$text</a>";
             $mform->addElement('html', $htmlurl);
-            $mform->disabledIf($name, $namecatmode, 'checked');
             $startdate = $record->get('standard_time_start');
             $enddate = $record->get('standard_time_end');
+            if ($startdate && $enddate) {
+                $startdate = usertime($startdate);
+                $enddate = usertime($enddate);
+            }
             if ($startdate) {
                 $mform->addElement('html', "<br/><div id='timehint_$i'>" . date('d.m.Y H:i', $startdate)
                                          . ' - ' .

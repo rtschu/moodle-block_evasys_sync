@@ -71,7 +71,8 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                             root.on('modal-save-cancel:save', function () {
                                 var saveid = new URL(clickedLink.prop('href')).searchParams.get("id");
                                 var times = {};
-                                if (document.getElementById("standardtimecheck").checked) {
+                                var settime = document.getElementById("standardtimecheck").checked;
+                                if (settime) {
                                     times = get_timestamp();
                                 }
                                 times.category = saveid;
@@ -83,8 +84,12 @@ define(['jquery', 'core/modal_factory', 'core/templates', 'core/str', 'core/url'
                                 var elementNo = clickedLink.prop('id').split("_")[1];
                                 startdates[elementNo] = times.starttime;
                                 enddates[elementNo] = times.endtime;
-                                document.getElementById('timehint_' + elementNo).innerHTML =
-                                    get_time_as_string('start') + " - " + get_time_as_string('end');
+                                if (settime) {
+                                    document.getElementById('timehint_' + elementNo).innerHTML =
+                                        get_time_as_string('start') + " - " + get_time_as_string('end');
+                                } else {
+                                    document.getElementById('timehint_' + elementNo).innerHTML = "";
+                                }
                             });
                             modal.show();
                             require(['block_evasys_sync/initialize'], function(timesetter) {
