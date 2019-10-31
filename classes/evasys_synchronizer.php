@@ -391,7 +391,8 @@ class evasys_synchronizer {
      * @throws \dml_missing_record_exception
      */
     public function set_evaluation_period($dates) : bool {
-        if ($dates == 'Standard') {
+        $usestandardtime = ($dates == 'Standard');
+        if ($usestandardtime) {
             $course = get_course($this->courseid);
             $dates = self::get_standard_timemode($course->category);
         }
@@ -410,6 +411,7 @@ class evasys_synchronizer {
 
         $data->set('startdate', $dates['start']);
         $data->set('enddate', $dates['end']);
+        $data->set('usestandardtime', $usestandardtime);
         $data->save();
 
         return $changed;

@@ -78,7 +78,7 @@ class block_evasys_sync extends block_base{
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
-            $hasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
+            $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
             $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
@@ -118,6 +118,8 @@ class block_evasys_sync extends block_base{
         $nostudents = (count_enrolled_users(
                 context_course::instance($this->page->course->id), 'block/evasys_sync:mayevaluate') == 0);
 
+        $recordhasstandardtime = false;
+
         if ($record !== false) {
             $state = $record->get('state');
             if ($state == course_evaluation_allocation::STATE_MANUAL) {
@@ -141,10 +143,12 @@ class block_evasys_sync extends block_base{
             // Set start and end to match the period that had been set.
             $start = $record->get('startdate');
             $end = $record->get('enddate');
+            $recordhasstandardtime = $record->get('usestandardtime');
         } else {
-            if (!$ismodeautomated && $hasstandardtime) {
-                $start = $hasstandardtime['start'];
-                $end = $hasstandardtime['end'];
+            if (!$ismodeautomated && $categoryhasstandardtime) {
+                $start = $categoryhasstandardtime['start'];
+                $end = $categoryhasstandardtime['end'];
+                $recordhasstandardtime = true;
             }
         }
         // This javascript module sets the start and end fields to the correct values.
@@ -202,7 +206,7 @@ class block_evasys_sync extends block_base{
             $courses[] = $course;
         }
 
-        $standardttimemode = (!$ismodeautomated && $hasstandardtime && !$record);
+        $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
 
         // Create the data object for the mustache table.
         $data = array(
@@ -214,7 +218,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime),
+            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime),
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled || $standardttimemode,

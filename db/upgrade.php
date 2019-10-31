@@ -222,5 +222,20 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019201400, 'evasys_sync');
     }
 
+    if ($oldversion < 2019203100) {
+
+        // Define field usestandardtime to be added to block_evasys_sync_courseeval.
+        $table = new xmldb_table('block_evasys_sync_courseeval');
+        $field = new xmldb_field('usestandardtime', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field usestandardtime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2019203100, 'evasys_sync');
+    }
+
     return true;
 }
