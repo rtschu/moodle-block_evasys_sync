@@ -41,6 +41,11 @@ $string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber a
 $string['change_mapping'] = "Weitere Veranstaltungen zuordnen";
 $string['semester'] = "Semester";
 $string['optional'] = "(Optional)";
+$string['activate_nonstandard_time'] = "Evaluationszeitraum wegen Sonderveranstaltung ändern";
+$string['activate_standard_time'] = "Standardzeitraum verwenden";
+$string['standard_period'] = "Standard-Evaluationszeitraum:";
+$string['different_period'] = "Abweichender Evaluationszeitraum:";
+$string['time_set'] = "Standard-Evaluationszeitraum gesetzt";
 
 // Multi allocation strings.
 
@@ -148,6 +153,10 @@ $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 $string['auto_mode'] = 'Automatischer Modus';
+$string['standard_time_mode'] = "Standardzeitraum anbieten";
+$string['edit_time'] = "Standardzeitraum bearbeiten";
+$string['save_failure'] = "Fehler beim speichern";
+$string['usetimecheckbox'] = "Standardzeitraum verwenden";
 
 
 // Settings - category table.
@@ -165,6 +174,7 @@ $string['invalidcourse'] = 'Ungültiger Kurs';
 $string['invalidsurvey'] = "Ungültige Umfrage";
 $string['invaliddate'] = "Ungültiges Datum";
 $string['invalidstate'] = "Ungültiger Statuscode";
+$string['invalid_standard_time_mode'] = "Ungültige Angabe ob Standardzeiten vorhanden sind";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';

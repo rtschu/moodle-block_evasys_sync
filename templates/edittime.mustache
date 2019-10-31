@@ -1,0 +1,15 @@
+{{!
+@template block_evasys_sync/datetimepicker
+Example context (json):
+{
+}
+}}
+{{< block_evasys_sync/datetimepicker}}
+{{$id}}start{{/id}}
+{{/block_evasys_sync/datetimepicker}}
+<br/>
+{{< block_evasys_sync/datetimepicker}}
+{{$id}}end{{/id}}
+{{/block_evasys_sync/datetimepicker}}
+<br/>
+<input type="checkbox" name="use_standardtime" id="standardtimecheck"> {{# str}}usetimecheckbox, block_evasys_sync{{/str}}

@@ -41,6 +41,10 @@ $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['reactivate_invite'] = 'Invite students again';
 $string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 $string['optional'] = '(optional)';
+$string['standard_period'] = "Standard evaluationperiod:";
+$string['different_period'] = "Exceptional evaluationperiod:";
+$string['activate_nonstandard_time'] = "Alter evaluationperiod for special courses";
+$string['time_set'] = "Standard evaluationperiod set";
 
 // Multi allocation strings.
 
@@ -153,6 +157,11 @@ $string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 $string['auto_mode'] = 'Automatic mode';
+$string['standard_time_mode'] = "Offer standard period of time";
+$string['activate_standard_time'] = "Use standard timeframe.";
+$string['edit_time'] = "Edit standard timeframe";
+$string['save_failure'] = "Error saving";
+$string['usetimecheckbox'] = "Use standard timeframe";
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
@@ -169,6 +178,7 @@ $string['invalidcourse'] = "Invalid course";
 $string['invalidsurvey'] = "Invalid survey";
 $string['invaliddate'] = "Invalid date";
 $string['invalidstate'] = "Invalid state code";
+$string['invalid_standard_time_mode'] = "Invalid information whether standard periods of time may be used.";
 
 
 // Privacy API.

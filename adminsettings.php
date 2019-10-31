@@ -99,8 +99,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
             $records = \block_evasys_sync\user_cat_allocation::get_records();
             foreach ($records as $allocation) {
                 $newvalue = 'category_' . $allocation->get('id');
-                $oldvalue = $allocation->get('id');
+                $oldvalue = $allocation->get('userid');
                 $newvaluemodename = 'category_mode_' . $allocation->get('id');
+
                 // Checkboxex only get submitted if they're checked.
                 if (isset($data->$newvaluemodename) && $data->$newvaluemodename) {
                     $newvaluemode = 1; // Category uses automated mode.
@@ -113,7 +114,9 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     $oldvaluemode = $newvaluemode + 1; // Make the below if statement execute.
                 }
                 // Update db entry.
-                if ($data->$newvalue != $oldvalue || $newvaluemode != $oldvaluemode) {
+                if ($data->$newvalue != $oldvalue or
+                    $newvaluemode != $oldvaluemode) {
+
                     $allocation->set('userid', $data->$newvalue);
                     $allocation->set('category_mode', $newvaluemode);
                     $allocation->update();
@@ -136,7 +139,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     $entry->evasys_soap_url = get_config('block_evasys_sync', 'evasys_soap_url');
     $entry->evasys_wsdl_url = get_config('block_evasys_sync', 'evasys_wsdl_url');
     $entry->default_evasys_moodleuser = get_config('block_evasys_sync', 'default_evasys_moodleuser');
-
 
     $mform->set_data($entry);
     $mform->display();

@@ -12,6 +12,8 @@
                 <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="standard_time_end" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="standard_time_start" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

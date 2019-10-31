@@ -25,6 +25,8 @@ Example context (json):
     "startdisabled": false,
     "enddisabled": false,
     "startoption": false,
+    "onlyend": false,
+    "disablesubmit": false,
     "coursemappingenabled": true,
     "nostudents": false,
     "emailsentnotice": true,
@@ -33,12 +35,15 @@ Example context (json):
     "warning": false
 }
 }}
-
-{{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
-{{#courses}}
-    {{#.}}
+<form action="{{href}}" method="post" id="evasys_block_form">
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
+    <input type="hidden" name="courseid" value="{{courseid}}">
+    {{#onlyend}}<input id="only_end" type="hidden" name="only_end" value="true">{{/onlyend}}
+    {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
+    {{#courses}}
+        {{#.}}
             <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}
-{{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
+                {{# str}}evainternalid, block_evasys_sync{{/str}} {{technicalid}}">
                 <span class="emphasize">{{# str}}evacoursename, block_evasys_sync{{/str}}</span> {{evasyscoursetitle}}</div>
             <div>
                 <span class="emphasize">{{# str}}countparticipants, block_evasys_sync{{/str}}</span>
@@ -61,15 +66,19 @@ Example context (json):
 {{#coursemappingenabled}}
     {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
-<form action="{{href}}" method="post" id="evasys_block_form">
-    <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <input type="hidden" name="courseid" value="{{courseid}}">
-{{#startdisabled}}<input id="only_end" type="hidden" name="only_end" value="true">{{/startdisabled}}
+<div class = "linedrawer"></div>
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
+{{#usestandardtimelayout}}
+        <div class="flexmargin">
+            <input type="hidden" id="activate_standard" name="activate_standard" value="true">
+            <input class="margin" type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
+            <label for="deactivate_standard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
+        </div>
+{{/usestandardtimelayout}}
     {{#showcontrols}}
-        <fieldset>
+        <fieldset{{#usestandardtimelayout}} id="inputfieldset" disabled {{/usestandardtimelayout}}>
             {{#startoption}}
                 <div>
                     <label for="reactivate">
@@ -78,7 +87,10 @@ Example context (json):
                     </label>
                 </div>
             {{/startoption}}
-            {{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />
+            {{^usestandardtimelayout}}{{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />{{/usestandardtimelayout}}
+            {{#usestandardtimelayout}}<span id="evaluationperiod">
+                {{# str}}standard_period, block_evasys_sync{{/str}}
+            </span><br/>{{/usestandardtimelayout}}
             {{#direct}}
                 <div>
                     <label for="direct_invite">
@@ -101,10 +113,10 @@ Example context (json):
             {{/block_evasys_sync/datetimepicker}}
         </fieldset>
         {{^direct}}
-            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#enddisabled}}disabled{{/enddisabled}}/>
+            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}invitestudents, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
         {{#direct}}
-            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#enddisabled}}disabled{{/enddisabled}}/>
+            <input id='evasyssubmitbutton' class="in_box_button" type="submit" value="{{# str}}planorstartevaluation, block_evasys_sync{{/str}}" {{#disablesubmit}}disabled{{/disablesubmit}}/>
         {{/direct}}
     {{/showcontrols}}
 </form>

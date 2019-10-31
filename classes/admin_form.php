@@ -130,7 +130,11 @@ class admin_form extends moodleform {
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('auto_mode', 'block_evasys_sync'), $attributes);
         $attributes = array();
-        $attributes['class'] = 'header c3 lastcol';
+        $attributes['class'] = 'header c3';
+        $attributes['scope'] = 'col';
+        $output .= html_writer::tag('th', get_string('standard_time_mode', 'block_evasys_sync'), $attributes);
+        $attributes = array();
+        $attributes['class'] = 'header c4 lastcol';
         $attributes['scope'] = 'col';
         $output .= html_writer::tag('th', get_string('delete_category_user', 'block_evasys_sync'), $attributes);
         $output .= html_writer::end_tag('tr');
@@ -144,10 +148,14 @@ class admin_form extends moodleform {
      * @return string
      */
     private function table_body() {
+        global $USER;
         $mform = $this->_form;
 
         $mform->addElement('html', '<tbody>');
         $records = $this->getrecords();
+        $i = 0;
+        $startdates = [];
+        $enddates = [];
         foreach ($records as $record) {
             $mform->addElement('html', '<tr>');
             $mform->addElement('html', '<td class="cell c0"><div>' .
@@ -169,17 +177,37 @@ class admin_form extends moodleform {
                 // Backwards compatibility.
                 $mode = false;
             }
-            $name = 'category_mode_' . $record->get('id');
-            $mform->addElement('checkbox', $name);
-            $mform->setType($name, PARAM_BOOL);
-            $mform->setDefault($name, $mode);
 
-            $mform->addElement('html', '</td><td class="cell c3 lastcol">');
+            $namecatmode = 'category_mode_' . $record->get('id');
+            $mform->addElement('checkbox', $namecatmode);
+            $mform->setType($namecatmode, PARAM_BOOL);
+            $mform->setDefault($namecatmode, $mode);
+
+            $mform->addElement('html', '</td><td class="cell c3">');
+            $timeeditlink = 'javascript:void(0)';
+            $timeediturl = new \moodle_url($timeeditlink, array('id' => $record->get('id')));
+            $text = get_string('edit_time', 'block_evasys_sync');
+            $htmlurl = "<a id='timeediturl_{$i}' href='{$timeediturl->out()}'>$text</a>";
+            $mform->addElement('html', $htmlurl);
+            $startdate = $record->get('standard_time_start');
+            $enddate = $record->get('standard_time_end');
+            if ($startdate) {
+                $mform->addElement('html', "<br/><div id='timehint_$i'>" .
+                                         get_string('time_set', 'block_evasys_sync'). "</div>");
+            } else {
+                $mform->addElement('html', "<br/><div id='timehint_$i'></div>");
+            }
+            $mform->addElement('html', '</td><td class="cell c4 lastcol">');
             $link = '/blocks/evasys_sync/adminsettings.php';
             $editurl = new \moodle_url($link, array('d' => $record->get('id')));
             $text = get_string('delete', 'block_evasys_sync');
             $mform->addElement('html', '<a href="' . $editurl->out() . '">' . $text . '</a></td></tr>');
+            $startdates[] = $startdate;
+            $enddates[] = $enddate;
+            $i++;
         }
+        global $PAGE;
+        $PAGE->requires->js_call_amd('block_evasys_sync/edit_timeframe', 'initialize', array($startdates, $enddates));
         $mform->addElement('html', '</tbody>');
         $mform->addElement('html', '</table>');
     }

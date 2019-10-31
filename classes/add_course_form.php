@@ -133,7 +133,6 @@ class add_course_form extends moodleform {
 
     /**
      * Prints course categories and assigned moodle users.
-     * @return string
      */
     private function table_body($courses) {
         $mform = $this->_form;

@@ -185,5 +185,42 @@ function xmldb_block_evasys_sync_upgrade ($oldversion) {
         upgrade_block_savepoint(true, 2019190000, 'evasys_sync');
     }
 
+    if ($oldversion < 2019200800) {
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('standard_time_mode', XMLDB_TYPE_INTEGER, '10', null, false, null, 0);
+        $dbman->add_field($table, $field);
+
+        upgrade_block_savepoint(true, 2019200800, 'evasys_sync');
+    }
+
+    if ($oldversion < 2019201400) {
+
+        $table = new xmldb_table('block_evasys_sync_categories');
+        $field = new xmldb_field('standard_time_mode', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'standard_time_end');
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field standard_time_start to be added to block_evasys_sync_categories.
+        $field = new xmldb_field('standard_time_start', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'standard_time_end');
+
+        // Conditionally launch add field standard_time_start.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field standard_time_end to be added to block_evasys_sync_categories.
+        $field = new xmldb_field('standard_time_end', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field standard_time_end.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Evasys_sync savepoint reached.
+        upgrade_block_savepoint(true, 2019201400, 'evasys_sync');
+    }
+
     return true;
 }

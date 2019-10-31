@@ -77,6 +77,9 @@ class block_evasys_sync extends block_base{
         // If the teacher can start the evaluation directly, we'll want to run some javascript initialization.
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
+        } else {
+            $hasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
+            $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
@@ -138,6 +141,11 @@ class block_evasys_sync extends block_base{
             // Set start and end to match the period that had been set.
             $start = $record->get('startdate');
             $end = $record->get('enddate');
+        } else {
+            if (!$ismodeautomated && $hasstandardtime) {
+                $start = $hasstandardtime['start'];
+                $end = $hasstandardtime['end'];
+            }
         }
         // This javascript module sets the start and end fields to the correct values.
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end));
@@ -193,6 +201,9 @@ class block_evasys_sync extends block_base{
             // Append this course.
             $courses[] = $course;
         }
+
+        $standardttimemode = (!$ismodeautomated && $hasstandardtime && !$record);
+
         // Create the data object for the mustache table.
         $data = array(
             'href' => $href,
@@ -203,10 +214,13 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
+            'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime),
             // Choose mode.
             'direct' => $ismodeautomated,
-            'startdisabled' => $startdisabled,
-            'enddisabled' => $enddisabled,
+            'startdisabled' => $startdisabled || $standardttimemode,
+            'enddisabled' => $enddisabled || $standardttimemode,
+            'onlyend' => $startdisabled && !$standardttimemode,
+            'disablesubmit' => $enddisabled,
             // If the evaluation hasn't ended yet, display option to restart it.
             'startoption' => $startoption,
             // Only allow coursemapping before starting an evaluation.

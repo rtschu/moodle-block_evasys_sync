@@ -1,4 +1,4 @@
-input.in_box_button[type="submit"] {
+.block_evasys_sync input.in_box_button[type="submit"] {
     white-space: normal;
     width: 100%;
     margin: 2px 0;
@@ -14,7 +14,22 @@ input.in_box_button[type="submit"] {
     margin-left: 0;
 }
 
-.inline-block {
+.block_evasys_sync .linedrawer {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 2px solid #bec6c8;
+}
+
+.block_evasys_sync .flexmargin {
+    display: flex;
+    margin-bottom: 3px;
+}
+
+.block_evasys_sync .margin {
+    margin: 5px;
+}
+
+.block_evasys_sync .inline-block {
     display: inline-block;
 }
 

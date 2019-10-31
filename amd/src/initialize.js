@@ -7,17 +7,17 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
             // No form present.
             return;
         }
-        $('[name=minute_start]')[0].selectedIndex = start.getMinutes();
-        $('[name=hour_start]')[0].selectedIndex = start.getHours();
-        $('[name=day_start]')[0].selectedIndex = start.getDate() - 1;
-        $('[name=month_start]')[0].selectedIndex = start.getMonth();
-        $('[name=year_start]')[0].selectedIndex = start.getFullYear() - 2000;
+        $('[name=minute_start]').last()[0].selectedIndex = start.getMinutes();
+        $('[name=hour_start]').last()[0].selectedIndex = start.getHours();
+        $('[name=day_start]').last()[0].selectedIndex = start.getDate() - 1;
+        $('[name=month_start]').last()[0].selectedIndex = start.getMonth();
+        $('[name=year_start]').last()[0].selectedIndex = start.getFullYear() - 2000;
 
-        $('[name=minute_end]')[0].selectedIndex = end.getMinutes();
-        $('[name=hour_end]')[0].selectedIndex = end.getHours();
-        $('[name=day_end]')[0].selectedIndex = end.getDate() - 1;
-        $('[name=month_end]')[0].selectedIndex = end.getMonth();
-        $('[name=year_end]')[0].selectedIndex = end.getFullYear() - 2000;
+        $('[name=minute_end]').last()[0].selectedIndex = end.getMinutes();
+        $('[name=hour_end]').last()[0].selectedIndex = end.getHours();
+        $('[name=day_end]').last()[0].selectedIndex = end.getDate() - 1;
+        $('[name=month_end]').last()[0].selectedIndex = end.getMonth();
+        $('[name=year_end]').last()[0].selectedIndex = end.getFullYear() - 2000;
         if ($('#reactivate').length > 0) {
             endenabled = !$('[name=minute_end]')[0].disabled;
             $(document).on("change", "#reactivate", function() {
