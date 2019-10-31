@@ -54,6 +54,10 @@ class block_evasys_sync extends block_base{
         // If there has been a status in the url, show the prompt.
         $this->display_status($status);
 
+        // Get the evasys-persistenceclass for the current course if it exists.
+        // The persistencelass only gets created when the teacher sets the evaluation period or sends an email to the coordinator.
+        $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
+
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
             $inlsf = !empty($this->page->course->idnumber);
@@ -79,7 +83,11 @@ class block_evasys_sync extends block_base{
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
             $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
-            $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
+
+            // Only use standardtime js if no record exists.
+            if (!$record) {
+                $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
+            }
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
@@ -108,10 +116,6 @@ class block_evasys_sync extends block_base{
         $oneweeklater = $time = new \DateTime();
         $oneweeklater->add(new \DateInterval("P7D"));
         $end = $oneweeklater->getTimestamp();
-
-        // Get the evasys-persistenceclass for the current course if it exists.
-        // The persistencelass only gets created when the teacher sets the evaluation period or sends an email to the coordinator.
-        $record = course_evaluation_allocation::get_record_by_course($this->page->course->id, false);
 
         // See if there are any students that can evaluate.
         // If there are no students we disable all controls.
@@ -218,7 +222,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime),
+            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && $record),
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled || $standardttimemode,
