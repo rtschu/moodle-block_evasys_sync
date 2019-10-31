@@ -78,7 +78,7 @@ class block_evasys_sync extends block_base{
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
-            $hasstandardtime = \block_evasys_sync\evasys_synchronizer::getstandardtimemode($this->page->course->category);
+            $hasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
             $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
         }
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);

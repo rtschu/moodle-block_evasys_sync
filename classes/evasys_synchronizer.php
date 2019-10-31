@@ -303,7 +303,7 @@ class evasys_synchronizer {
             "hinzugefügt oder der Zeitraum angepasst. Dies ist ggf. unten angegeben.\r\n\r\n";
 
         $addstandardtimestring = false;
-        $standarddates = self::getstandardtimemode($course->category);
+        $standarddates = self::get_standard_timemode($course->category);
         // If the dates are not the standard dates and there are standard dates for this course:
         if ($standarddates !== false) {
             if ($dates == "Standard") {
@@ -393,7 +393,7 @@ class evasys_synchronizer {
     public function set_evaluation_period($dates) : bool {
         if ($dates == 'Standard') {
             $course = get_course($this->courseid);
-            $dates = self::getstandardtimemode($course->category);
+            $dates = self::get_standard_timemode($course->category);
         }
         $changed = false;
         $data = course_evaluation_allocation::get_record_by_course($this->courseid, false);
@@ -415,7 +415,16 @@ class evasys_synchronizer {
         return $changed;
     }
 
-    public static function getstandardtimemode($category) {
+    /**
+     * Returns a set standard timeframe, if one is set for the category of this course or any parent category.
+     *
+     * @param $category int id of the category
+     * @return array|false returns an array containing the start and end timestamp of a defined standard timeframe.
+     *    false if no standard timeframe is set.
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function get_standard_timemode($category) {
         global $DB;
         $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $category));
         if ($mode !== false) {
