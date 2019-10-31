@@ -38,17 +38,19 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                                 if (hasdeactivatestandard) {
                                     $('#deactivate_standard').prop('disabled', false);
                                 }
-                                $('[name=minute_start]')[0].disabled = false;
-                                $('[name=hour_start]')[0].disabled = false;
-                                $('[name=day_start]')[0].disabled = false;
-                                $('[name=month_start]')[0].disabled = false;
-                                $('[name=year_start]')[0].disabled = false;
-                                if (!endenabled) {
-                                    $('[name=minute_end]')[0].disabled = false;
-                                    $('[name=hour_end]')[0].disabled = false;
-                                    $('[name=day_end]')[0].disabled = false;
-                                    $('[name=month_end]')[0].disabled = false;
-                                    $('[name=year_end]')[0].disabled = false;
+                                if ($('#deactivate_standard').prop('checked')) {
+                                    $('[name=minute_start]')[0].disabled = false;
+                                    $('[name=hour_start]')[0].disabled = false;
+                                    $('[name=day_start]')[0].disabled = false;
+                                    $('[name=month_start]')[0].disabled = false;
+                                    $('[name=year_start]')[0].disabled = false;
+                                    if (!endenabled) {
+                                        $('[name=minute_end]')[0].disabled = false;
+                                        $('[name=hour_end]')[0].disabled = false;
+                                        $('[name=day_end]')[0].disabled = false;
+                                        $('[name=month_end]')[0].disabled = false;
+                                        $('[name=year_end]')[0].disabled = false;
+                                    }
                                 }
                                 if ($('#direct_invite').length > 0) {
                                     $('#direct_invite').prop('disabled', false);
@@ -71,19 +73,17 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     if (hasdeactivatestandard) {
                         $('#deactivate_standard').prop('disabled', true);
                     }
-                    if ($('#deactivate_standard').prop('checked')) {
-                        $('[name=minute_start]')[0].disabled = true;
-                        $('[name=hour_start]')[0].disabled = true;
-                        $('[name=day_start]')[0].disabled = true;
-                        $('[name=month_start]')[0].disabled = true;
-                        $('[name=year_start]')[0].disabled = true;
-                        if (!endenabled) {
-                            $('[name=minute_end]')[0].disabled = true;
-                            $('[name=hour_end]')[0].disabled = true;
-                            $('[name=day_end]')[0].disabled = true;
-                            $('[name=month_end]')[0].disabled = true;
-                            $('[name=year_end]')[0].disabled = true;
-                        }
+                    $('[name=minute_start]')[0].disabled = true;
+                    $('[name=hour_start]')[0].disabled = true;
+                    $('[name=day_start]')[0].disabled = true;
+                    $('[name=month_start]')[0].disabled = true;
+                    $('[name=year_start]')[0].disabled = true;
+                    if (!endenabled) {
+                        $('[name=minute_end]')[0].disabled = true;
+                        $('[name=hour_end]')[0].disabled = true;
+                        $('[name=day_end]')[0].disabled = true;
+                        $('[name=month_end]')[0].disabled = true;
+                        $('[name=year_end]')[0].disabled = true;
                     }
                     if ($('#direct_invite').length > 0) {
                         $('#direct_invite').prop('disabled', true);
