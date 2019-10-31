@@ -70,23 +70,23 @@ Example context (json):
 {{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_states, block_evasys_sync{{/str}}</div>{{/warning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}
-{{#usestandardtimelayout}}
-        <div class="flexmargin">
-            <input type="hidden" id="activate_standard" name="activate_standard" value="true">
-            <input class="margin" type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
-            <label for="deactivate_standard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
-        </div>
-{{/usestandardtimelayout}}
     {{#showcontrols}}
-        <fieldset{{#usestandardtimelayout}} id="inputfieldset" disabled {{/usestandardtimelayout}}>
-            {{#startoption}}
-                <div>
-                    <label for="reactivate">
-                        <input type="checkbox" id="reactivate">
-                        {{# str}}reactivate_invite, block_evasys_sync{{/str}}
-                    </label>
+        {{#startoption}}
+            <div>
+                <label for="reactivate">
+                    <input type="checkbox" id="reactivate">
+                    {{# str}}reactivate_invite, block_evasys_sync{{/str}}
+                </label>
+            </div>
+        {{/startoption}}
+        {{#usestandardtimelayout}}
+                <div class="flexmargin">
+                    <input type="hidden" id="activate_standard" name="activate_standard" value="true">
+                    <input class="margin" type="checkbox" id="deactivate_standard" name="deactivate_standard" disabled>
+                    <label for="deactivate_standard">{{#str}}activate_nonstandard_time, block_evasys_sync{{/str}}</label>
                 </div>
-            {{/startoption}}
+        {{/usestandardtimelayout}}
+        <fieldset{{#usestandardtimelayout}} id="inputfieldset" disabled {{/usestandardtimelayout}}>
             {{^usestandardtimelayout}}{{# str}}evaluationperiod, block_evasys_sync{{/str}}<br />{{/usestandardtimelayout}}
             {{#usestandardtimelayout}}<span id="evaluationperiod">
                 {{# str}}standard_period, block_evasys_sync{{/str}}

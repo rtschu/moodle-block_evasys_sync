@@ -3,6 +3,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
         var start = new Date(starttime * 1000);
         var end = new Date(endtime * 1000);
         var endenabled;
+        var hasdeactivatestandard;
         if ($('[name=minute_start]').length == 0) {
             // No form present.
             return;
@@ -20,6 +21,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
         $('[name=year_end]').last()[0].selectedIndex = end.getFullYear() - 2000;
         if ($('#reactivate').length > 0) {
             endenabled = !$('[name=minute_end]')[0].disabled;
+            hasdeactivatestandard = ($('#deactivate_standard').length > 0);
             $(document).on("change", "#reactivate", function() {
                 if (this.checked) {
                     // Ask for confirmation, then enable all fields related to re-invitation.
@@ -33,6 +35,9 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                         notification.confirm(s[0], s[1], s[2], s[3],
                             function () {
                                 // User pressed yes.
+                                if (hasdeactivatestandard) {
+                                    $('#deactivate_standard').prop('disabled', false);
+                                }
                                 $('[name=minute_start]')[0].disabled = false;
                                 $('[name=hour_start]')[0].disabled = false;
                                 $('[name=day_start]')[0].disabled = false;
@@ -63,17 +68,22 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     });
                 } else {
                     // Disable all fields related to re-invitation.
-                    $('[name=minute_start]')[0].disabled = true;
-                    $('[name=hour_start]')[0].disabled = true;
-                    $('[name=day_start]')[0].disabled = true;
-                    $('[name=month_start]')[0].disabled = true;
-                    $('[name=year_start]')[0].disabled = true;
-                    if (!endenabled) {
-                        $('[name=minute_end]')[0].disabled = true;
-                        $('[name=hour_end]')[0].disabled = true;
-                        $('[name=day_end]')[0].disabled = true;
-                        $('[name=month_end]')[0].disabled = true;
-                        $('[name=year_end]')[0].disabled = true;
+                    if (hasdeactivatestandard) {
+                        $('#deactivate_standard').prop('disabled', true);
+                    }
+                    if ($('#deactivate_standard').prop('checked')) {
+                        $('[name=minute_start]')[0].disabled = true;
+                        $('[name=hour_start]')[0].disabled = true;
+                        $('[name=day_start]')[0].disabled = true;
+                        $('[name=month_start]')[0].disabled = true;
+                        $('[name=year_start]')[0].disabled = true;
+                        if (!endenabled) {
+                            $('[name=minute_end]')[0].disabled = true;
+                            $('[name=hour_end]')[0].disabled = true;
+                            $('[name=day_end]')[0].disabled = true;
+                            $('[name=month_end]')[0].disabled = true;
+                            $('[name=year_end]')[0].disabled = true;
+                        }
                     }
                     if ($('#direct_invite').length > 0) {
                         $('#direct_invite').prop('disabled', true);

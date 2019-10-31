@@ -53,7 +53,7 @@ class course_evaluation_allocation extends persistent{
                 'type' => PARAM_INT,
                 'message' => new \lang_string('invaliddate', 'block_evasys_sync')
             ),
-            'usestartdate' => array(
+            'usestandardtime' => array(
                 'type' => PARAM_BOOL,
                 'default' => false
             ),
