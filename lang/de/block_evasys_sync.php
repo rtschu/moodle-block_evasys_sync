@@ -19,7 +19,7 @@ $string['evasys_sync'] = 'EvaSys-Export';
 $string['evasys_sync:addinstance'] = 'EvaSys-Export-Block hinzufügen';
 $string['invitestudents'] = 'Evaluation beauftragen';
 $string['checkstatus'] = 'Status der Evaluationen anzeigen';
-$string['countparticipants'] = 'Anzahl Teilnehmer: ';
+$string['countparticipants'] = 'Anzahl Teilnehmer*innen: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
 $string['finishedforms'] = 'Ausgefüllt:';
 $string['evacourseid'] = 'EvaSys-Kurs-ID:';
@@ -31,7 +31,7 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
-$string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer, die evaluieren könnten.';
+$string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer*innen, die evaluieren könnten.';
 $string['taskname'] = 'EvaSys-Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
@@ -68,7 +68,7 @@ $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladun
 $string['title_send_failure'] = "Fehler beim Versand";
 $string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
 $string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
-$string['content_nostudents'] = "Dieser Kurs enthält keine Teilnehmer, die an der Evaluation teilnehmen könnten.";
+$string['content_nostudents'] = "Dieser Kurs enthält keine Teilnehmer*innen, die an der Evaluation teilnehmen könnten.";
 $string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
     "Es wurden keine neuen Einladungen versendet";
 $string['direct_title_info'] = "Einladungen bereits versandt";
@@ -102,8 +102,11 @@ $string['content_start_after_end'] = "Der Start ist nach dem Ende";
 $string['title_wrong_mode'] = "Unzulässige Operation";
 $string['content_wrong_mode'] = "Dieser Kurs ist nicht im angenommenen Modus. Bitte wenden Sie sich an das Support-Team.";
 
-// Form strings.
+// Sync date problems.
+$string['syncendinthepast'] = 'Teilnehmer*innen nicht übertragen: Das gewünschte Enddatum liegt in der Vergangenheit.';
+$string['syncstartafterend'] = 'Teilnehmer*innen nicht übertragen: Das Startdatum muss vor dem Enddatum liegen.';
 
+// Form strings.
 $string['startplaceholder'] = "Startdatum für die Evaluation";
 $string['endplaceholder'] = "Enddatum für die Evaluation";
 
