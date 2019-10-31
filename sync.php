@@ -23,6 +23,10 @@ require_login();
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
 
+$returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
+$returnurl->param('id', $courseid);
+$returnurl->param('evasyssynccheck', 1);
+
 if (!optional_param('activate_standard', false, PARAM_BOOL)) {
     if (optional_param('only_end', false, PARAM_BOOL)) {
         // Existing start date should not be changed; just the end date. Fetch start date from record.
@@ -57,6 +61,15 @@ if (!optional_param('activate_standard', false, PARAM_BOOL)) {
     $enddate->setTime($endhour, $endmin);
 
     $dates = ["start" => $startdate->getTimestamp(), "end" => $enddate->getTimestamp()];
+
+    if ($dates['start'] > $dates['end']) {
+        redirect($returnurl, get_string('syncstartafterend', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
+        exit();
+    }
+    if (time() > $dates['end']) {
+        redirect($returnurl, get_string('syncendinthepast', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
+        exit();
+    }
 } else {
     $dates = "Standard";
     // We can't detect that anyways since we don't know the dates.
@@ -78,19 +91,6 @@ $DB->get_record('course', array('id' => $courseid), 'id', MUST_EXIST);
 
 $PAGE->set_context(context_course::instance($courseid));
 require_capability('block/evasys_sync:synchronize', context_course::instance($courseid));
-
-$returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
-$returnurl->param('id', $courseid);
-$returnurl->param('evasyssynccheck', 1);
-
-if ($dates['start'] > $dates['end']) {
-    redirect($returnurl, get_string('syncstartafterend', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
-    exit();
-}
-if (time() > $dates['end']) {
-    redirect($returnurl, get_string('syncendinthepast', 'block_evasys_sync'), 0, \core\output\notification::NOTIFY_ERROR);
-    exit();
-}
 
 try {
     if (count_enrolled_users(context_course::instance($courseid), 'block/evasys_sync:mayevaluate') == 0) {
