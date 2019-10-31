@@ -222,7 +222,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && $record),
+            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && !$record),
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled || $standardttimemode,
