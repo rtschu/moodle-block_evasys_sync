@@ -128,9 +128,10 @@ $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werd
                              "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
-$string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes Setzen der Startzeit wird " .
-                                " alle Evaluationen neu anstoßen, für die mindestens ein*e neue*r Teilnehmer*in vorhanden ist. <br />" .
-                                "Sind Sie sicher, dass sie die Startzeit freigeben möchten?";
+$string['content_confirm_reactivate_automated'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?';
+$string['content_confirm_reactivate_manual'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?' .
+    'Evaluationskoordinator*innen werden über die Änderung informiert und können die Evaluation anpassen, ' .
+    'aber es ist nicht sicher, dass dies rechtzeitig geschieht.';
 
 // Survey status.
 $string['surveystatusopen'] = 'offen';

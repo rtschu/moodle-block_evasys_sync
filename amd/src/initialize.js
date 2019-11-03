@@ -1,5 +1,5 @@
 define(['jquery', 'core/notification', 'core/str'], function ($, notification, str) {
-    var init = function(starttime, endtime) {
+    var init = function(starttime, endtime, mode) {
         var start = new Date(starttime * 1000);
         var end = new Date(endtime * 1000);
         var endenabled;
@@ -25,7 +25,7 @@ define(['jquery', 'core/notification', 'core/str'], function ($, notification, s
                     // Ask for confirmation, then enable all fields related to re-invitation.
                     str.get_strings([
                         {'key': 'confirm'},
-                        {'key': 'content_confirm_reactivate', component: 'block_evasys_sync'},
+                        {'key': 'content_confirm_reactivate_'+mode, component: 'block_evasys_sync'},
                         {'key': 'yes'},
                         {'key': 'no'},
                         {'key': 'requestagain', component: 'block_evasys_sync'}

@@ -107,8 +107,11 @@ $string['direct_already'] = "You have already sent invitations to all students."
 $string['direct_title_info'] = "Invitation already complete";
 $string['title_send_rejected'] = "Invalid Date";
 $string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
-    "This is not allowed. Some evaluationperiods may have been altered.<br />";
-$string['content_confirm_reactivate'] = "Are you sure you want to reactivate the invite options? This will restart all surveys with at least one new participant";
+    "This is not allowed. Some evaluation periods may have been altered.<br />";
+$string['content_confirm_reactivate_automated'] = 'Are you sure you want to change the start date?';
+$string['content_confirm_reactivate_manual'] = 'Are you sure you want to change the start date? ' .
+    'Submitting the form will cause the coordinator to be notified of the change, but there is no guarantee ' .
+    'that the dates will be modified in time.';
 
 // Alert Coordinator mail.
 $string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
