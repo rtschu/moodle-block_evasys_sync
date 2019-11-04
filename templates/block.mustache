@@ -75,7 +75,12 @@ Example context (json):
             <div>
                 <label for="reactivate">
                     <input type="checkbox" id="reactivate">
-                    {{# str}}reactivate_invite, block_evasys_sync{{/str}}
+                    {{#enddisabled}}
+                        {{# str}}reactivate_invite, block_evasys_sync{{/str}}
+                    {{/enddisabled}}
+                    {{^enddisabled}}
+                        {{# str}}reactivate_startdate, block_evasys_sync{{/str}}
+                    {{/enddisabled}}
                 </label>
             </div>
         {{/startoption}}

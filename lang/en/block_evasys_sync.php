@@ -39,6 +39,7 @@ $string['change_mapping'] = "Change mapping";
 $string['semester'] = "Semester";
 $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['reactivate_invite'] = 'Invite students again';
+$string['reactivate_startdate'] = 'Modify start date';
 $string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 $string['optional'] = '(optional)';
 $string['standard_period'] = "Standard evaluationperiod:";
