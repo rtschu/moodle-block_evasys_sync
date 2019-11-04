@@ -109,8 +109,11 @@ $string['direct_title_info'] = "Invitation already complete";
 $string['title_send_rejected'] = "Invalid Date";
 $string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
     "This is not allowed. Some evaluation periods may have been altered.<br />";
-$string['content_confirm_reactivate_automated'] = 'Are you sure you want to change the start date?';
-$string['content_confirm_reactivate_manual'] = 'Are you sure you want to change the start date? ' .
+$string['content_confirm_reactivate_automated_closed'] = 'Are you sure you want to change the start date?';
+$string['content_confirm_reactivate_automated_open'] = 'Are you sure you want to restart the evaluation?';
+$string['content_confirm_reactivate_manual_closed'] = 'Are you sure you want to restart the evaluation? ' .
+    'Submitting the form will cause the coordinator to be notified of the change, who is then able to restart the evaluation.';
+$string['content_confirm_reactivate_manual_open'] = 'Are you sure you want to change the start date? ' .
     'Submitting the form will cause the coordinator to be notified of the change, but there is no guarantee ' .
     'that the dates will be modified in time.';
 

@@ -129,8 +129,11 @@ $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werd
                              "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
-$string['content_confirm_reactivate_automated'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?';
-$string['content_confirm_reactivate_manual'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?' .
+$string['content_confirm_reactivate_automated_closed'] = 'Sind Sie sicher, dass Sie die Evaluation erneut beginnen möchten?';
+$string['content_confirm_reactivate_automated_open'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?';
+$string['content_confirm_reactivate_manual_closed'] = 'Sind Sie sicher, dass Sie die Evaluation erneut beginnen möchten? ' .
+    'Evaluationskoordinator*innen werden über die Änderung informiert und können die Evaluation anschließend neu starten.';
+$string['content_confirm_reactivate_manual_open'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten? ' .
     'Evaluationskoordinator*innen werden über die Änderung informiert und können die Evaluation anpassen, ' .
     'aber es ist nicht sicher, dass dies rechtzeitig geschieht.';
 

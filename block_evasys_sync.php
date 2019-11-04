@@ -157,6 +157,7 @@ class block_evasys_sync extends block_base{
         }
         // This javascript module sets the start and end fields to the correct values.
         $jsmodestring = $ismodeautomated ? 'automated' : 'manual';
+        $jsmodestring .= $enddisabled ? '_closed' : '_open';
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
 
         // Initialize variables to pass to mustache.
