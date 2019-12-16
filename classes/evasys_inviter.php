@@ -89,7 +89,7 @@ class evasys_inviter {
      * @return array IDs of surveys
      */
     public function get_evasys_course_surveys($evasyskennung, $all = true) {
-        $soapresult = $this->evasysapi->get_course($evasyskennung);
+        $soapresult = $this->evasysapi->get_evasys_course($evasyskennung);
         $surveyids = $soapresult->m_oSurveyHolder->m_aSurveys;
         if (is_soap_fault($soapresult)) {
             return array();
@@ -252,12 +252,12 @@ class evasys_inviter {
     }
 
     public function make_sure_enough_passwords_are_available($evasyscourseid) {
-        $evasyscourse = $this->evasysapi->get_course($evasyscourseid);
+        $evasyscourse = $this->evasysapi->get_evasys_course($evasyscourseid);
         if (!is_soap_fault($evasyscourse)) {
             $usercount = $evasyscourse->m_nCountStud;
             $surveys = $this->get_evasys_course_surveys($evasyscourseid);
             foreach ($surveys as $survey) {
-                $this->evasysapi->create_passwords((string)$survey->m_nSurveyId, $usercount);
+                $this->evasysapi->create_passwords_for_all_users((string)$survey->m_nSurveyId, $usercount);
             }
         }
     }

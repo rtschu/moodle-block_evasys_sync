@@ -45,7 +45,7 @@ class evasys_api {
         return self::$instance;
     }
 
-    public function get_course($evasyskennung) {
+    public function get_evasys_course($evasyskennung) {
         $soapresult = $this->soapclient->GetCourse($evasyskennung, 'PUBLIC', true, false);
         return $soapresult;
     }
@@ -59,8 +59,13 @@ class evasys_api {
         return $soapresult;
     }
 
-    public function create_passwords ($evasysid, $pwcount) {
-        $this->soapclient->GetPswdsBySurvey($evasysid, $pwcount, 1, true, false);
+    /** Makes sure a course has at least as many passwords as users.
+     * Will create passwords up to the usercount provided.
+     * @param $evasysid mixed Id of evasys course.
+     * @param $usercount int number of users.
+     */
+    public function create_passwords_for_all_users ($evasysid, $usercount) {
+        $this->soapclient->GetPswdsBySurvey($evasysid, $usercount, 1, true, false);
     }
 
     public function insert_close_task ($task) {
@@ -255,7 +260,7 @@ class evasys_api_testable extends evasys_api {
                           public 'm_oPeriod' =>
                             object(stdClass)[410]
     */
-    public function get_course($evasyskennung) {
+    public function get_evasys_course($evasyskennung) {
         // Get data into the structure that would have been returned by the evasys-api SOAP.
         if (!$evasyskennung) {
             throw new \SoapFault(101, "Testerror");
@@ -339,7 +344,7 @@ class evasys_api_testable extends evasys_api {
         return true;
     }
 
-    public function create_passwords ($evasysid, $pwcount) {
+    public function create_passwords_for_all_users ($evasysid, $usercount) {
         return true;
     }
 

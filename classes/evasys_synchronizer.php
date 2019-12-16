@@ -91,7 +91,7 @@ class evasys_synchronizer {
     private function get_course_information() {
         $result = [];
         foreach ($this->get_courses_from_lsf() as $course) {
-            $soapresult = $this->evasysapi->get_course($course['id']);
+            $soapresult = $this->evasysapi->get_evasys_course($course['id']);
             if (is_soap_fault($soapresult)) {
                 // This happens e.g. if there is no corresponding course in EvaSys.
                 return null;
@@ -229,18 +229,18 @@ class evasys_synchronizer {
         $this->courseinformation = $this->get_course_information();
         foreach ($this->courseinformation as $course) {
             $soapresult = $this->evasysapi->insert_participants($personlist, $course->m_sPubCourseId);
-            $course = $this->evasysapi->get_course($course->m_sPubCourseId); // Update usercount.
+            $course = $this->evasysapi->get_evasys_course($course->m_sPubCourseId); // Update usercount.
             $usercountnow = $course->m_nCountStud;
             // The m_aSurveys element might be an empty object!
             if (!empty((array) $course->m_oSurveyHolder->m_aSurveys)) {
                 if (is_array($course->m_oSurveyHolder->m_aSurveys->Surveys)) {
                     foreach ($course->m_oSurveyHolder->m_aSurveys->Surveys as $survey) {
                         $id = $survey->m_nSurveyId;
-                        $this->evasysapi->create_passwords($id, $usercountnow);
+                        $this->evasysapi->create_passwords_for_all_users($id, $usercountnow);
                     }
                 } else {
                     $id = $course->m_oSurveyHolder->m_aSurveys->Surveys->m_nSurveyId;
-                    $this->evasysapi->create_passwords($id, $usercountnow); // Create new TAN's.
+                    $this->evasysapi->create_passwords_for_all_users($id, $usercountnow); // Create new TAN's.
                 }
             }
             if (is_soap_fault($soapresult)) {
