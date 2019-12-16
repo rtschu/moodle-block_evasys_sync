@@ -52,7 +52,7 @@ class behat_block_evasys_sync extends behat_base {
 
     public static function cleandb () {
         \block_evasys_sync\tear_down();
-        // \block_evasys_sync\evasys_api_testable::get_instance()->tear_down();
+        \block_evasys_sync\evasys_api_testable::get_instance()->tear_down();
     }
 
     /**
@@ -64,6 +64,7 @@ class behat_block_evasys_sync extends behat_base {
      */
     public function take_screenshot_after_failed_step (Behat\Behat\Hook\Scope\AfterStepScope $scope) {
         $logall = true;
+        error_reporting(E_ALL ^ E_WARNING); // Travis will error otherwise.
         if (99 === $scope->getTestResult()->getResultCode() || $logall) {
             $img = $this->getSession()->getDriver()->getContent();
             file_put_contents("/var/www/public/moodle38/errorbackend.html", $img);
