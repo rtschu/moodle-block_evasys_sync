@@ -38,3 +38,5 @@ Feature: Use the manual nonstandardtime version of the evasys block
     And I turn editing mode off
     And I press "Show status of surveys"
     And I should see a button named "Request evaluation"
+    Given the course with shortname C1 has the following lsfcourses mapped:
+      | lsfcourse | semestertxt | veranstnr |

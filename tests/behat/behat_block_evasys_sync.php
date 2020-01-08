@@ -67,7 +67,7 @@ class behat_block_evasys_sync extends behat_base {
         error_reporting(E_ALL ^ E_WARNING); // Travis will error otherwise.
         if (99 === $scope->getTestResult()->getResultCode() || $logall) {
             $img = $this->getSession()->getDriver()->getContent();
-            file_put_contents("/var/www/public/moodle38/errorbackend.html", $img);
+            file_put_contents("/var/www/public/moodle/errorbackend.html", $img);
         }
     }
 
@@ -78,6 +78,11 @@ class behat_block_evasys_sync extends behat_base {
         \block_evasys_sync\set_up();
         require_once(__DIR__ . '/../../classes/evasys_api.php');
         $this->evasysapi = \block_evasys_sync\evasys_api_testable::get_instance();
+    }
+
+    private function get_courseid_by_shortname($shortname) {
+        global $DB;
+        return $DB->get_field("course", "id", array("shortname" => $shortname));
     }
 
     // Evasys setters.
@@ -210,6 +215,119 @@ class behat_block_evasys_sync extends behat_base {
 
     public function category_is_not_in_nonstandard_mode ($cat) {
         $this->category_is_in_standardtime_mode($cat, null, null);
+    }
+
+    /**
+     * @Given there is no internal record of course :shortname
+     */
+    public function and_there_is_no_internal_record_of_course ($shortname) {
+        global $DB;
+        $id = $this->get_courseid_by_shortname($shortname);
+        $DB->execute("DELETE FROM {block_evasys_sync_courseeval} WHERE course = ?", array($id));
+    }
+
+    /**
+     * @Given the internal state of course :shortname is :mode
+     */
+    public function the_internal_state_of_course_is($shortname, $mode) {
+        global $DB;
+        $id = $this->get_courseid_by_shortname($shortname);
+        $record = \block_evasys_sync\course_evaluation_allocation::get_record_by_course($id, false);
+        if (!$record) {
+            $record = new \block_evasys_sync\course_evaluation_allocation(0);
+            $record->set('course', $id);
+        }
+        if ($mode == "manual") {
+            $record->set('state', \block_evasys_sync\course_evaluation_allocation::STATE_MANUAL);
+        } else if ($mode == "notopened") {
+            $record->set('state', \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_NOTOPENED);
+        } else if ($mode == "opened") {
+            $record->set('state', \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_OPENED);
+        } else if ($mode == "closed") {
+            $record->set('state', \block_evasys_sync\course_evaluation_allocation::STATE_AUTO_CLOSED);
+        } else {
+            throw new \Exception("Didnt't recognize state");
+        }
+        $record->set('startdate', 1595714400);
+        $record->set('enddate', 1595800800);
+    }
+
+    /**
+     * @Given only invalid mappings are present for course :shortname
+     */
+    public function only_invalid_mappings_are_present_for_course ($shortname) {
+        $id = $this->get_courseid_by_shortname($shortname);
+        $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
+        if (!$record) {
+            $record = new \block_evasys_sync\course_evasys_courses_allocation(0);
+        }
+        $record->set("course", $id);
+        $record->set("evasyscourses", "-99#-100#-101");
+        $record->save();
+    }
+
+    /**
+     * @Given /^the course with shortname ([^"]*) has the following lsfcourses mapped:$/
+     */
+    public function the_course_with_shortname_has_the_following_lsfcourses_mapped ($shortname, TableNode $table) {
+        $hash = $table->getHash();
+        $lsfcourses = array();
+        foreach ($hash as $row) {
+            array_push($lsfcourses, $row['lsfcourse']);
+            $this->the_lsfcourse_with_id_has_semestertxt_and_veranstnr($row['lsfcourse'], $row['semestertxt'], $row['veranstnr']);
+        }
+
+
+        $id = $this->get_courseid_by_shortname($shortname);
+        $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
+        if (!$record) {
+            $record = new \block_evasys_sync\course_evasys_courses_allocation(0);
+        }
+        $record->set("course", $id);
+        $record->set("evasyscourses", implode("#", $lsfcourses));
+        $record->save();
+    }
+
+    /**
+     * @Given no courses are mapped to course :shortname
+     */
+    public function no_courses_are_mapped_to_course($shortname) {
+        // nothing to be done. But sure reads better.
+    }
+
+    /**
+     * @Given no students enrolled in course :course
+     */
+    public function no_students_enrolled_in_course($shortname) {
+        // nothing to be done. But sure reads better.
+    }
+
+    /**
+     * @Given only tutors enrolled in course :shortname
+     */
+    public function only_tutors_enrolled_in_course($shortname) {
+        throw new \Behat\Behat\Tester\Exception\PendingException("TBD");
+    }
+
+    /**
+     * @Given students enrolled in course :shortna,e
+     */
+    public function students_enrolled_in_course($shortname) {
+        $this->the_following_exists("course enrolments", array("user" => array("teacher1", "student1"), "course" => array($shortname, $shortname), "role" => array("editingteacher", "student")));
+    }
+
+    /**
+     * @Given And the idnumber for course :shortname is invalid
+     */
+    public function and_the_idnumber_for_course_is_invalid($shortname) {
+        $this->the_course_has_idnumber($shortname, -99);
+    }
+
+    /**
+     * @Given there is no idnumber mapped to course :shortname
+     */
+    public function there_is_no_idnumber_mapped($shortname) {
+        // nothing to be done. But sure reads better.
     }
 
     /**
