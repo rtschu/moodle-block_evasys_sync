@@ -19,9 +19,9 @@ use block_evasys_sync\date_decoder;
 
 require_once('../../config.php');
 
-require_login();
-require_sesskey();
 $courseid = required_param('courseid', PARAM_INT);
+require_login($courseid);
+require_sesskey();
 
 $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php');
 $returnurl->param('id', $courseid);
