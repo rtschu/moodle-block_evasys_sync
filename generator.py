@@ -237,6 +237,7 @@ def checks_standardtimemode(standardtime, automode, internal_state):
 
 
 def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+<<<<<<< HEAD
     checks = ""
     if (idnumber_state == "none") and (mapped_state == "none"):
         return "Then I should see \"Change mapping\"\nAnd I should not see \"Name:\"\n"
@@ -260,6 +261,32 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
     checks += checks_standardtimemode(standardtime, automode, internal_state) + "\n"
     checks += student_checks[students_state]
     return checks
+=======
+	checks = ""
+	if (idnumber_state == "none" or idnumber_state == "invalid") and (mapped_state == "none" or mapped_state == "invalid"):
+		if idnumber_state == "invalid" or mapped_state == "invalid":
+			return "And I press \"Show status of surveys\"\n" + "Then I should see \"Change mapping\"\nAnd I should not see \"Name:\"\n"
+		return "Then I should see \"Change mapping\"\nAnd I should not see \"Name:\"\n"
+
+
+	checks += "And I press \"Show status of surveys\"\n"
+	checks += idnumber_checks[idnumber_state]
+	checks += mapped_checks[mapped_state]
+	if ((internal_state != "manual" and internal_state != "none") and mode == "manual") or (internal_state == "manual" and mode == "auto"):
+		checks += inconsistent_mode + "\n"
+	else:
+		checks += internal_state_checks[internal_state]
+		if internal_state == "none" or (internal_state == "notopened" and mode == "auto"):
+			checks += automode_checks[mode] + "\n"
+
+	if internal_state == "closed" and actual_state != "closed":
+		checks += "And I should see \"There are some open surveys, but all surveys should be closed.\"" + "\n"
+	elif internal_state != "closed" and actual_state != "open":
+		checks += "And I should see \"Some of the surveys have been closed ahead of schedule!\"" + "\n"
+	checks += standardtimemode_checks[standardtime] + "\n"
+	checks += student_checks[students_state]
+	return checks
+>>>>>>> cc0cc54... corrected mistake
 
 
 def get_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
