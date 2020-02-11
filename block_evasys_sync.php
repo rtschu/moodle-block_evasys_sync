@@ -98,7 +98,6 @@ class block_evasys_sync extends block_base{
             $this->content->text .= html_writer::div(get_string('syncnotpossible', 'block_evasys_sync'));
             return $this->content;
         }
-
         if ($ismodeautomated) {
             $href = new moodle_url('/course/view.php',
                                    array('id' => $this->page->course->id, "evasyssynccheck" => true));

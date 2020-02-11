@@ -43,7 +43,13 @@ class behat_block_evasys_sync extends behat_base {
      */
 
     public static function prepare () {
+    }
 
+    /**
+     * @BeforeScenario
+     */
+    public static function prepare_database() {
+        \block_evasys_sync\clean_database();
     }
 
     /**
@@ -100,7 +106,7 @@ class behat_block_evasys_sync extends behat_base {
     }
 
     /**
-     * @Given The following evasys courses exist:
+     * @Given /the following evasys courses exist:/
      */
     public function the_following_evasys_courses_exist(TableNode $table) {
         $evasysapi = $this->evasysapi;
@@ -277,7 +283,6 @@ class behat_block_evasys_sync extends behat_base {
             $this->the_lsfcourse_with_id_has_semestertxt_and_veranstnr($row['lsfcourse'], $row['semestertxt'], $row['veranstnr']);
         }
 
-
         $id = $this->get_courseid_by_shortname($shortname);
         $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
         if (!$record) {
@@ -292,7 +297,14 @@ class behat_block_evasys_sync extends behat_base {
      * @Given no courses are mapped to course :shortname
      */
     public function no_courses_are_mapped_to_course($shortname) {
-        // nothing to be done. But sure reads better.
+        global $DB;
+        $courseid = $this->get_courseid_by_shortname($shortname);
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
+        if (!$pid) {
+            return;
+        }
+        $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+        $persistent->delete();
     }
 
     /**
@@ -310,10 +322,11 @@ class behat_block_evasys_sync extends behat_base {
     }
 
     /**
-     * @Given students enrolled in course :shortna,e
+     * @Given students enrolled in course :shortname
      */
     public function students_enrolled_in_course($shortname) {
-        $this->the_following_exists("course enrolments", array("user" => array("teacher1", "student1"), "course" => array($shortname, $shortname), "role" => array("editingteacher", "student")));
+        $this->the_following_exists("course enrolments", array("user" => array("teacher1", "student1"),
+            "course" => array($shortname, $shortname), "role" => array("editingteacher", "student")));
     }
 
     /**
@@ -331,10 +344,73 @@ class behat_block_evasys_sync extends behat_base {
     }
 
     /**
+     * @Given course :arg1 has the following courses mapped:
+     */
+    public function course_has_the_following_courses_mapped ($shortname, TableNode $node) {
+        global $DB;
+        $courseid = $DB->get_field('course', 'id', array('shortname' => $shortname));
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
+        if (!$pid) {
+            $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
+        } else {
+            $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
+        }
+        $hash = $node->getHash();
+        $mapping = array();
+        foreach ($hash as $row) {
+            array_push($mapping, $row[courseid]);
+        }
+        $magicstring = implode("#", $mapping);
+        // If the mapping is empty, remove it.
+        if (empty($magicstring) && $persistent->get('id') != 0) {
+            $persistent->delete();
+        }
+        // Only save the mapping, if the mapping string is not empty.
+        if (!empty($magicstring)) {
+            $persistent->set('course', $courseid);
+            $persistent->set('evasyscourses', $magicstring);
+            $persistent->save();
+        }
+    }
+
+    /**
      * @Then I should see a button named :name
      */
     public function i_should_see_a_button_named($name) {
         $this->find_button($name);
+    }
+
+    /**
+     * @Given the idnumber for course :course is invalid
+     */
+    public function the_idnumber_for_course_is_invalid ($shortname) {
+        global $DB;
+        $max = $DB->get_records_sql("SELECT 1 AS dummy,max(idnumber) FROM {course}");
+        foreach ($max as $maxi) {
+            $idnum = $maxi->max + 10000; // Let's just assume noone wants to add 10000 lsf courses from now.
+        }
+        $this->the_course_has_idnumber($shortname, $idnum);
+    }
+
+    /**
+     * @Given category :category is in auto mode
+     */
+    public function category_is_in_auto_mode ($id) {
+        $this->category_is_in_automatic_mode($id);
+    }
+
+    /**
+     * @Given the startselector should be disabled
+     */
+    public function the_startselector_should_be_disabled () {
+        throw new \Behat\Behat\Tester\Exception\PendingException();
+    }
+
+    /**
+     * @Given both selectors should be disabled
+     */
+    public function both_selectors_should_be_disabled () {
+        throw new \Behat\Behat\Tester\Exception\PendingException();
     }
 
 

@@ -18,7 +18,7 @@ namespace block_evasys_sync;
 
 defined('MOODLE_INTERNAL') || die();
 
-if (!defined('BEHAT_SITE_RUNNING') or true) {
+if (!defined('BEHAT_SITE_RUNNING')) {
     require_once($CFG->dirroot . "/local/lsf_unification/lib_his.php");
 } else {
     require_once($CFG->dirroot . "/blocks/evasys_sync/classes/lsf_api_mock_testable.php");

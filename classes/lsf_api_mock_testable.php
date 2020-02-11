@@ -38,7 +38,7 @@ function close_secondary_DB_connection() { // phpcs:ignore @codingStandardsIgnor
 function set_up () {
     // Use a table to store behat mock data, so it's preserved over multiple site calls.
     global $DB, $prefix;
-    $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_lsf_mock_data (courseid INT PRIMARY KEY, veranstnr INT UNIQUE, semestertxt VARCHAR (50))");
+    $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_lsf_mock_data (courseid INT PRIMARY KEY, veranstnr INT, semestertxt VARCHAR (50))");
 }
 
 function tear_down () {
@@ -63,9 +63,15 @@ function get_course_by_veranstid ($courseid) {
      return $result;
 }
 
+function clean_database() {
+    global $DB, $prefix;
+    $DB->execute("DELETE FROM {$prefix}_lsf_mock_data");
+}
+
 function set_course_to_veranstid ($id, $veranstnr, $semestertxt) {
     global $DB, $prefix;
     $id = intval($id);
     $veranstnr = intval($veranstnr);
     $DB->execute("INSERT INTO {$prefix}_lsf_mock_data VALUES ($id, $veranstnr, '$semestertxt')");
+    print ("ok");
 }

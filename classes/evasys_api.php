@@ -107,7 +107,7 @@ class evasys_api_testable extends evasys_api {
         $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_courses (identifier VARCHAR (50) PRIMARY KEY,
                                                                                     title VARCHAR(50),
                                                                                     studcount INTEGER)");
-        $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_surveys (id INTEGER PRIMARY KEY,
+        $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_surveys (id SERIAL PRIMARY KEY,
                                                                                     title VARCHAR(20),
                                                                                     formid INTEGER,
                                                                                     is_open BOOLEAN,
@@ -137,7 +137,6 @@ class evasys_api_testable extends evasys_api {
     public function set_course($identifier, $title, $studcount) {
         global $DB;
         $prefix = self::$prefix;
-        print("INSERT INTO {$prefix}_evasys_mock_courses VALUES ('$identifier', '$title', $studcount)");
         $DB->execute("INSERT INTO {$prefix}_evasys_mock_courses VALUES ('$identifier', '$title', $studcount)");
     }
 
@@ -320,7 +319,7 @@ class evasys_api_testable extends evasys_api {
         global $DB;
         $prefix = self::$prefix;
         $opensql = $open ? 't' : 'f';
-        $DB->execute("INSERT INTO {$prefix}_evasys_mock_surveys VALUES ($id, '$title', $formid, '$opensql',
+        $DB->execute("INSERT INTO {$prefix}_evasys_mock_surveys VALUES (DEFAULT, '$title', $formid, '$opensql',
                                                     $formcount, $pswdcount, '$evasysidentifier')");
     }
 
