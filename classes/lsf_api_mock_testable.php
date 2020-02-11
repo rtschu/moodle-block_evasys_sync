@@ -47,20 +47,30 @@ function tear_down () {
 }
 
 function get_course_by_veranstid ($courseid) {
-     // Only return used values. fill the rest with dummys.
-     global $DB, $prefix;
-     // Moodle seemingly checks wether the requested relation exists according to the definitons of all plugins for functions like
-     // get_record(). Since our mocktable is never defined to moodle, we have to use get_records_sql() which skips this check.
-     $data = $DB->get_records_sql("SELECT * FROM {$prefix}_lsf_mock_data WHERE courseid = $courseid");
-     $result = new \stdClass();
-     $result->veranstid = 1;
-     $result->veranstnr = $data[$courseid]->veranstnr;
-     $result->semester = 1;
-     $result->semestertxt = $data[$courseid]->semestertxt;
-     $result->veranstaltungsart = 1;
-     $result->titel = 1;
-     $result->urlveranst = 1;
-     return $result;
+    // Only return used values. fill the rest with dummys.
+    global $DB, $prefix;
+    // Moodle seemingly checks wether the requested relation exists according to the definitons of all plugins for functions like
+    // get_record(). Since our mocktable is never defined to moodle, we have to use get_records_sql() which skips this check.
+    $data = $DB->get_records_sql("SELECT * FROM {$prefix}_lsf_mock_data WHERE courseid = $courseid");
+    $result = new \stdClass();
+    if (!$data) {
+        $result->veranstid = null;
+        $result->veranstnr = null;
+        $result->semester = null;
+        $result->semestertxt = null;
+        $result->veranstaltungsart = null;
+        $result->titel = null;
+        $result->urlveranst = null;
+    } else {
+        $result->veranstid = 1;
+        $result->veranstnr = $data[$courseid]->veranstnr;
+        $result->semester = 1;
+        $result->semestertxt = $data[$courseid]->semestertxt;
+        $result->veranstaltungsart = 1;
+        $result->titel = 1;
+        $result->urlveranst = 1;
+    }
+    return $result;
 }
 
 function clean_database() {

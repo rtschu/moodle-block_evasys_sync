@@ -259,9 +259,22 @@ class evasys_api_testable extends evasys_api {
         if (!$evasyskennung) {
             throw new \SoapFault(101, "Testerror");
         }
+        if (is_null($evasyskennung)) {
+            $courseclass = new \stdClass();
+            $courseclass->m_nCourseId = 'Unknown';
+            $courseclass->m_sCourseTitle = 'Unknown';
+            return $courseclass;
+        }
         global $DB;
         $prefix = self::$prefix;
-        $coursedata = $DB->get_records_sql("SELECT * FROM {$prefix}_evasys_mock_courses WHERE identifier = '$evasyskennung'")[$evasyskennung];
+        $fullcoursedata = $DB->get_records_sql("SELECT * FROM {$prefix}_evasys_mock_courses WHERE identifier = '$evasyskennung'");
+        if (!isset($fullcoursedata[$evasyskennung])) {
+            $courseclass = new \stdClass();
+            $courseclass->m_nCourseId = 'Unknown';
+            $courseclass->m_sCourseTitle = 'Unknown';
+            return $courseclass;
+        }
+        $coursedata = $fullcoursedata[$evasyskennung];
         $courseclass = new \stdClass();
         $courseclass->m_nCourseId = 1;
         $courseclass->m_sCourseTitle = $coursedata->title;
