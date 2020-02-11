@@ -1,6 +1,5 @@
 import random
 import copy
-import ast
 
 do_fast = False
 # parameters
@@ -19,6 +18,7 @@ internalstate = ["notopened", "opened", "closed", "manual", "none"]
 actualstate = ["open", "closed", "mixed"]
 # dicts
 
+# Descriptions
 students_descriptions = {
     "none": "If there are no students I should see a warning\n",
     "onlytutors": "If there are only tutors I should see a warning\n",
@@ -39,9 +39,11 @@ idnumber_descriptions = {
 mapped_descriptions = {
     "none": "",
     "invalid": "If there are invalid mappings I should see a warning\n",
-    "one": "If there is a course mapped I should see this evasys-course\n",
-    "multi": "If there are multiple courses mapped I should see all of those\n"
+    "one": "If there are any mapped courses I should see those \n",
+    "multi": "If there are any mapped courses I should see those \n"
 }
+
+# Environment configuration
 
 manual_auto_mode = {
     "manual": "Given category {{category}} is in manual mode",
@@ -68,6 +70,8 @@ studentsState = {
 }
 
 inconsistent_mode = "Then I should see \"This evaluation was already started in another mode\""
+
+# Checks
 
 automode_checks = {
     "manual": "And I should see \"Request evaluation\"",
@@ -106,6 +110,7 @@ internal_state_checks = {
     "none": ""
 }
 
+# Background
 background = '  Background:\n\
     Given the following "users" exist:\n\
       | username | firstname | lastname | email |\n\
@@ -206,7 +211,7 @@ def makeEvasysSurveys(state):
     if state == "mixed" and lsfcourseid < 2:
         return ""
     coursenames = [] * lsfcourseid
-    titles = [] * lsfcoursei
+    titles = [] * lsfcourseid
     for i in range(0, lsfcourseid):
         coursenames.append(str(i) + " WS 2018/19 ")
         titles.append("Survey " + str(i))
@@ -239,27 +244,42 @@ def checks_standardtimemode(standardtime, automode, internal_state):
 def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
 <<<<<<< HEAD
     checks = ""
+    # If there are no mapped courses the Block not offer the option to "Show surveys"
     if (idnumber_state == "none") and (mapped_state == "none"):
-        return "Then I should see \"Change mapping\"\nAnd I should not see \"Name:\"\n"
+        return "Then I should see \"Change mapping\"\n    And I should not see \"Name:\"\n"
+
+    # In all other cases (even if there are only invalid entries) we need to click the button to start code execution
     checks += "And I press \"Show status of surveys\"\n"
 
+    # First we want to check for idnumber and mapped checks. If there are invalid entries in either of these
+    # there should be a warning. However, it should not disable the ability to request a evaluation or set a timeframe
+    # in manual mode this was explicitly requested, and there might be an analog usecase in automatic mode.
     checks += idnumber_checks[idnumber_state]
     checks += mapped_checks[mapped_state]
+
+    # if there is an internal state that is reserved for manual or automode we want to check we want to output
+    # a warning if this is not in fact the correct mode
     if ((internal_state != "manual" and internal_state != "none") and mode == "manual") or (
             internal_state == "manual" and mode == "auto"):
         checks += inconsistent_mode + "\n"
     else:
+        # if the internal state isn't conflicting we want to check, if the block is correctly displaying for that state
         checks += internal_state_checks[internal_state]
+        # finally if there is no entry yet or the planned date is in the future we want to check that
+        # there is an option to set the date for the evaluation
         if internal_state == "none" or (internal_state == "notopened" and mode == "auto"):
             checks += automode_checks[mode] + "\n"
-
+    # If our own states don't match those of evasys we want to output a warning
     if internal_state == "closed" and actual_state != "closed":
         checks += "And I should see \"There are some open surveys, but all surveys should be closed.\"" + "\n"
     elif internal_state != "closed" and actual_state != "open":
         checks += "And I should see \"Some of the surveys have been closed ahead of schedule!\"" + "\n"
 
+    # if the standardtimemodecheckbox should be present from the start we also want to check that
     checks += checks_standardtimemode(standardtime, automode, internal_state) + "\n"
+    # if there are no students that are eligible to evaluate we want to output a warning
     checks += student_checks[students_state]
+    checks = checks.replace("\n", "\n    ")
     return checks
 =======
 	checks = ""
@@ -290,8 +310,7 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
 
 
 def get_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
-    if (mapped_state == "none" or mapped_state == "invalid") and (
-            idnumber_state == "none" or idnumber_state == "invalid"):
+    if mapped_state == "none" and idnumber_state == "none":
         return "If there are no related evasys-courses I should not see any.\n    "
     description = ""
     description += standardtimemode_descriptions[standardtime]
@@ -308,27 +327,42 @@ def get_description(mode, standardtime, students_state, idnumber_state, mapped_s
     return description
 
 
-def get_auto_mode_combi_description(mode):
-    if "manual" in mode and "auto" in mode:
-        return ""
-    if "manual" in mode:
-        return "If the Survey is in manual mode I should see the manual mode strings"
-    elif "auto" in mode:
-        return "If the Survey is in auto mode I should see the auto mode strings"
+def get_combi_sentence(set, dictionary, param_name):
+    set2 = set.copy()
+    last_response = dictionary[set.pop()]
+    while 1:
+        if len(set) == 0:
+            return last_response
+        if not last_response == dictionary[set.pop()]:
+            break
+    sentence = last_response
+    sentence += "This should be valid regardless of " + param_name + " being set to "
+    while len(set2) > 1:
+        sentence += str(set2.pop()) + ", "
+    sentence = sentence[:len(sentence)-2]
+    sentence += " or " + str(set2.pop()) + "\n"
+    return sentence
 
 
-def get_standardtime_description(standardtime, auto_mode):
-    if standardtime == {1} and automode == {["auto"]}:
-        return "There should be the option to start with a standardtime"
-    return "There should not be a standardtime"
+def get_combi_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+    if "none" in mapped_state and "none" in idnumber_state:
+        return "If there are no related evasys-courses I should not see any.\n    "
+    description = ""
+    description += get_combi_sentence(standardtime, standardtimemode_descriptions, "standardtime")
+    description += get_combi_sentence(students_state, students_descriptions, "number of students")
+    description += get_combi_sentence(idnumber_state, idnumber_descriptions, "idnumber")
+    description += get_combi_sentence(mapped_state, mapped_descriptions, "mapped courses")
+    if ("manual" not in internal_state and "none" not in internal_state) and mode == {"manual"} or (
+            internal_state == {"manual"} and mode != {"manual"}):
+        description += "If there are inconsistent modes I should see a warning\n"
+    if (actual_state != {"open"} and internal_state == {"opened"}) or (
+            internal_state == {"closed"} and actual_state != {"closed"}):
+        description += "If there are surveys that don't match the internal state I should see a warning\n"
+    description = description.replace("\n", "\n    ")
+    return description
 
 
-def get_combi_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
-                          actual_state):
-    desc = ""
-
-
-def make_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
     global lsfcourseid
     lsfcourseid = 0
     behat_scenario = manual_auto_mode[mode].replace("{{category}}", str(category)) + "\n"
@@ -348,8 +382,11 @@ def make_scenario(mode, standardtime, students_state, idnumber_state, mapped_sta
 
     if actual_state == "mixed" and lsfcourseid < 2:
         return ""
-    return "  Scenario: " + get_description(mode, standardtime, students_state, idnumber_state, mapped_state,
-                                            internal_state, actual_state) + behat_scenario + "\n"
+    return behat_scenario
+
+
+def make_scenario(description, scenario, checks):
+    return "  Scenario: " + description + scenario + checks + "\n"
 
 
 def count_full_scenarios(condesed_array):
@@ -376,7 +413,7 @@ def condense_keep_options(fullarray):
     changed = True
     for i in range(0, len(fullarray)):
         for j in range(0, len(fullarray[i])):
-            fullarray[i][j] = set([fullarray[i][j]])
+            fullarray[i][j] = set([fullarray[i][j]])  # Do not replace with literal!
     while changed:
         new_array = copy.deepcopy(fullarray)
         changed = False
@@ -400,6 +437,7 @@ def condense_keep_options(fullarray):
 
 
 def main():
+    f = open("test.feature", "w")
     # f = open("/home/robintschudi/Dev/moodle38/blocks/evasys_sync/tests/behat/fulltest.feature", "w")
     x = ""
     i = 0
@@ -429,21 +467,26 @@ def main():
     testcases = 0
     endcases = 0
     for check in condensed_dict.keys():
-        print(check)
-        print("(Automode, standartimemode, enrolled_students, idnum, mapped, internal, external)")
+        # print(check)
+        # print("(Automode, standartimemode, enrolled_students, idnum, mapped, internal, external)")
         for scenario in condensed_dict[check]:
             testcases += 1
-            print(scenario)
+            # print(scenario)
         endcases += count_full_scenarios(condensed_dict[check])
-        print("\n")
+        # print("\n")
 
     for check in condensed_dict.keys():
         for scenario in condensed_dict[check]:
-            pass
+            scenario_copy = copy.deepcopy(scenario)
+            desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5], scenario[6])
+            scen_text = get_scenario(scenario_copy[0].pop(), scenario_copy[1].pop(), scenario_copy[2].pop(), scenario_copy[3].pop(),
+                                     scenario_copy[4].pop(), scenario_copy[5].pop(), scenario_copy[6].pop())
+            x += make_scenario(desc, scen_text, check)
+
 
     print("Startcases: %i, Endcases: %i" % (i, endcases))
-    # f.write(x)
-    # f.close()
+    f.write(x)
+    f.close()
     print("Condensed %i testcases to %i testcases with %i scenarios" % (i, testcases, len(condensed_dict)))
 
 
