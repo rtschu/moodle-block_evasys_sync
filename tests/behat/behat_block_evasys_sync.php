@@ -37,6 +37,7 @@ use Behat\Gherkin\Node\TableNode as TableNode;
 class behat_block_evasys_sync extends behat_base {
 
     private $evasysapi;
+    private $generator;
 
     /**
      * @BeforeSuite
@@ -70,10 +71,9 @@ class behat_block_evasys_sync extends behat_base {
      */
     public function take_screenshot_after_failed_step (Behat\Behat\Hook\Scope\AfterStepScope $scope) {
         $logall = true;
-        error_reporting(E_ALL ^ E_WARNING); // Travis will error otherwise.
         if (99 === $scope->getTestResult()->getResultCode() || $logall) {
             $img = $this->getSession()->getDriver()->getContent();
-            file_put_contents("/var/www/public/moodle/errorbackend.html", $img);
+            file_put_contents("/var/www/public/moodle38/errorbackend.html", $img);
         }
     }
 
@@ -84,6 +84,7 @@ class behat_block_evasys_sync extends behat_base {
         \block_evasys_sync\set_up();
         require_once(__DIR__ . '/../../classes/evasys_api.php');
         $this->evasysapi = \block_evasys_sync\evasys_api_testable::get_instance();
+        $this->generator = new \behat_data_generators();
     }
 
     private function get_courseid_by_shortname($shortname) {
@@ -196,11 +197,12 @@ class behat_block_evasys_sync extends behat_base {
             $cc->update();
         } else {
             $record = new stdClass();
-            $record->userid = 2;
-            $record->course_category = $id;
+            $record->userid = 1;
+            $record->course_category = strval($id);
             $record->category_mode = 1;
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();
+            $persistent->save();
         }
     }
 
@@ -256,6 +258,7 @@ class behat_block_evasys_sync extends behat_base {
         }
         $record->set('startdate', 1595714400);
         $record->set('enddate', 1595800800);
+        $record->save();
     }
 
     /**
@@ -325,8 +328,10 @@ class behat_block_evasys_sync extends behat_base {
      * @Given students enrolled in course :shortname
      */
     public function students_enrolled_in_course($shortname) {
-        $this->the_following_exists("course enrolments", array("user" => array("teacher1", "student1"),
-            "course" => array($shortname, $shortname), "role" => array("editingteacher", "student")));
+        $node = new \Behat\Gherkin\Node\TableNode(array("user" => array("teacher1", "student1"),
+                                                      "course" => array($shortname, $shortname),
+                                                      "role" => array("editingteacher", "student")));
+        $this->generator->the_following_entities_exist("course enrolments", $node);
     }
 
     /**
@@ -386,6 +391,9 @@ class behat_block_evasys_sync extends behat_base {
     public function the_idnumber_for_course_is_invalid ($shortname) {
         global $DB;
         $max = $DB->get_records_sql("SELECT 1 AS dummy,max(idnumber) FROM {course}");
+        if (!$max) {
+            $max = 0;
+        }
         foreach ($max as $maxi) {
             $idnum = $maxi->max + 10000; // Let's just assume noone wants to add 10000 lsf courses from now.
         }

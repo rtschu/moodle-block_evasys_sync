@@ -227,6 +227,8 @@ class block_evasys_sync extends block_base{
         $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
 
         // Create the data object for the mustache table.
+        var_dump($state);
+        var_dump($ismodeautomated);
         $data = array(
             'href' => $href,
             'sesskey' => sesskey(),
@@ -255,7 +257,11 @@ class block_evasys_sync extends block_base{
             // Outputs a warning that there are open course when there shouldn't.
             'warning' => $warning,
             'invalididnumberwarning' => $unknownidnumbercourse,
-            'invalidextrawarning' => $unknownextracourse
+            'invalidextrawarning' => $unknownextracourse,
+            // If there is a internal state that is reserved for auto/manual mode, but the mode doesn't match warn the user.
+            'inconsistentmodeswarning' => isset($state) ?
+                ($state == course_evaluation_allocation::STATE_MANUAL and $ismodeautomated)
+                or ($state < course_evaluation_allocation::STATE_MANUAL and !$ismodeautomated) : false
         );
 
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);

@@ -38,9 +38,9 @@ Feature: Show the evasys block
     Given The following Evasys relations exist:
     | shortname | idnumber | semestertxt | veranstnr |
     | C1        | 1        | WS 2018/19  | 1001      |
-    And The following evasys courses exist:
-    | evasysid        | title  | studentcount |
-    | 1001 WS 2018/19 | Info 1 | 150          |
+    And the following evasys courses exist:
+      | evasysid        | title  | studentcount |
+      | 1001 WS 2018/19 | Info 1 | 150          |
     And The following Forms exist:
     | id | name  | title             |
     | 1  | AA253 | Umfrage zu Info 1 |
@@ -63,3 +63,4 @@ Feature: Show the evasys block
     Then I should see "Change mapping"
     Then I should see "Evaluation period"
     Then I should see "Planned period from"
+    Then I should see a button named "Request evaluation"

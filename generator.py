@@ -9,7 +9,7 @@ import copy
 PATH = "../fulltest.feature"
 do_fast = False
 # parameters
-category = 0
+category = 1
 coursename = "C1"
 tags = "@block @block_evasys_sync @block_evasys_sync_fulltest"
 feature_desc = "Tests all use-cases of the Evasys-block"
@@ -83,8 +83,8 @@ inconsistent_mode = "Then I should see \"This evaluation was already started in 
 # Checks
 
 automode_checks = {
-    "manual": "And I should see \"Request evaluation\"",
-    "auto": 'And I should see "Set evaluation period"'
+    "manual": "And I should see a button named \"Request evaluation\"",
+    "auto": 'And I should see a button named "Set evaluation period"'
 }
 
 standardtimemode_checks = {
@@ -100,13 +100,13 @@ student_checks = {
 
 idnumber_checks = {
     "none": "",
-    "invalid": "Then I should see \"The lsf-course linked to this course is invalid\"\n",
+    "invalid": "Then I should see \"The hard linked evasys-course is invalid!\"\n",
     "one": ""
 }
 
 mapped_checks = {
     "none": "",
-    "invalid": "Then I should see \"One of the associated lsf-courses is invalid\"\n",
+    "invalid": "Then I should see \"One of the dynamically mapped evasys-courses is invalid\"\n",
     "one": "",
     "multi": ""
 }
@@ -619,11 +619,14 @@ def main():
         for scenario in condensed_dict[check]:
             # do a deep-copy of the scenario because sets can only be accessed by pop which alters the set itself
             scenario_copy = copy.deepcopy(scenario)
+            scenario_txt_rprs = str(scenario)
             desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5],
                                          scenario[6])
             scen_text = get_scenario(scenario_copy[0].pop(), scenario_copy[1].pop(), scenario_copy[2].pop(),
                                      scenario_copy[3].pop(),
                                      scenario_copy[4].pop(), scenario_copy[5].pop(), scenario_copy[6].pop())
+            if scen_text == "":
+                print("Warning no enviroment for scenario!!! " + scenario_txt_rprs)
             x += make_scenario(desc, scen_text, check)
 
     # write actual data
