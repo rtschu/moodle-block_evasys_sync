@@ -7,15 +7,18 @@ category = 0
 coursename = "C1"
 tags = "@block @block_evasys_sync @block_evasys_sync_fulltest"
 feature_desc = "Tests all use-cases of the Evasys-block"
+
 # catoptions
 automode = ["manual", "auto"]
 standardtimemode = [0, 1]
+
 # courseoptions
 students = ["none", "onlytutors", "multi"]
 idnumber = ["none", "invalid", "one"]
 mapped = ["none", "invalid", "one", "multi"]
 internalstate = ["notopened", "opened", "closed", "manual", "none"]
 actualstate = ["open", "closed", "mixed"]
+
 # dicts
 
 # Descriptions
@@ -103,7 +106,7 @@ mapped_checks = {
 }
 
 internal_state_checks = {
-    "notopened": "And I should see \"Evaluationperiod has been set\"\n",
+    "notopened": "And I should see \"Evaluationperiod has been set   \"\n",
     "opened": "And the startselector should be disabled\n",
     "closed": "And both selectors should be disabled\n",
     "manual": "And I should see \"Evaluation has been requested\"\n",
@@ -235,8 +238,8 @@ def makeEvasysCourses():
     return x
 
 
-def checks_standardtimemode(standardtime, automode, internal_state):
-    if standardtime == 1 and automode == "auto" and (internal_state == "none" or internal_state == "manual"):
+def checks_standardtimemode(standardtime, auto_mode, internal_state):
+    if standardtime == 1 and auto_mode == "manual" and (internal_state == "none" or internal_state == "manual"):
         return standardtimemode_checks[1]
     return standardtimemode_checks[0]
 
@@ -276,7 +279,7 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
         checks += "And I should see \"Some of the surveys have been closed ahead of schedule!\"" + "\n"
 
     # if the standardtimemodecheckbox should be present from the start we also want to check that
-    checks += checks_standardtimemode(standardtime, automode, internal_state) + "\n"
+    checks += checks_standardtimemode(standardtime, mode, internal_state) + "\n"
     # if there are no students that are eligible to evaluate we want to output a warning
     checks += student_checks[students_state]
     checks = checks.replace("\n", "\n    ")
