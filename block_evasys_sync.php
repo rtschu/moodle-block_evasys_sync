@@ -161,6 +161,8 @@ class block_evasys_sync extends block_base{
         $this->page->requires->js_call_amd('block_evasys_sync/initialize', 'init', array($start, $end, $jsmodestring));
 
         // Initialize variables to pass to mustache.
+        $unknownidnumbercourse = false;
+        $unknownextracourse = false;
         $courses = array();
         $hassurveys = false;
         $startoption = ($startdisabled xor $enddisabled);
@@ -170,9 +172,19 @@ class block_evasys_sync extends block_base{
         foreach ($evasyscourses as $evasyscourseinfo) {
             $course = array();
             $course['evasyscoursetitle'] = $evasyssynchronizer->get_course_name($evasyscourseinfo['id']);
+            if ($course['evasyscoursetitle'] == 'Unknown') {
+                $couseidnum = $this->page->course->idnumber;
+                if ($evasyscourseinfo['lsf_id'] == $couseidnum) {
+                    $unknownidnumbercourse = true;
+                } else {
+                    $unknownextracourse = true;
+                }
+                continue;
+            }
             $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
             $course['evasyscourseid'] = $evasyscourseinfo['id'];
             $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
+            var_dump($course);
             $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
             $surveys = array();
             foreach ($rawsurveys as $rawsurvey) {
@@ -241,7 +253,9 @@ class block_evasys_sync extends block_base{
             // Defines if an lsf course is already mapped to the moodle course.
             'optional' => !empty($evasyscourses),
             // Outputs a warning that there are open course when there shouldn't.
-            'warning' => $warning
+            'warning' => $warning,
+            'invalididnumberwarning' => $unknownidnumbercourse,
+            'invalidextrawarning' => $unknownextracourse
         );
 
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);

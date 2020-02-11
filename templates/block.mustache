@@ -40,6 +40,8 @@ Example context (json):
     <input type="hidden" name="courseid" value="{{courseid}}">
     {{#onlyend}}<input id="only_end" type="hidden" name="only_end" value="true">{{/onlyend}}
     {{#nostudents}}<span style="color: orange; ">{{# str}}syncnostudents, block_evasys_sync{{/str}}</span>{{/nostudents}}
+    {{#invalididnumberwarning}}<div style="color: red; ">{{# str}}warning_invalid_idnumber, block_evasys_sync{{/str}}</div>{{/invalididnumberwarning}}
+    {{#invalidextrawarning}}<div style="color: red; ">{{# str}}warning_invalid_extra, block_evasys_sync{{/str}}</div>{{/invalidextrawarning}}
     {{#courses}}
         {{#.}}
             <div title="{{# str}}evacourseid, block_evasys_sync{{/str}} {{evasyscourseid}}

@@ -225,3 +225,5 @@ $string['endondate'] = 'until';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
+$string['warning_invalid_idnumber'] = "The hard linked evasys-course is invalid!";
+$string['warning_invalid_extra'] = "One of the dynamically mapped evasys-courses is invalid";

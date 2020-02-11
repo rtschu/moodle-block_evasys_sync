@@ -81,7 +81,8 @@ class evasys_synchronizer {
             $courseinfo = get_course_by_veranstid(intval($lsfcourse));
             $result[] = array(
                 'title' => $courseinfo->titel,
-                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
+                'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt),
+                'lsf_id' => $lsfcourse);
         }
         close_secondary_DB_connection();
         $this->lsfcourses = $result;
