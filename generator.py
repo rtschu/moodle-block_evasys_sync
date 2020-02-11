@@ -6,7 +6,7 @@
 import random
 import copy
 
-PATH = "/home/robintschudi/Dev/moodle38/blocks/evasys_sync/tests/behat/fulltest.feature"
+PATH = "../fulltest.feature"
 do_fast = False
 # parameters
 category = 0
