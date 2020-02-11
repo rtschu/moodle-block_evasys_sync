@@ -77,8 +77,8 @@ class evasys_synchronizer {
         establish_secondary_DB_connection();
         // Fetch metadata (id, title) for the courses.
         $result = array();
-        foreach ($extras as $course) {
-            $courseinfo = get_course_by_veranstid(intval($course));
+        foreach ($extras as $lsfcourse) {
+            $courseinfo = get_course_by_veranstid(intval($lsfcourse));
             $result[] = array(
                 'title' => $courseinfo->titel,
                 'id' => trim($courseinfo->veranstnr) . ' ' . trim($courseinfo->semestertxt));
