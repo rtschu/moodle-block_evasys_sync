@@ -6,6 +6,7 @@
 import random
 import copy
 
+PATH = "/home/robintschudi/Dev/moodle38/blocks/evasys_sync/tests/behat/fulltest.feature"
 do_fast = False
 # parameters
 category = 0
@@ -576,8 +577,7 @@ def condense_keep_options(fullarray):
 
 def main():
     # open feature file
-    f = open("test.feature", "w")
-    # f = open("/home/robintschudi/Dev/moodle38/blocks/evasys_sync/tests/behat/fulltest.feature", "w")
+    f = open(PATH, "w")
     x = ""
     i = 0
     # initialize feature data
