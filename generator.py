@@ -1,3 +1,8 @@
+# A little note for those trying to understand this code.
+# There is a global variable called lsfcourseid.
+# It is reset (to 0) everytime a new scenario is being built.
+# This generator maps different courses by taking the lsfcourseid and appending it to the end of a (often generic) ID.
+# The variable decleration is directly above the Section of code where it's actually used.
 import random
 import copy
 
@@ -129,8 +134,21 @@ background = '  Background:\n\
     And I am on "Course 1" course homepage'
 
 
-# other shorthands
+# The following Methods create Gherkin-tables to be used by the behat-functions of the Evasys-Plugin.
+# Most of the tables specify a connection or entity per line.
+
+# relations.
 def evasys_relations(shortname, idnumber, semestertxt, veranstnr):
+    """
+    Specifies a Moodlecourse - Evasyscourse connection and creates the necessary lsf-course in the Process.
+    One connection per table row
+    :param shortname: Shortname of the moodle-course
+    :param idnumber: idnumber to use in moodle-course and lsf-identifier
+    :param semestertxt: semestertxt to use in lsf-course and evasys-identifier
+    :param veranstnr: veranstnr to use in lsf-course and evasys-identifier
+    :return: string A behat-table that specifies a full connection from a learnweb-course to a evasys-course
+    Format: | Shortname | idnumber | semestertxt | veranstnr |
+    """
     x = "And The following Evasys relations exist: \n" \
         "  | shortname | idnumber | semestertxt | veranstnr |\n"
     for i in range(0, len(shortname)):
@@ -138,7 +156,35 @@ def evasys_relations(shortname, idnumber, semestertxt, veranstnr):
     return x
 
 
+def lsf_evasys_surveys(courseshortname, lsfcourses, semsestertxt, veranstnr):
+    """
+    Specifies which evasys-courses should be mapped to a specific moodle-course and creates the necessary lsf-courses.
+    One evasys-course per row BUT all these will be mapped to a single moodle-course.
+    :param courseshortname: Shortname of the moodle course
+    :param lsfcourses: lsfcourseid's to map (what would be the idnumber)
+    :param semsestertxt: semestertxt of the created lsfcourse and evasys-id
+    :param veranstnr: veranstnr of lsfcourse and evasys-id
+    :return: string a behat tablt that specifies which lsf-courses were mapped to a single moodle-course
+    Format: | lsfcourse | semestertxt | veranstnr |
+    """
+    x = "And the course with shortname " + str(courseshortname) + " has the following lsfcourses mapped:\n" \
+                                                                  "  | lsfcourse | semestertxt | veranstnr |\n"
+    for i in range(0, len(lsfcourses)):
+        x += "  | " + lsfcourses[i] + " | " + semsestertxt[i] + " | " + veranstnr[i] + " |\n"
+    return x
+
+
+# entitys
 def evasys_courses(evasysid, title, studentcount):
+    """
+    Specifies which evasys-courses should exist.
+    One evasys-course per line.
+    :param evasysid: Evasysid
+    :param title: Title of evasys-course
+    :param studentcount: number of students synced to the evasys-course
+    :return: string A behat table that specifies multiple evasys-courses
+    Format: | Evasysid | Title | Studentcount |
+    """
     x = "And The following evasys courses exist: \n" \
         "  | evasysid | title  | studentcount |\n"
     for i in range(0, len(evasysid)):
@@ -147,6 +193,13 @@ def evasys_courses(evasysid, title, studentcount):
 
 
 def evasys_forms(formid):
+    """
+    Specifies which evasys-forms should exist.
+    One form per row.
+    :param formid: Formid of the evasys-form
+    :return: string a behat table that specifies multiple evasysforms
+    Format: | Id | Name | Title |
+    """
     x = "And The following Forms exist: \n" \
         "  | id | name  | title |\n"
     for i in range(0, len(formid)):
@@ -156,6 +209,17 @@ def evasys_forms(formid):
 
 
 def evasys_surveys(evasys_course, title, formid, open, completed=-1):
+    """
+    Specifies what evasys-surveys should exist. The referenced evasys-course has to exist.
+    One survey per row.
+    :param evasys_course: referenced evasys-course
+    :param title: Title of the survey
+    :param formid: Formid of the survey
+    :param open: wether the survey is open
+    :param completed: number of students that completed the survey
+    :return: string a behat-table that specifies multiple evasys-surveys
+    Format: | course | title | formid | open | completed |
+    """
     x = "And The following surveys exist: \n" \
         "  | course | title  | formid | open | completed |\n"
     for i in range(0, len(evasys_course)):
@@ -168,18 +232,18 @@ def evasys_surveys(evasys_course, title, formid, open, completed=-1):
     return x
 
 
-def lsf_evasys_surveys(courseshortname, lsfcourses, semsestertxt, veranstnr):
-    x = "And the course with shortname " + str(courseshortname) + " has the following lsfcourses mapped:\n" \
-                                                                  "  | lsfcourse | semestertxt | veranstnr |\n"
-    for i in range(0, len(lsfcourses)):
-        x += "  | " + lsfcourses[i] + " | " + semsestertxt[i] + " | " + veranstnr[i] + " |\n"
-    return x
-
-
+# The following Methods help to construct Behat steps.
+# There are only methods when using a dict (like above) is either unnecessarry complicated
+# needs preparation (from a state like "multi" to an array of surveys)
+# or something has to be added programatically (like coursenames or ids)
 lsfcourseid = 0
 
 
 def idnumberState(state):
+    """
+    :param state: idnumber state (none/invalid/one)
+    :return: String either creating none, an invalid or one evasys-course - moodle-course link via idnumber
+    """
     global lsfcourseid
     if state == "none":
         return "And there is no idnumber mapped to course " + coursename + "\n"
@@ -192,6 +256,10 @@ def idnumberState(state):
 
 
 def mappedState(state):
+    """
+    :param state: mapped state (none/invalid/one/multi)
+    :return: a string creating none, only invalid, one or multiple mappings of a moodle-course to evasys-courses
+    """
     global lsfcourseid
     if state == "none":
         return "And no courses are mapped to course " + coursename + "\n"
@@ -210,6 +278,11 @@ def mappedState(state):
 
 
 def makeEvasysSurveys(state):
+    """
+    creates the necessary data for the evasys_surveys function given a state, and returns the result for these
+    :param state: State of the surveys (open/closed/mixed)
+    :return: String creating surveys of the specified state
+    """
     global lsfcourseid
     if state == "mixed" and lsfcourseid < 2:
         return ""
@@ -228,6 +301,10 @@ def makeEvasysSurveys(state):
 
 
 def makeEvasysCourses():
+    """
+    creates the necessary data for <lsfcourseid> many evasys-courses and returns this as a table of evasys-courses
+    :return: string table that creates evasys-courses
+    """
     global lsfcourseid
     if lsfcourseid < 1:
         return ""
@@ -239,13 +316,27 @@ def makeEvasysCourses():
 
 
 def checks_standardtimemode(standardtime, auto_mode, internal_state):
+    """
+    The standardtimemode check is a little tricky since the checkbox showing is dependent on 3 states
+    :param standardtime: standardtimemode
+    :param auto_mode: auto or manual mode
+    :param internal_state: internal state
+    :return: A string checking for the presence or absence of the standardtime checkbox
+    """
     if standardtime == 1 and auto_mode == "manual" and (internal_state == "none" or internal_state == "manual"):
         return standardtimemode_checks[1]
     return standardtimemode_checks[0]
 
 
+# The following methods are mostly combining methods. they take all scenario parameters and combine all specified
+# checks/actions/descriptions
+
+
 def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
-<<<<<<< HEAD
+    """
+    This Function will take the scenario parameters and construct the resulting checks.
+    :return: The combined checks for the parameters.
+    """
     checks = ""
     # If there are no mapped courses the Block not offer the option to "Show surveys"
     if (idnumber_state == "none") and (mapped_state == "none"):
@@ -313,6 +404,10 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
 
 
 def get_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+    """
+        This Function will take the scenario parameters and construct the resulting description.
+        :return: The combined description for the parameters.
+        """
     if mapped_state == "none" and idnumber_state == "none":
         return "If there are no related evasys-courses I should not see any.\n    "
     description = ""
@@ -331,6 +426,15 @@ def get_description(mode, standardtime, students_state, idnumber_state, mapped_s
 
 
 def get_combi_sentence(set, dictionary, param_name):
+    """
+    This function takes a set of states for a scenario parameter and checks whether they all result in the same
+    description. If they do it'll return this shared description. Otherwise it'll add a list of parameters,
+    that should all behave the same and add those to the description.
+    :param set: Set of states
+    :param dictionary: dictionary that holds the descriptions for the parametertype
+    :param param_name: name of the parameter
+    :return: String description for the set of parameters
+    """
     set2 = set.copy()
     last_response = dictionary[set.pop()]
     while 1:
@@ -342,12 +446,17 @@ def get_combi_sentence(set, dictionary, param_name):
     sentence += "This should be valid regardless of " + param_name + " being set to "
     while len(set2) > 1:
         sentence += str(set2.pop()) + ", "
-    sentence = sentence[:len(sentence)-2]
+    sentence = sentence[:len(sentence) - 2]
     sentence += " or " + str(set2.pop()) + "\n"
     return sentence
 
 
-def get_combi_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+def get_combi_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
+                          actual_state):
+    """
+    This will construct the description for a scenario that covers multiple states.
+    :return: String the description of the scenario.
+    """
     if "none" in mapped_state and "none" in idnumber_state:
         return "If there are no related evasys-courses I should not see any.\n    "
     description = ""
@@ -366,6 +475,10 @@ def get_combi_description(mode, standardtime, students_state, idnumber_state, ma
 
 
 def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+    """
+    This constructs the actual scenario by building all courses, states etc.
+    :return: string the combined enviroment specifiing string for a scenario
+    """
     global lsfcourseid
     lsfcourseid = 0
     behat_scenario = manual_auto_mode[mode].replace("{{category}}", str(category)) + "\n"
@@ -389,10 +502,19 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
 
 
 def make_scenario(description, scenario, checks):
+    """
+    :return: Scenarion specified by its description, enviroment and checks
+    """
     return "  Scenario: " + description + scenario + checks + "\n"
 
 
 def count_full_scenarios(condesed_array):
+    """
+    Given an array of condenses scenarios (aka. scenarios with sets instead of single values) this function will
+    compute how many unique scenarios those condensed scenarios hold.
+    :param condesed_array: array of scenarios with sets of parameters
+    :return: number of unique scenarios covered by all condensed scenarios.
+    """
     i = 0
     for array in condesed_array:
         j = 1
@@ -403,6 +525,11 @@ def count_full_scenarios(condesed_array):
 
 
 def array_diff(array1, array2):
+    """
+    :param array1: first array
+    :param array2: second array
+    :return: returns the number of missmatches between array1 and 2 aswell as the index of the last missmatch
+    """
     diff = 0
     position = 0
     for i in range(0, len(array1)):
@@ -413,6 +540,14 @@ def array_diff(array1, array2):
 
 
 def condense_keep_options(fullarray):
+    """
+    Given an array of scenarios this function will combine these into new scenarios that cover the exact same range
+    of scenarios, but will combine them.
+    { off, off, on } and { on, off, on } will be combined to { on/off, off, on}
+    The array of scenarios passed should all have the same result ( checks )
+    :param fullarray: array of scenarios
+    :return: condensed array of scenarios
+    """
     changed = True
     for i in range(0, len(fullarray)):
         for j in range(0, len(fullarray[i])):
@@ -440,13 +575,17 @@ def condense_keep_options(fullarray):
 
 
 def main():
+    # open feature file
     f = open("test.feature", "w")
     # f = open("/home/robintschudi/Dev/moodle38/blocks/evasys_sync/tests/behat/fulltest.feature", "w")
     x = ""
     i = 0
+    # initialize feature data
     x += tags + "\n"
     x += "Feature: " + feature_desc + "\n\n"
     x += background + "\n\n\n"
+
+    # get all scenarios
     uncondensed_dict = {}
     for auto_mode in automode:
         for time_mode in standardtimemode:
@@ -462,6 +601,7 @@ def main():
                                 uncondensed_dict[check].append(
                                     [auto_mode, time_mode, studenoptions, idnum, map, istate, astate])
 
+    # condense those scenarios
     condensed_dict = {}
     for check in uncondensed_dict.keys():
         scenarios = uncondensed_dict[check]
@@ -469,27 +609,28 @@ def main():
 
     testcases = 0
     endcases = 0
+    # check that the number of cases stayed the same
     for check in condensed_dict.keys():
-        # print(check)
-        # print("(Automode, standartimemode, enrolled_students, idnum, mapped, internal, external)")
-        for scenario in condensed_dict[check]:
-            testcases += 1
-            # print(scenario)
+        testcases += len(condensed_dict[check])
         endcases += count_full_scenarios(condensed_dict[check])
-        # print("\n")
 
+    # finally build the actual behat-suite
     for check in condensed_dict.keys():
         for scenario in condensed_dict[check]:
+            # do a deep-copy of the scenario because sets can only be accessed by pop which alters the set itself
             scenario_copy = copy.deepcopy(scenario)
-            desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5], scenario[6])
-            scen_text = get_scenario(scenario_copy[0].pop(), scenario_copy[1].pop(), scenario_copy[2].pop(), scenario_copy[3].pop(),
+            desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5],
+                                         scenario[6])
+            scen_text = get_scenario(scenario_copy[0].pop(), scenario_copy[1].pop(), scenario_copy[2].pop(),
+                                     scenario_copy[3].pop(),
                                      scenario_copy[4].pop(), scenario_copy[5].pop(), scenario_copy[6].pop())
             x += make_scenario(desc, scen_text, check)
 
-
-    print("Startcases: %i, Endcases: %i" % (i, endcases))
+    # write actual data
     f.write(x)
     f.close()
+    # output statistics
+    print("Startcases: %i, Endcases: %i" % (i, endcases))
     print("Condensed %i testcases to %i testcases with %i scenarios" % (i, testcases, len(condensed_dict)))
 
 
