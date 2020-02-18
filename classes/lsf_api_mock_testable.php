@@ -83,5 +83,4 @@ function set_course_to_veranstid ($id, $veranstnr, $semestertxt) {
     $id = intval($id);
     $veranstnr = intval($veranstnr);
     $DB->execute("INSERT INTO {$prefix}_lsf_mock_data VALUES ($id, $veranstnr, '$semestertxt')");
-    print ("ok");
 }
