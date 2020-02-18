@@ -184,7 +184,6 @@ class block_evasys_sync extends block_base{
             $course['technicalid'] = $evasyssynchronizer->get_course_id($evasyscourseinfo['id']);
             $course['evasyscourseid'] = $evasyscourseinfo['id'];
             $course['c_participants'] = format_string($evasyssynchronizer->get_amount_participants($evasyscourseinfo['id']));
-            var_dump($course);
             $rawsurveys = $evasyssynchronizer->get_surveys($evasyscourseinfo['id']);
             $surveys = array();
             foreach ($rawsurveys as $rawsurvey) {
@@ -227,8 +226,6 @@ class block_evasys_sync extends block_base{
         $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
 
         // Create the data object for the mustache table.
-        var_dump($state);
-        var_dump($ismodeautomated);
         $data = array(
             'href' => $href,
             'sesskey' => sesskey(),
