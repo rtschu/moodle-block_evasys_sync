@@ -38,6 +38,7 @@ class behat_block_evasys_sync extends behat_base {
 
     private $evasysapi;
     private $generator;
+    public const ERRORSAVEPATH = "/var/www/public/moodle38/errorbackend.html";
 
     /**
      * @BeforeSuite
@@ -72,8 +73,10 @@ class behat_block_evasys_sync extends behat_base {
     public function take_screenshot_after_failed_step (Behat\Behat\Hook\Scope\AfterStepScope $scope) {
         $logall = true;
         if (99 === $scope->getTestResult()->getResultCode() || $logall) {
-            $img = $this->getSession()->getDriver()->getContent();
-            file_put_contents("/var/www/public/moodle38/errorbackend.html", $img);
+            if(file_exists(self::ERRORSAVEPATH)) {
+                $img = $this->getSession()->getDriver()->getContent();
+                file_put_contents(self::ERRORSAVEPATH, $img);
+            }
         }
     }
 
