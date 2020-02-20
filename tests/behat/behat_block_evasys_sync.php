@@ -71,7 +71,7 @@ class behat_block_evasys_sync extends behat_base {
      * @AfterStep
      */
     public function take_screenshot_after_failed_step (Behat\Behat\Hook\Scope\AfterStepScope $scope) {
-        $logall = true;
+        $logall = false;
         if (99 === $scope->getTestResult()->getResultCode() || $logall) {
             if (file_exists(self::ERRORSAVEPATH)) {
                 $img = $this->getSession()->getDriver()->getContent();
@@ -409,7 +409,12 @@ class behat_block_evasys_sync extends behat_base {
      * @Given the startselector should be disabled
      */
     public function the_startselector_should_be_disabled () {
-        $startday = $this->find_field("day_start");
+        try {
+            $startday = $this->find_field("day_start");
+        } catch (\Behat\Mink\Exception\ElementNotFoundException $e) {
+            // selector can be disabled or not visible
+            return;
+        }
         if (is_null($startday->getAttribute('disabled'))) {
             throw new SelectorNotDisabledException();
         }
@@ -419,8 +424,13 @@ class behat_block_evasys_sync extends behat_base {
      * @Given both selectors should be disabled
      */
     public function both_selectors_should_be_disabled () {
-        $startday = $this->find_field("day_start");
-        $endday = $this->find_field("day_end");
+        try {
+            $startday = $this->find_field("day_start");
+            $endday = $this->find_field("day_end");
+        } catch (\Behat\Mink\Exception\ElementNotFoundException $e) {
+            // selector can be disabled or not visible
+            return;
+        }
         if (is_null($startday->getAttribute('disabled')) or is_null($endday->getAttribute('disabled'))) {
             throw new SelectorNotDisabledException();
         }
