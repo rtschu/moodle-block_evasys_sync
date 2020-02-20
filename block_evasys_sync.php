@@ -229,9 +229,7 @@ class block_evasys_sync extends block_base{
             // Append this course.
             $courses[] = $course;
         }
-
-        $standardttimemode = (!$ismodeautomated && $recordhasstandardtime && !$record);
-
+        $standardttimemode = (!$ismodeautomated && $hasstandardtime && !$record);
         // Create the data object for the mustache table.
         $data = array(
             'href' => $href,
@@ -268,7 +266,6 @@ class block_evasys_sync extends block_base{
                 ($state == course_evaluation_allocation::STATE_MANUAL and $ismodeautomated)
                 or ($state < course_evaluation_allocation::STATE_MANUAL and !$ismodeautomated) : false
         );
-
         $this->content->text .= $OUTPUT->render_from_template("block_evasys_sync/block", $data);
         $this->content->footer = '';
         return $this->content;
