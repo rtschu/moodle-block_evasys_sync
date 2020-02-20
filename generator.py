@@ -6,6 +6,8 @@
 import random
 import copy
 
+# TODO check for button, check for course.
+
 PATH = "../fulltest.feature"
 do_fast = False
 # parameters
@@ -61,7 +63,7 @@ manual_auto_mode = {
 
 standardtimeMode = {
     0: "And category {{category}} is not in standardtime mode",
-    1: "And category {{category}} is in standardtime mode"
+    1: "And category {{category}} is in standardtime mode with dates 1581043586 1582043586"
 }
 
 internalState = {
@@ -88,8 +90,8 @@ automode_checks = {
 }
 
 standardtimemode_checks = {
-    0: "And I should not see \"Offer standard period of time\"",
-    1: 'And I should see "Offer standard period of time"'
+    0: "And I should not see \"Alter evaluationperiod for special courses\"",
+    1: 'And I should see "Alter evaluationperiod for special courses"'
 }
 
 student_checks = {
@@ -112,7 +114,7 @@ mapped_checks = {
 }
 
 internal_state_checks = {
-    "notopened": "And I should see \"Evaluationperiod has been set   \"\n",
+    "notopened": "And I should see \"Evaluationperiod has been set\"\n",
     "opened": "And the startselector should be disabled\n",
     "closed": "And both selectors should be disabled\n",
     "manual": "And I should see \"Evaluation has been requested\"\n",
@@ -329,6 +331,17 @@ def checks_standardtimemode(standardtime, auto_mode, internal_state):
     return standardtimemode_checks[0]
 
 
+def checks_internalstate(internal_state, actual_state, student_state):
+    if actual_state == "closed" and internal_state == "manual":
+        return ""
+    if student_state == "none" or student_state == "onlytutors":
+        return internal_state_checks["closed"]
+    check = internal_state_checks[internal_state]
+    if internal_state != "closed" and (not internal_state == "none" and (actual_state == "closed" or actual_state == "mixed")):
+        check += "And the submitbutton should be enabled"
+    return check
+
+
 # The following methods are mostly combining methods. they take all scenario parameters and combine all specified
 # checks/actions/descriptions
 
@@ -352,6 +365,8 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
     checks += idnumber_checks[idnumber_state]
     checks += mapped_checks[mapped_state]
 
+    no_valid_mappings = ((idnumber_state == "none" or idnumber_state == "invalid")
+                         and (mapped_state == "none" or mapped_state == "invalid"))
     # if there is an internal state that is reserved for manual or automode we want to check we want to output
     # a warning if this is not in fact the correct mode
     if ((internal_state != "manual" and internal_state != "none") and mode == "manual") or (
@@ -359,16 +374,19 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
         checks += inconsistent_mode + "\n"
     else:
         # if the internal state isn't conflicting we want to check, if the block is correctly displaying for that state
-        checks += internal_state_checks[internal_state]
+        checks += checks_internalstate(internal_state, actual_state, students_state)
         # finally if there is no entry yet or the planned date is in the future we want to check that
         # there is an option to set the date for the evaluation
-        if internal_state == "none" or (internal_state == "notopened" and mode == "auto"):
+        if (internal_state == "none" and (not no_valid_mappings or mode == "manual"))\
+                or (internal_state == "notopened" and mode == "auto" and not no_valid_mappings):
             checks += automode_checks[mode] + "\n"
     # If our own states don't match those of evasys we want to output a warning
-    if internal_state == "closed" and actual_state != "closed":
-        checks += "And I should see \"There are some open surveys, but all surveys should be closed.\"" + "\n"
-    elif internal_state != "closed" and actual_state != "open":
-        checks += "And I should see \"Some of the surveys have been closed ahead of schedule!\"" + "\n"
+    if mode != "manual" and not no_valid_mappings:
+        # In manual mode we don't check for matching states because we have no way of knowing what the state should be.
+        if internal_state == "closed" and actual_state != "closed":
+            checks += "And I should see \"There are some open surveys, but all surveys should be closed.\"" + "\n"
+        elif internal_state != "closed" and internal_state != "manual" and actual_state != "open":
+            checks += "And I should see \"There are some closed surveys, but all surveys should be open.\"" + "\n"
 
     # if the standardtimemodecheckbox should be present from the start we also want to check that
     checks += checks_standardtimemode(standardtime, mode, internal_state) + "\n"
@@ -402,6 +420,21 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
 	checks += student_checks[students_state]
 	return checks
 >>>>>>> cc0cc54... corrected mistake
+
+
+def get_postcondensing_checks():
+    """
+    Sometimes we want to check for something, but don't want to include it as a "difference" in the grouping of checks.
+    Those checks can be defined here.
+    """
+    postchecks = ""
+    # Check that surveys are actually shown.
+    # We don't want to include this in the sorting, because it only tests a for loop, but multiplies the tests by 2.
+    global lsfcourseid
+    for i in range(0, lsfcourseid):
+        postchecks += "And I should see \"Name: Evatestcourse " + str(i) + "\"\n"
+    postchecks = postchecks.replace("\n", "\n    ")
+    return postchecks
 
 
 def get_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
@@ -487,9 +520,9 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     behat_scenario += studentsState[students_state] + "\n"
     behat_scenario += idnumberState(idnumber_state)
     behat_scenario += mappedState(mapped_state)
-    behat_scenario += evasys_forms([1])
     behat_scenario += internalState[internal_state].replace("{{course}}", str(coursename)) + "\n"
     behat_scenario += makeEvasysCourses()
+    behat_scenario += evasys_forms([1])
     behat_scenario += makeEvasysSurveys(actual_state)
 
     behat_scenario += "And I turn editing mode on\n"
@@ -498,7 +531,7 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     behat_scenario = behat_scenario.replace("\n", "\n    ")
 
     if actual_state == "mixed" and lsfcourseid < 2:
-        return ""
+        return False
     return behat_scenario
 
 
@@ -618,16 +651,26 @@ def main():
     for check in condensed_dict.keys():
         for scenario in condensed_dict[check]:
             # do a deep-copy of the scenario because sets can only be accessed by pop which alters the set itself
+            scen_text = ""
             scenario_copy = copy.deepcopy(scenario)
             scenario_txt_rprs = str(scenario)
             desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5],
                                          scenario[6])
-            scen_text = get_scenario(scenario_copy[0].pop(), scenario_copy[1].pop(), scenario_copy[2].pop(),
-                                     scenario_copy[3].pop(),
-                                     scenario_copy[4].pop(), scenario_copy[5].pop(), scenario_copy[6].pop())
-            if scen_text == "":
-                print("Warning no enviroment for scenario!!! " + scenario_txt_rprs)
-            x += make_scenario(desc, scen_text, check)
+            mode = scenario_copy[0].pop()
+            standardtime = scenario_copy[1].pop()
+            students_state = scenario_copy[2].pop()
+            idnumber_state = scenario_copy[3].pop()
+            mapped_state = scenario_copy[4].pop()
+            internal_state = scenario_copy[5].pop()
+            actual_state = scenario_copy[6].pop()
+            if actual_state == "mixed" and len(scenario_copy[6]) > 0:
+                actual_state = scenario_copy[6].pop()
+            scen_text = get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state)
+            if scen_text == False:
+                print("Warning impossible scenario!!! " + scenario_txt_rprs)
+                continue
+            postchecks = get_postcondensing_checks()
+            x += make_scenario(desc, scen_text, check + postchecks)
 
     # write actual data
     f.write(x)

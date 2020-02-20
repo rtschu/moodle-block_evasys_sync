@@ -177,6 +177,7 @@ class behat_block_evasys_sync extends behat_base {
         if ($cc = \block_evasys_sync\user_cat_allocation::get_record(array("course_category" => $id))) {
             $cc->set('category_mode', 0);
             $cc->update();
+            $cc->save();
         } else {
             $record = new stdClass();
             $record->userid = 2;
@@ -184,6 +185,7 @@ class behat_block_evasys_sync extends behat_base {
             $record->category_mode = 0;
             $persistent = new \block_evasys_sync\user_cat_allocation(0, $record);
             $persistent->create();
+            $persistent->save();
         }
     }
 
@@ -195,6 +197,7 @@ class behat_block_evasys_sync extends behat_base {
         if ($cc = \block_evasys_sync\user_cat_allocation::get_record(array("course_category" => $id))) {
             $cc->set('category_mode', 1);
             $cc->update();
+            $cc->save();
         } else {
             $record = new stdClass();
             $record->userid = 1;
@@ -328,16 +331,17 @@ class behat_block_evasys_sync extends behat_base {
      * @Given students enrolled in course :shortname
      */
     public function students_enrolled_in_course($shortname) {
-        $node = new \Behat\Gherkin\Node\TableNode(array("user" => array("teacher1", "student1"),
-                                                      "course" => array($shortname, $shortname),
-                                                      "role" => array("editingteacher", "student")));
+        $head = array("user", "course", "role");
+        $teacher = array("teacher1", $shortname, "editingteacher");
+        $student = array("student1", $shortname, "student");
+        $node = new \Behat\Gherkin\Node\TableNode(array($head, $teacher, $student));
         $this->generator->the_following_entities_exist("course enrolments", $node);
     }
 
     /**
-     * @Given And the idnumber for course :shortname is invalid
+     * @Given the idnumber for course :course is invalid
      */
-    public function and_the_idnumber_for_course_is_invalid($shortname) {
+    public function the_idnumber_for_course_is_invalid($shortname) {
         $this->the_course_has_idnumber($shortname, -99);
     }
 
@@ -385,19 +389,10 @@ class behat_block_evasys_sync extends behat_base {
         $this->find_button($name);
     }
 
-    /**
-     * @Given the idnumber for course :course is invalid
-     */
-    public function the_idnumber_for_course_is_invalid ($shortname) {
+    private function get_max_idnumber () {
         global $DB;
-        $max = $DB->get_records_sql("SELECT 1 AS dummy,max(idnumber) FROM {course}");
-        if (!$max) {
-            $max = 0;
-        }
-        foreach ($max as $maxi) {
-            $idnum = $maxi->max + 10000; // Let's just assume noone wants to add 10000 lsf courses from now.
-        }
-        $this->the_course_has_idnumber($shortname, $idnum);
+        $max = $DB->get_records_sql("SELECT 'max' AS dummy, max(idnumber) AS max FROM {course}")['max']->max;
+        return $max;
     }
 
     /**
@@ -411,14 +406,31 @@ class behat_block_evasys_sync extends behat_base {
      * @Given the startselector should be disabled
      */
     public function the_startselector_should_be_disabled () {
-        throw new \Behat\Behat\Tester\Exception\PendingException();
+        $startday = $this->find_field("day_start");
+        if (is_null($startday->getAttribute('disabled'))) {
+            throw new SelectorNotDisabledException();
+        }
     }
 
     /**
      * @Given both selectors should be disabled
      */
     public function both_selectors_should_be_disabled () {
-        throw new \Behat\Behat\Tester\Exception\PendingException();
+        $startday = $this->find_field("day_start");
+        $endday = $this->find_field("day_end");
+        if (is_null($startday->getAttribute('disabled')) or is_null($endday->getAttribute('disabled'))) {
+            throw new SelectorNotDisabledException();
+        }
+    }
+
+    /**
+     * @Given the submitbutton should be enabled
+     */
+    public function the_submitbutton_should_be_enabled () {
+        $button = $this->find_button("evasyssubmitbutton");
+        if (! is_null($button->getAttribute('disabled'))) {
+            throw new SubmitButtonDisabledException();
+        }
     }
 
 
