@@ -69,7 +69,8 @@ Example context (json):
     {{> block_evasys_sync/coursemapping}}
 {{/coursemappingenabled}}
 <div class = "linedrawer"></div>
-{{#warning}}<div style="color: red; ">{{# str}}warning_inconsistent_send_states, block_evasys_sync{{/str}}</div>{{/warning}}
+{{#warningnotallopen}}<div style="color: red; ">{{# str}}warning_not_all_open, block_evasys_sync{{/str}}</div>{{/warningnotallopen}}
+{{#warningnotallclosed}}<div style="color: red; ">{{# str}}warning_not_all_closed, block_evasys_sync{{/str}}</div>{{/warningnotallclosed}}
 {{#inconsistentmodeswarning}}<div style="color: orange; ">{{# str}}warning_inconsistent_modes, block_evasys_sync{{/str}}</div>{{/inconsistentmodeswarning}}
 {{#emailsentnotice}}<div style="color: limegreen; ">{{# str}}emailsentnotice, block_evasys_sync{{/str}}</div>{{/emailsentnotice}}
 {{#evaluationperiodsetnotice}}<div style="color: limegreen; ">{{# str}}evalperiodsetnotice, block_evasys_sync{{/str}}</div>{{/evaluationperiodsetnotice}}

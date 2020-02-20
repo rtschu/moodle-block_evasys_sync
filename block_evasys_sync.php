@@ -61,7 +61,7 @@ class block_evasys_sync extends block_base{
 
         // If we are not in sync mode, we display either the course mapping or the check status button.
         if ($evasyssynccheck !== 1) {
-            $inlsf = !empty($this->page->course->idnumber);
+            $inlsf = (!empty($this->page->course->idnumber) or $this->page->course->idnumber === '0');
             $hasextras = \block_evasys_sync\course_evasys_courses_allocation::record_exists_select(
                 "course = {$this->page->course->id} AND NOT evasyscourses = ''");
 
@@ -166,7 +166,8 @@ class block_evasys_sync extends block_base{
         $courses = array();
         $hassurveys = false;
         $startoption = ($startdisabled xor $enddisabled);
-        $warning = false;
+        $warningnotallclosed = false;
+        $warningnotallopen = false;
         $invalidcourses = false;
         // Query course data (put in function).
         foreach ($evasyscourses as $evasyscourseinfo) {
@@ -195,12 +196,18 @@ class block_evasys_sync extends block_base{
                     $rawsurvey->surveyStatus == 'open') {
                     // If the evaluation has ended as far as we know, but there are still open evaluations output a warning...
                     // and enable all controls.
-                    $warning = true;
+                    $warningnotallclosed = true;
                     $startdisabled = false;
                     $enddisabled = false;
                 }
+                if (($record !== false && ($record->get('state') == course_evaluation_allocation::STATE_AUTO_NOTOPENED
+                    || $record->get('state') == course_evaluation_allocation::STATE_AUTO_OPENED)
+                    && $rawsurvey->surveyStatus == 'closed')
+                    or ($ismodeautomated and $record === false and $rawsurvey->surveyStatus == 'closed')) {
+                    $warningnotallopen = true;
+                }
                 if (($record === false || $record->get('state') == course_evaluation_allocation::STATE_MANUAL) &&
-                    $rawsurvey->surveyStatus == 'closed') {
+                    $rawsurvey->surveyStatus == 'closed' && !$ismodeautomated) {
                     // In case of a manual evaluation get the status of the evaluation by...
                     // checking whether the evaluations are closed.
                     $emailsentnotice = false;
@@ -252,7 +259,8 @@ class block_evasys_sync extends block_base{
             // Defines if an lsf course is already mapped to the moodle course.
             'optional' => !empty($evasyscourses),
             // Outputs a warning that there are open course when there shouldn't.
-            'warning' => $warning,
+            'warningnotallclosed' => $warningnotallclosed,
+            'warningnotallopen' => $warningnotallopen,
             'invalididnumberwarning' => $unknownidnumbercourse,
             'invalidextrawarning' => $unknownextracourse,
             // If there is a internal state that is reserved for auto/manual mode, but the mode doesn't match warn the user.

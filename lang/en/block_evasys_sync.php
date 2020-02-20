@@ -225,5 +225,6 @@ $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
 $string['warning_invalid_idnumber'] = "The hard linked evasys-course is invalid!";
 $string['warning_invalid_extra'] = "One of the dynamically mapped evasys-courses is invalid";
-$string['warning_inconsistent_send_states'] = "There are some open surveys, but all surveys should be closed.";
+$string['warning_not_all_closed'] = "There are some open surveys, but all surveys should be closed.";
+$string['warning_not_all_open'] = "There are some closed surveys, but all surveys should be open.";
 $string['warning_inconsistent_modes'] = "This evaluation was already started in another mode";

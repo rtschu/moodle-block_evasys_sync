@@ -216,5 +216,6 @@ $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
 $string['warning_invalid_idnumber'] = "Der fest zugeordnete Evasys-kurs ist ungültig!";
 $string['warning_invalid_extra'] = "Einer der zugeordneten Evasys-kurse ist ungültig";
-$string['warning_inconsistent_send_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
+$string['warning_not_all_closed'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
+$string['warning_not_all_open'] = "Einige Umfragen sind geschlossen, aber alle Umfragen sollten offen sein.";
 $string['warning_inconsistent_modes'] = "Diese Evaluation wurde bereits in einem anderen Modus gestartet";
