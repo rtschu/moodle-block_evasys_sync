@@ -50,8 +50,8 @@ idnumber_descriptions = {
 mapped_descriptions = {
     "none": "",
     "invalid": "If there are invalid mappings I should see a warning\n",
-    "one": "If there are any mapped courses I should see those \n",
-    "multi": "If there are any mapped courses I should see those \n"
+    "one": "If there are any mapped courses I should see those\n",
+    "multi": "If there are any mapped courses I should see those\n"
 }
 
 # Environment configuration
@@ -96,7 +96,7 @@ standardtimemode_checks = {
 
 student_checks = {
     "none": "And I should see \"This course does not contain any students that can evaluate it.\"\n",
-    "onlytutors": 'And I should see \"This course contains only tutors\"\n',
+    "onlytutors": 'And I should see \"This course does not contain any students that can evaluate it.\"\n',
     "multi": ""
 }
 
@@ -121,12 +121,19 @@ internal_state_checks = {
     "none": ""
 }
 
+selector_disabled_checks = {
+    "both": "And both selectors should be disabled\n",
+    "start": "And the startselector should be disabled\n",
+    "none": ""
+}
+
 # Background
 background = '  Background:\n\
     Given the following "users" exist:\n\
       | username | firstname | lastname | email |\n\
       | teacher1 | Teacher | 1 | teacher1@example.com |\n\
-	  | student1 | Student | 1 | student1@example.com |\n\
+      | student1 | Student | 1 | student1@example.com |\n\
+      | tutor1   | Tutor   | 1 | tutor1@example.com | \n\
     And the following "courses" exist:\n\
       | fullname | shortname | category |\n\
       | Course 1 | C1 | 0 |\n\
@@ -152,7 +159,7 @@ def evasys_relations(shortname, idnumber, semestertxt, veranstnr):
     :return: string A behat-table that specifies a full connection from a learnweb-course to a evasys-course
     Format: | Shortname | idnumber | semestertxt | veranstnr |
     """
-    x = "And The following Evasys relations exist: \n" \
+    x = "And The following Evasys relations exist:\n" \
         "  | shortname | idnumber | semestertxt | veranstnr |\n"
     for i in range(0, len(shortname)):
         x += "  | " + shortname[i] + " | " + idnumber[i] + " | " + semestertxt[i] + " | " + veranstnr[i] + " |\n"
@@ -188,7 +195,7 @@ def evasys_courses(evasysid, title, studentcount):
     :return: string A behat table that specifies multiple evasys-courses
     Format: | Evasysid | Title | Studentcount |
     """
-    x = "And The following evasys courses exist: \n" \
+    x = "And The following evasys courses exist:\n" \
         "  | evasysid | title  | studentcount |\n"
     for i in range(0, len(evasysid)):
         x += "  | " + evasysid[i] + " | " + title[i] + " | " + studentcount[i] + " |\n"
@@ -203,7 +210,7 @@ def evasys_forms(formid):
     :return: string a behat table that specifies multiple evasysforms
     Format: | Id | Name | Title |
     """
-    x = "And The following Forms exist: \n" \
+    x = "And The following Forms exist:\n" \
         "  | id | name  | title |\n"
     for i in range(0, len(formid)):
         x += "  | " + str(formid[i]) + " | " + "AAAA" + str(formid[i]) + " | " + "Testformnr. " + str(
@@ -223,7 +230,7 @@ def evasys_surveys(evasys_course, title, formid, open, completed=-1):
     :return: string a behat-table that specifies multiple evasys-surveys
     Format: | course | title | formid | open | completed |
     """
-    x = "And The following surveys exist: \n" \
+    x = "And The following surveys exist:\n" \
         "  | course | title  | formid | open | completed |\n"
     for i in range(0, len(evasys_course)):
         if not isinstance(completed, list):
@@ -331,15 +338,51 @@ def checks_standardtimemode(standardtime, auto_mode, internal_state):
     return standardtimemode_checks[0]
 
 
-def checks_internalstate(internal_state, actual_state, student_state):
+def checks_internalstate2(internal_state, actual_state, student_state, no_valid_mappings, mode):
     if actual_state == "closed" and internal_state == "manual":
-        return ""
+        return internal_state_checks["closed"]
     if student_state == "none" or student_state == "onlytutors":
         return internal_state_checks["closed"]
+    if internal_state == "none" and no_valid_mappings and mode != "manual":
+        return internal_state_checks["notopened"]
+    if actual_state == "open" and internal_state == "closed":
+        return internal_state_checks["notopened"]
+    if actual_state == "mixed" and (internal_state == "manual" or internal_state == "none"):
+        return ""
     check = internal_state_checks[internal_state]
-    if internal_state != "closed" and (not internal_state == "none" and (actual_state == "closed" or actual_state == "mixed")):
-        check += "And the submitbutton should be enabled"
+    if internal_state != "closed" and (
+            not internal_state == "none" and (actual_state == "closed" or actual_state == "mixed")):
+        check += "And the submitbutton should be enabled\n"
     return check
+
+
+def checks_internalstate(internal_state, actual_state, student_state, no_valid_mappings, mode, standardtime):
+    checks = ""
+    if standardtime and mode == "manual" and internal_state == "none":
+        return selector_disabled_checks["both"]
+    if no_valid_mappings:
+        actual_state = "does_never_get_called"
+    if ((internal_state == "opened" or internal_state == "closed" or (student_state == "none" or student_state == "onlytutors")
+            and internal_state != "none")
+            and not (internal_state == "closed" and (actual_state == "mixed" or actual_state == "open"))):
+        if internal_state == "opened":
+            checks += selector_disabled_checks["start"]
+            if not (student_state == "none" or student_state == "onlytutors") and not no_valid_mappings:
+                checks += "And the submitbutton should be enabled\n"
+        else:
+            checks += selector_disabled_checks["both"]
+    elif (internal_state == "manual" or internal_state == "none") and \
+            (actual_state == "mixed" or actual_state == "closed") and mode == "manual":
+        checks += selector_disabled_checks["both"]
+        if not actual_state == "closed" and not actual_state == "mixed":
+            checks += internal_state_checks[internal_state]
+    elif not no_valid_mappings and (internal_state == "notopened" or internal_state == "manual" or internal_state == "none"):
+        if (internal_state == "manual" or internal_state == "none") and (actual_state == "closed" or actual_state == "mixed"):
+            return ""
+        checks += internal_state_checks[internal_state]
+        if not (student_state == "none" or student_state == "onlytutors") and not no_valid_mappings:
+            checks += "And the submitbutton should be enabled\n"
+    return checks
 
 
 # The following methods are mostly combining methods. they take all scenario parameters and combine all specified
@@ -374,10 +417,10 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
         checks += inconsistent_mode + "\n"
     else:
         # if the internal state isn't conflicting we want to check, if the block is correctly displaying for that state
-        checks += checks_internalstate(internal_state, actual_state, students_state)
+        checks += checks_internalstate(internal_state, actual_state, students_state, no_valid_mappings, mode, standardtime)
         # finally if there is no entry yet or the planned date is in the future we want to check that
         # there is an option to set the date for the evaluation
-        if (internal_state == "none" and (not no_valid_mappings or mode == "manual"))\
+        if (internal_state == "none" and (not no_valid_mappings or mode == "manual")) \
                 or (internal_state == "notopened" and mode == "auto" and not no_valid_mappings):
             checks += automode_checks[mode] + "\n"
     # If our own states don't match those of evasys we want to output a warning
@@ -616,7 +659,7 @@ def main():
     # initialize feature data
     x += tags + "\n"
     x += "Feature: " + feature_desc + "\n\n"
-    x += background + "\n\n\n"
+    x += background + "\n\n"
 
     # get all scenarios
     uncondensed_dict = {}
@@ -633,6 +676,9 @@ def main():
                                     uncondensed_dict[check] = []
                                 uncondensed_dict[check].append(
                                     [auto_mode, time_mode, studenoptions, idnum, map, istate, astate])
+
+                                if astate == "open" and "the startselector should be disabled" in check:
+                                    scen = get_scenario(auto_mode, time_mode, studenoptions, idnum, map, istate, astate)
 
     # condense those scenarios
     condensed_dict = {}
@@ -665,13 +711,22 @@ def main():
             actual_state = scenario_copy[6].pop()
             if actual_state == "mixed" and len(scenario_copy[6]) > 0:
                 actual_state = scenario_copy[6].pop()
-            scen_text = get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state)
+            scen_text = get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
+                                     actual_state)
+            if scen_text != False and (
+                    "And the statselector should be disabled" in scen_text) and actual_state == "open":
+                print("WTF " + scenario_txt_rprs)
+            if check != get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
+                                   actual_state):
+                print("Error")
             if scen_text == False:
                 print("Warning impossible scenario!!! " + scenario_txt_rprs)
                 continue
             postchecks = get_postcondensing_checks()
             x += make_scenario(desc, scen_text, check + postchecks)
 
+    x = x.replace("\n    \n", "\n\n")  # remove whitespaces on empty lines
+    x = x[:len(x) - 1]  # remove last newline
     # write actual data
     f.write(x)
     f.close()
