@@ -332,7 +332,11 @@ class behat_block_evasys_sync extends behat_base {
      * @Given only tutors enrolled in course :shortname
      */
     public function only_tutors_enrolled_in_course($shortname) {
-        throw new \Behat\Behat\Tester\Exception\PendingException("TBD");
+        $head = array("user", "course", "role");
+        $teacher = array("teacher1", $shortname, "editingteacher");
+        $student = array("tutor1", $shortname, "teacher");
+        $node = new \Behat\Gherkin\Node\TableNode(array($head, $teacher, $student));
+        $this->generator->the_following_entities_exist("course enrolments", $node);
     }
 
     /**

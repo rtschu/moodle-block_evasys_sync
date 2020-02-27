@@ -5,7 +5,8 @@ Feature: Tests all use-cases of the Evasys-block
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
-	  | student1 | Student | 1 | student1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | tutor1   | Tutor   | 1 | tutor1@example.com | 
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
