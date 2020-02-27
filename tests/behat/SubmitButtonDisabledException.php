@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-class SubmitButtonDisabledException extends Exception
+namespace behat_block_evasys_sync;
+class SubmitButtonDisabledException extends \Exception
 {
 
 }

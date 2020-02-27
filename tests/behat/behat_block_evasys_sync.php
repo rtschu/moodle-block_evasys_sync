@@ -24,8 +24,13 @@
  */
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
+require_once(__DIR__. '/SelectorNotDisabledException.php');
+require_once(__DIR__. '/SubmitButtonDisabledException.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
+use behat_block_evasys_sync\SelectorNotDisabledException;
+use behat_block_evasys_sync\SubmitButtonDisabledException;
+
 /**
  * evasys_sync-related steps definitions.
  *
