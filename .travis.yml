@@ -15,7 +15,6 @@ addons:
   postgresql: "9.4"
 
 php:
-  -7.0
  - 7.1
  - 7.2
  - 7.3
@@ -26,10 +25,8 @@ env:
  matrix:
   - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=master
-  - DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
-  - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
-  - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
-  - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -63,19 +60,10 @@ jobs:
     # Smaller build matrix for development builds
     - stage: develop
       php: 7.3
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
-  exclude:
-    - env: DB=pgsql MOODLE_BRANCH=master
-      php: 7.0
-    - env: DB=mysqli MOODLE_BRANCH=master
-      php: 7.0
-    - env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
-      php: 7.0
-    - env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
-      php: 7.0
 
 # Default 'test' stage: Unit tests and behat tests against full matrix.
 script:
