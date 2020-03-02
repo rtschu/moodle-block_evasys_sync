@@ -62,16 +62,25 @@ jobs:
       env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
       script:
       - moodle-plugin-ci phpunit --coverage-clover
-      - php admin/tool/behat/cli/run.php --tags "@block_evasys_sync_fulltest" --BEHAT_OPTION="--format=pretty"
+      - cd moodle
+      - php -S localhost:8000 >/dev/null 2>&1 &
+      - cd ..
+      - sleep 10 # Wait for behat to start
+      - php moodle/admin/tool/behat/cli/run.php --tags="@block_evasys_sync_fulltest"
 
 # Default 'test' stage: Unit tests and behat tests against full matrix.
 script:
   - moodle-plugin-ci phpunit --coverage-clover
-  - moodle-plugin-ci behat
+  - cd moodle
+  - php -S localhost:8000 >/dev/null 2>&1 &
+  - cd ..
+  - sleep 10 # Wait for behat to start
+  - php moodle/admin/tool/behat/cli/run.php --tags="@block_evasys_sync_fulltest"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
+# TODO re-add static
 stages:
   - static
   - name: develop
