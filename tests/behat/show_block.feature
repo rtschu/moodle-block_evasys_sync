@@ -33,34 +33,3 @@ Feature: Show the evasys block
     And I turn editing mode off
     Then I should not see "Change mapping"
     And I should not see "Name:"
-
-  Scenario: Add a Standard normally linked block.
-    Given The following Evasys relations exist:
-    | shortname | idnumber | semestertxt | veranstnr |
-    | C1        | 1        | WS 2018/19  | 1001      |
-    And the following evasys courses exist:
-      | evasysid        | title  | studentcount |
-      | 1001 WS 2018/19 | Info 1 | 150          |
-    And The following Forms exist:
-    | id | name  | title             |
-    | 1  | AA253 | Umfrage zu Info 1 |
-    And The following surveys exist:
-    | course          | title     | formid | open | completed |
-    | 1001 WS 2018/19 | Umfrage 1 | 1      | 1    | 25         |
-    And I turn editing mode on
-    And I add the "EvaSys Sync" block
-    And I turn editing mode off
-    And I press "Show status of surveys"
-    Then I should see "Name: Info 1"
-    Then I should see "Number of participants:"
-    Then I should see "150"
-    Then I should see "Surveys:"
-    Then I should see "Umfrage zu Info 1"
-    Then I should see "Survey status:"
-    Then I should see "open"
-    Then I should see "Completed forms:"
-    Then I should see "25"
-    Then I should see "Change mapping"
-    Then I should see "Evaluation period"
-    Then I should see "Planned period from"
-    Then I should see a button named "Request evaluation"
