@@ -110,6 +110,7 @@ class block_evasys_sync extends block_base{
         $enddisabled = false;
         $emailsentnotice = false;
         $periodsetnotice = false;
+        $wasstarted = false;
 
         // Set start to today and end to a week from now.
         $start = time();
@@ -134,6 +135,8 @@ class block_evasys_sync extends block_base{
                 // If the persistenceclass exists and the state is automatic and not opened
                 // the period must have been set.
                 $periodsetnotice = true;
+            } else {
+                $wasstarted = true;
             }
             if ($state >= course_evaluation_allocation::STATE_AUTO_OPENED || $nostudents) {
                 // If the course was already opened, disable the start date. If there are no students disable all controls.
@@ -240,7 +243,7 @@ class block_evasys_sync extends block_base{
             * In case of the automated workflow, we require surveys
             * in order to be able to automatically trigger the evaluation. */
             'showcontrols' => ($hassurveys || !$ismodeautomated) && count($evasyscourses) > 0 && !$invalidcourses,
-            'usestandardtimelayout' => (!$ismodeautomated && $recordhasstandardtime && !$record),
+            'usestandardtimelayout' => (!$ismodeautomated && $hasstandardtime && !$wasstarted),
             // Choose mode.
             'direct' => $ismodeautomated,
             'startdisabled' => $startdisabled || $standardttimemode,
