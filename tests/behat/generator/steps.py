@@ -208,7 +208,7 @@ def postcheck_mappedstate(mapped_state):
     if mapped_state == "one":
         postchecks += 'And I should see "DynamicSurvey0"\n'
         postchecks += 'And I should not see "DynamicSurvey1"\n'
-    elif mapped_state == "mulit":
+    elif mapped_state == "multi":
         postchecks += 'And I should see "DynamicSurvey0"\n'
         postchecks += 'And I should see "DynamicSurvey1"\n'
     else:
