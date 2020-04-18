@@ -23,9 +23,11 @@
 
 namespace block_evasys_sync;
 
+use Behat\Behat\Tester\Exception\PendingException;
+use core_privacy\local\deprecated;
+use Matrix\Exception;
+
 defined('MOODLE_INTERNAL') || die();
-global $prefix;
-$prefix = "behaterino";
 
 function establish_secondary_DB_connection() { // phpcs:ignore @codingStandardsIgnoreLine
     return true;
@@ -35,25 +37,17 @@ function close_secondary_DB_connection() { // phpcs:ignore @codingStandardsIgnor
     return true;
 }
 
-function set_up () {
-    // Use a table to store behat mock data, so it's preserved over multiple site calls.
-    global $DB, $prefix;
-    $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_lsf_mock_data (courseid INT PRIMARY KEY, veranstnr INT, semestertxt VARCHAR (50))");
-}
-
-function tear_down () {
-    global $DB, $prefix;
-    $DB->execute("DROP TABLE IF EXISTS {$prefix}_lsf_mock_data");
-}
-
 function get_course_by_veranstid ($courseid) {
     // Only return used values. fill the rest with dummys.
-    global $DB, $prefix;
-    // Moodle seemingly checks wether the requested relation exists according to the definitons of all plugins for functions like
-    // get_record(). Since our mocktable is never defined to moodle, we have to use get_records_sql() which skips this check.
-    $data = $DB->get_records_sql("SELECT * FROM {$prefix}_lsf_mock_data WHERE courseid = $courseid");
+    global $COURSE;
+    $moodleid = $COURSE->id;
+    require_once(__DIR__. './../tests/behat/behat_block_evasys_sync.php');
+    $fulldata = \behat_block_evasys_sync::get_coursedata_by_courseid($moodleid);
+    $coursedata = $fulldata->evacourses[$courseid];
+
+
     $result = new \stdClass();
-    if (!$data) {
+    if (!$coursedata->valid) {
         $result->veranstid = null;
         $result->veranstnr = null;
         $result->semester = null;
@@ -61,26 +55,19 @@ function get_course_by_veranstid ($courseid) {
         $result->veranstaltungsart = null;
         $result->titel = null;
         $result->urlveranst = null;
+        // If the coursedata is not valid we dont assign the evasyskey to lsfkey.
+        // First this could easily be overwritten because all invalid cousrses have evasyskey " ".
+        // Second we check for " " being the evasyskey in the evasysapi before ever accessing $coursedata->valid.
     } else {
         $result->veranstid = 1;
-        $result->veranstnr = $data[$courseid]->veranstnr;
+        $result->veranstnr = $coursedata->veranstnr;
         $result->semester = 1;
-        $result->semestertxt = $data[$courseid]->semestertxt;
+        $result->semestertxt = $coursedata->semestertxt;
         $result->veranstaltungsart = 1;
         $result->titel = 1;
         $result->urlveranst = 1;
+        // Associate evasyskey with lsfkey for easier reverse lookup.
+        \behat_block_evasys_sync::$evalsfkeyassoc[$coursedata->veranstnr . " " . $coursedata->semestertxt] = $courseid;
     }
     return $result;
-}
-
-function clean_database() {
-    global $DB, $prefix;
-    $DB->execute("DELETE FROM {$prefix}_lsf_mock_data");
-}
-
-function set_course_to_veranstid ($id, $veranstnr, $semestertxt) {
-    global $DB, $prefix;
-    $id = intval($id);
-    $veranstnr = intval($veranstnr);
-    $DB->execute("INSERT INTO {$prefix}_lsf_mock_data VALUES ($id, $veranstnr, '$semestertxt')");
 }

@@ -22,8 +22,6 @@
 
 namespace block_evasys_sync;
 
-use gradereport_singleview\local\screen\select;
-
 defined('MOODLE_INTERNAL') || die();
 
 class evasys_api {
@@ -54,16 +52,16 @@ class evasys_api {
         $this->soapclient->SendInvitationToParticipants($surveyid);
     }
 
-    public function insert_participants ($personlist, $evasyscourse) {
+    public function insert_participants($personlist, $evasyscourse) {
         $soapresult = $this->soapclient->InsertParticipants($personlist, $evasyscourse, 'PUBLIC', false);
         return $soapresult;
     }
 
-    public function create_passwords ($evasysid, $pwcount) {
+    public function create_passwords($evasysid, $pwcount) {
         $this->soapclient->GetPswdsBySurvey($evasysid, $pwcount, 1, true, false);
     }
 
-    public function insert_close_task ($task) {
+    public function insert_close_task($task) {
         return $this->soapclient->InsertCloseTask($task);
     }
 
@@ -71,7 +69,7 @@ class evasys_api {
         return $this->soapclient->CloseSurvey($surveyid);
     }
 
-    public function get_form($formid ) {
+    public function get_form($formid) {
         $soapresult = $this->soapclient->GetForm($formid, 'INTERNAL', false);
         return $soapresult;
     }
@@ -98,33 +96,8 @@ class evasys_api {
 
 class evasys_api_testable extends evasys_api {
     private static $instance;
-    private static $prefix = "behaterino";
 
     private function __construct() {
-        global $DB;
-        $prefix = self::$prefix;
-        // Store data in tables, so it's preserved over multiple site calls.
-        $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_courses (identifier VARCHAR (50) PRIMARY KEY,
-                                                                                    title VARCHAR(50),
-                                                                                    studcount INTEGER)");
-        $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_surveys (id SERIAL PRIMARY KEY,
-                                                                                    title VARCHAR(20),
-                                                                                    formid INTEGER,
-                                                                                    is_open BOOLEAN,
-                                                                                    form_count INTEGER,
-                                                                                    pswd_count INTEGER,
-                                                                                    related_course_identifier VARCHAR(50))");
-        $DB->execute("CREATE TABLE IF NOT EXISTS {$prefix}_evasys_mock_forms (frmid INTEGER PRIMARY KEY,
-                                                                                    formname VARCHAR(50),
-                                                                                    formtitle VARCHAR(50))");
-    }
-
-    public function tear_down () {
-        global $DB;
-        $prefix = self::$prefix;
-        $DB->execute("DROP TABLE IF EXISTS {$prefix}_evasys_mock_courses");
-        $DB->execute("DROP TABLE IF EXISTS {$prefix}_evasys_mock_surveys");
-        $DB->execute("DROP TABLE IF EXISTS {$prefix}_evasys_mock_forms");
     }
 
     public static function get_instance() {
@@ -132,12 +105,6 @@ class evasys_api_testable extends evasys_api {
             self::$instance = new evasys_api_testable();
         }
         return self::$instance;
-    }
-
-    public function set_course($identifier, $title, $studcount) {
-        global $DB;
-        $prefix = self::$prefix;
-        $DB->execute("INSERT INTO {$prefix}_evasys_mock_courses VALUES ('$identifier', '$title', $studcount)");
     }
 
     /* Format: (var dump of SINGLE! survey evasys course)
@@ -254,46 +221,56 @@ class evasys_api_testable extends evasys_api {
                           public 'm_oPeriod' =>
                             object(stdClass)[410]
     */
+
     public function get_course($evasyskennung) {
         // Get data into the structure that would have been returned by the evasys-api SOAP.
         if (!$evasyskennung) {
             throw new \SoapFault(101, "Testerror");
         }
-        if (is_null($evasyskennung)) {
+        // If the lsf-course is invalid, it will return null on the details. This will result in the $evasyskennung
+        // being set to null . " " . null or " " so we need to check for " " here.
+        if (is_null($evasyskennung) or $evasyskennung == " ") {
             $courseclass = new \stdClass();
             $courseclass->m_nCourseId = 'Unknown';
             $courseclass->m_sCourseTitle = 'Unknown';
             return $courseclass;
         }
-        global $DB;
-        $prefix = self::$prefix;
-        $fullcoursedata = $DB->get_records_sql("SELECT * FROM {$prefix}_evasys_mock_courses WHERE identifier = '$evasyskennung'");
-        if (!isset($fullcoursedata[$evasyskennung])) {
+
+        global $COURSE;
+        $courseid = $COURSE->id;
+        $lsfid = \behat_block_evasys_sync::$evalsfkeyassoc[$evasyskennung];
+        $fullcoursedata = \behat_block_evasys_sync::get_coursedata_by_courseid($courseid)->evacourses;
+
+        // At the moment this check could be removed, since all cases of invalid links are treated the same,
+        // so having a working lsf course with a non working evasys course does not get tested.
+        // This check is here if anyone ever wants to output the debug details of where the conn fails and test that.
+        if (!isset($fullcoursedata[$lsfid]) or !$fullcoursedata[$lsfid]->valid) {
             $courseclass = new \stdClass();
             $courseclass->m_nCourseId = 'Unknown';
             $courseclass->m_sCourseTitle = 'Unknown';
             return $courseclass;
         }
-        $coursedata = $fullcoursedata[$evasyskennung];
+        $coursedata = $fullcoursedata[$lsfid];
+
         $courseclass = new \stdClass();
         $courseclass->m_nCourseId = 1;
         $courseclass->m_sCourseTitle = $coursedata->title;
-        $courseclass->m_Pub_CourseId = intval($coursedata->identifier);
-        $courseclass->m_nCountStud = intval($coursedata->studcount);
+        $courseclass->m_Pub_CourseId = intval($coursedata->veranstnr);
+        $courseclass->m_nCountStud = intval($coursedata->studentcount);
         $courseclass->m_aoParticipants = new \stdClass();
         $courseclass->m_aoParticipants->Persons = array();
-        for ($i = 0; $i < $coursedata->studcount; $i++) {
+        for ($i = 0; $i < $coursedata->studentcount; $i++) {
             array_push($courseclass->m_aoParticipants->Persons, "I'm a person");
         }
         $surveyholder = new \stdClass();
-        $surveydata = $DB->get_records_sql("SELECT * FROM {$prefix}_evasys_mock_surveys WHERE related_course_identifier = '$evasyskennung'");
+        $surveydata = $coursedata->surveys;
         if (count($surveydata) == 1) {
             // If it's just one survey it's an object.
             $surveys = new \stdClass();
             foreach ($surveydata as $singlesurveydata) {
-                $surveys->m_nSurveyId = intval($singlesurveydata->id);
+                $surveys->m_nSurveyId = intval($singlesurveydata->num);
                 $surveys->m_nState = 0;
-                $surveys->m_sTitle = $singlesurveydata->title;
+                $surveys->m_sTitle = "Survey" . $singlesurveydata->num;
                 $surveys->m_nFrmid = intval($singlesurveydata->formid);
                 $surveys->m_nOpenState = $singlesurveydata->is_open == 't' ? 1 : 0;
                 $surveys->m_nFormCount = intval($singlesurveydata->form_count);
@@ -304,13 +281,13 @@ class evasys_api_testable extends evasys_api {
             $surveys = array();
             foreach ($surveydata as $singlesurveydata) {
                 $survey = new \stdClass();
-                $survey->m_nSurveyId = $singlesurveydata->id;
+                $survey->m_nSurveyId = intval($singlesurveydata->num);
                 $survey->m_nState = 0;
-                $survey->m_sTitle = $singlesurveydata->title;
-                $survey->m_nFrmid = $singlesurveydata->formid;
+                $survey->m_sTitle = "Survey" . $singlesurveydata->num;
+                $survey->m_nFrmid = intval($singlesurveydata->formid);
                 $survey->m_nOpenState = $singlesurveydata->is_open == 't' ? 1 : 0;
-                $survey->m_nFormCount = $singlesurveydata->form_count;
-                $survey->m_nPswdCount = $singlesurveydata->pswd_count;
+                $survey->m_nFormCount = intval($singlesurveydata->form_count);
+                $survey->m_nPswdCount = intval($singlesurveydata->pswd_count);
                 array_push($surveys, $survey);
             }
         }
@@ -321,41 +298,19 @@ class evasys_api_testable extends evasys_api {
         return $courseclass;
     }
 
-    public function clear_courses() {
-        global $DB;
-        $prefix = self::$prefix;
-        print("DELETE FROM {$prefix}_evasys_mock_courses");
-        $DB->execute("DELETE FROM {$prefix}_evasys_mock_courses");
-    }
-
-    public function add_survey ($evasysidentifier, $id, $title, $formid, $open, $formcount, $pswdcount) {
-        global $DB;
-        $prefix = self::$prefix;
-        $opensql = $open ? 't' : 'f';
-        $DB->execute("INSERT INTO {$prefix}_evasys_mock_surveys VALUES (DEFAULT, '$title', $formid, '$opensql',
-                                                    $formcount, $pswdcount, '$evasysidentifier')");
-    }
-
-    public function clear_surveys() {
-        global $DB;
-        $prefix = self::$prefix;
-        $DB->execute("DELETE FROM {$prefix}_evasys_mock_surveys");
-    }
-
-
     public function send_invitation_to_participants_of_survey($surveyid) {
         return true;
     }
 
-    public function insert_participants ($personlist, $evasyscourse) {
+    public function insert_participants($personlist, $evasyscourse) {
         return true;
     }
 
-    public function create_passwords ($evasysid, $pwcount) {
+    public function create_passwords($evasysid, $pwcount) {
         return true;
     }
 
-    public function insert_close_task ($task) {
+    public function insert_close_task($task) {
         return true;
     }
 
@@ -364,27 +319,11 @@ class evasys_api_testable extends evasys_api {
     }
 
 
-    public function get_form($formid ) {
-        global $DB;
-        $prefix = self::$prefix;
-        $data = $DB->get_records_sql("SELECT * FROM {$prefix}_evasys_mock_forms WHERE frmid = $formid")[$formid];
+    public function get_form($formid) {
         $formclass = new \stdClass();
-        $formclass->FormId = $data->frmid;
-        $formclass->FormName = $data->formname;
-        $formclass->FormTitle = $data->formtitle;
+        $formclass->FormId = 1;
+        $formclass->FormName = "A Form";
+        $formclass->FormTitle = "A form title";
         return $formclass;
-    }
-
-
-    public function set_form($frmid, $formname, $formtitle) {
-        global $DB;
-        $prefix = self::$prefix;
-        $DB->execute("INSERT INTO {$prefix}_evasys_mock_forms VALUES ($frmid, '$formname', '$formtitle')");
-    }
-
-    public function clear_forms() {
-        global $DB;
-        $prefix = self::$prefix;
-        $DB->execute("DELETE FROM {$prefix}_evasys_mock_forms");
     }
 }

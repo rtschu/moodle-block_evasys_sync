@@ -23,11 +23,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once(__DIR__ . '/../../../../vendor/behat/behat/src/Behat/Behat/Context/Context.php');
+require_once(__DIR__ . '/../../../../vendor/behat/mink-extension/src/Behat/MinkExtension/Context/MinkAwareContext.php');
+require_once(__DIR__ . '/../../../../vendor/behat/mink-extension/src/Behat/MinkExtension/Context/RawMinkContext.php');
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 require_once(__DIR__. '/SelectorNotDisabledException.php');
 require_once(__DIR__. '/SubmitButtonDisabledException.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
 use behat_block_evasys_sync\SelectorNotDisabledException;
 use behat_block_evasys_sync\SubmitButtonDisabledException;
 
@@ -43,35 +45,12 @@ class behat_block_evasys_sync extends behat_base {
 
     private $evasysapi;
     private $generator;
-    public const ERRORSAVEPATH = "/var/www/public/moodle38/errorbackend.html";
+    public static $coursedata = array();
+    public static $evalsfkeyassoc = array();
+    public const ERRORSAVEPATH = "/var/www/public/moodle/errorbackend.html";
 
     /**
-     * @BeforeSuite
-     */
-
-    public static function prepare () {
-    }
-
-    /**
-     * @BeforeScenario
-     */
-    public static function prepare_database() {
-        \block_evasys_sync\clean_database();
-    }
-
-    /**
-     * @AfterSuite
-     */
-
-    public static function cleandb () {
-        \block_evasys_sync\tear_down();
-        \block_evasys_sync\evasys_api_testable::get_instance()->tear_down();
-    }
-
-    /**
-     * Take screenshot when step fails.
-     * Works only with Selenium2Driver.
-     * This little function makes it possible to see what behat is executing.
+     * Store Page content on failure
      *
      * @AfterStep
      */
@@ -86,94 +65,174 @@ class behat_block_evasys_sync extends behat_base {
     }
 
     public function __construct() {
-        // The set_up call belongs into prepare. However prepare has no access to the $DB variable as its executed BEFORE
-        // the config is included. Therefore it's in the constructor.
+        // The required classes have a "moodle internal" check. If they are loaded before the Scenario, this will not be set.
         require_once(__DIR__ . "/../../classes/lsf_api_mock_testable.php");
-        \block_evasys_sync\set_up();
         require_once(__DIR__ . '/../../classes/evasys_api.php');
         $this->evasysapi = \block_evasys_sync\evasys_api_testable::get_instance();
         $this->generator = new \behat_data_generators();
     }
 
-    private function get_courseid_by_shortname($shortname) {
+    public static function &get_coursedata_by_shortname($shortname) {
+        $courseid = self::get_courseid_by_shortname($shortname);
+        $coursedata = &self::get_coursedata_by_courseid($courseid);
+        return $coursedata;
+    }
+
+    public static function &get_coursedata_by_courseid($courseid) {
+        if (!array_key_exists($courseid, self::$coursedata)) {
+            $jsondata = get_course($courseid)->summary;
+            $localcoursedata = json_decode($jsondata);
+            if(!is_object($localcoursedata)) {
+                $localcoursedata = new \stdClass(); // If there is no data initialize a data object.
+            }
+            self::$coursedata[$courseid] = $localcoursedata;
+
+        }
+        return self::$coursedata[$courseid];
+    }
+
+    public static function write_coursedata_to_persistent_storage() {
+        global $DB;
+        foreach (self::$coursedata as $courseid => $courseinfo) {
+            $jsondata = json_encode($courseinfo);
+            $DB->execute("UPDATE {course} SET summary=? WHERE id=?", array($jsondata, $courseid));
+        }
+    }
+
+    private static function get_courseid_by_shortname($shortname) {
         global $DB;
         return $DB->get_field("course", "id", array("shortname" => $shortname));
     }
 
-    // Evasys setters.
-
-    // idnumber = lsfid -> (semestertxt, veranstnr) = evasyskennung -> EvaSys Daten
-    /**
-     * @Given The following Evasys relations exist:
-     */
-    public function the_following_evasys_relations_exist(TableNode $table) {
-        $hash = $table->getHash();
-        foreach ($hash as $row) {
-            $this->the_course_has_idnumber($row['shortname'], $row['idnumber']);
-            $this->the_lsfcourse_with_id_has_semestertxt_and_veranstnr($row['idnumber'], $row['semestertxt'], $row['veranstnr']);
+    private function add_lsf_evasys_course($moodlecourse, $valid, $veranstnr = null, $semestertxt = null, $studentcount = null,
+                                            $title = null, $surveycount = null, $surveystatus = null) {
+        if ($surveycount and $surveycount < 2 and $surveystatus == "mixed") {
+            throw new \Exception("Impossible to satisfy parameters (mixed surveystatus but just one survey)");
         }
+
+        $lsfevasyscourse = new \stdClass();
+        $surveys = array();
+
+        for ($i = 0; $i < $surveycount; $i++) {
+            $survey = new \stdClass();
+            $survey->num = $i;
+            $survey->formid = 1;
+            $survey->is_open = ($surveystatus == "open" or ($surveystatus == "mixed" and $i == 0)) ? "t" : "f";
+            $survey->form_count = 20;
+            $survey->pswd_count = 200;
+            array_push($surveys, $survey);
+        }
+
+        $lsfevasyscourse->valid = $valid;
+        $lsfevasyscourse->veranstnr = $veranstnr;
+        $lsfevasyscourse->semestertxt = $semestertxt;
+        $lsfevasyscourse->studentcount = $studentcount;
+        $lsfevasyscourse->title = $title;
+        $lsfevasyscourse->surveys = $surveys;
+
+        $coursedata = &self::get_coursedata_by_shortname($moodlecourse);
+        if (!property_exists($coursedata, "evacourses")) {
+            $coursedata->evacourses = array();
+        }
+        $position = count($coursedata->evacourses);
+        array_push($coursedata->evacourses, $lsfevasyscourse);
+        return $position;
     }
 
     /**
-     * @Given /the following evasys courses exist:/
+     * @Given I load the evasys block
      */
-    public function the_following_evasys_courses_exist(TableNode $table) {
-        $evasysapi = $this->evasysapi;
-        $evasysapi->clear_courses();
-        $hash = $table->getHash();
-        foreach ($hash as $row) {
-            $evasysapi->set_course($row['evasysid'], $row['title'], $row['studentcount']);
-        }
+    public function I_load_the_evasys_block () {
+        self::write_coursedata_to_persistent_storage();
+        $this->execute('behat_general::i_click_on', ["Show status of surveys", 'button']);
     }
 
     /**
-     * @Given The following surveys exist:
+     * @Given /^there are ([0-9]*) (open|closed|mixed) Evasyscourses mapped to course with shortname ([^"]*)$/
      */
-    public function the_following_surveys_exist(TableNode $table) {
-        $evasysapi = $this->evasysapi;
-        $evasysapi->clear_surveys();
-        $hash = $table->getHash();
-        foreach ($hash as $row) {
-            $evasysapi->add_survey($row['course'], 1, $row['title'], $row['formid'], $row['open'], $row['completed'], 0);
+    public function there_are_evasyscourses_mapped_to_course_with_shortname($number, $state, $shortname) {
+        $count = intval($number);
+        $lsfids = array();
+        for ($i = 0; $i < $count; $i++) {
+            $surveystatus = $state == "mixed" ? ($i==0 ? "closed" : "open)") : $state; // If mixed first will be closed, rest open.
+            $lsfid = $this->add_lsf_evasys_course($shortname, true, $i, "WS 2017/18", 100,
+                "DynamicSurvey" . $i, 1, $surveystatus);
+            array_push($lsfids, $lsfid);
+        }
+
+        global $DB;
+        $courseid = self::get_courseid_by_shortname($shortname);
+        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
+        $persistent = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($pid, false);
+        if (!$persistent) {
+            $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
+        }
+        $magicstring = implode("#", $lsfids);
+        // If the mapping is empty, remove it.
+        if (empty($magicstring) && $persistent->get('id') != 0) {
+            $persistent->delete();
+        }
+        // Only save the mapping, if the mapping string is not empty.
+        if (!empty($magicstring)) {
+            $persistent->set('course', $courseid);
+            $persistent->set('evasyscourses', $magicstring);
+            $persistent->save();
         }
     }
 
-    /**
-     * @Given The following Forms exist:
-     */
-    public function the_following_forms_exist(TableNode $table) {
-        $hash = $table->getHash();
-        $evasysapi = $this->evasysapi;
-        $evasysapi->clear_forms();
-        foreach ($hash as $row) {
-            $evasysapi->set_form($row['id'], $row['name'], $row['title']);
-        }
-    }
-
-    // LSF setters
     /**
      * Sets a courses Idnumber
      *
      * @Given The course :coursename has idnumber :idnum
-     * @param int $courseid
-     * @param int $idnum
      */
     public function the_course_has_idnumber($name, $idnum) {
         global $DB;
         $DB->execute("UPDATE {course} SET idnumber=$idnum WHERE shortname='$name'");
     }
-
-    /** Sets semestertxt and veranstnr for a given lsfcourse
-     * @param $id
-     * @param $semestertxt
-     * @param $veranstnr
-     * @Given The lsfcourse with id :id has semestertxt :semestertxt and veranstnr :veranstnr
+    /**
+     * @Given only invalid mappings are present for course :shortname
      */
-
-    public function the_lsfcourse_with_id_has_semestertxt_and_veranstnr($id, $semestertxt, $veranstnr) {
-        \block_evasys_sync\set_course_to_veranstid($id, $veranstnr, $semestertxt);
+    public function only_invalid_mappings_are_present_for_course ($shortname) {
+        $courseids = "";
+        $courseids .= $this->add_lsf_evasys_course($shortname, false) . "#";
+        $courseids .= $this->add_lsf_evasys_course($shortname, false) . "#";
+        $courseids .= $this->add_lsf_evasys_course($shortname, false);
+        $id = $this->get_courseid_by_shortname($shortname);
+        $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
+        if (!$record) {
+            $record = new \block_evasys_sync\course_evasys_courses_allocation(0);
+        }
+        $record->set("course", $id);
+        $record->set("evasyscourses", $courseids);
+        $record->save();
     }
 
+    /**
+     * @Given the idnumber of course :shortname links to a :state Evasyscourse
+      */
+    public function the_idnumber_of_course_links_to_a_Evasyscourse($shortname, $state) {
+        // If the state is mixed, the course linked by the idnumber should be "open" because we know there is at least
+        // one "closed" course mapped.
+        $surveystatus = $state == "mixed" ? "open" : $state;
+        $lsfid = $this->add_lsf_evasys_course($shortname, true, 1, "SS 2018", 100,
+                                                "IdnumberSurvey", 1, $surveystatus);
+        $this->the_course_has_idnumber($shortname, $lsfid);
+    }
+
+    /**
+     * @Given the idnumber for course :course is invalid
+     */
+    public function the_idnumber_for_course_is_invalid($shortname) {
+        $courseid = $this->add_lsf_evasys_course($shortname, false);
+        $this->the_course_has_idnumber($shortname, $courseid);
+    }
+
+    /**
+     * @Given there is no idnumber mapped to course :shortname
+     */
+    public function there_is_no_idnumber_mapped($shortname) {
+        // nothing to be done. But sure reads better.
+    }
 
 
     // Categorymode manipulation
@@ -272,40 +331,6 @@ class behat_block_evasys_sync extends behat_base {
         $record->save();
     }
 
-    /**
-     * @Given only invalid mappings are present for course :shortname
-     */
-    public function only_invalid_mappings_are_present_for_course ($shortname) {
-        $id = $this->get_courseid_by_shortname($shortname);
-        $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
-        if (!$record) {
-            $record = new \block_evasys_sync\course_evasys_courses_allocation(0);
-        }
-        $record->set("course", $id);
-        $record->set("evasyscourses", "-99#-100#-101");
-        $record->save();
-    }
-
-    /**
-     * @Given /^the course with shortname ([^"]*) has the following lsfcourses mapped:$/
-     */
-    public function the_course_with_shortname_has_the_following_lsfcourses_mapped ($shortname, TableNode $table) {
-        $hash = $table->getHash();
-        $lsfcourses = array();
-        foreach ($hash as $row) {
-            array_push($lsfcourses, $row['lsfcourse']);
-            $this->the_lsfcourse_with_id_has_semestertxt_and_veranstnr($row['lsfcourse'], $row['semestertxt'], $row['veranstnr']);
-        }
-
-        $id = $this->get_courseid_by_shortname($shortname);
-        $record = \block_evasys_sync\course_evasys_courses_allocation::get_record_by_course($id, false);
-        if (!$record) {
-            $record = new \block_evasys_sync\course_evasys_courses_allocation(0);
-        }
-        $record->set("course", $id);
-        $record->set("evasyscourses", implode("#", $lsfcourses));
-        $record->save();
-    }
 
     /**
      * @Given no courses are mapped to course :shortname
@@ -351,60 +376,10 @@ class behat_block_evasys_sync extends behat_base {
     }
 
     /**
-     * @Given the idnumber for course :course is invalid
-     */
-    public function the_idnumber_for_course_is_invalid($shortname) {
-        $this->the_course_has_idnumber($shortname, -99);
-    }
-
-    /**
-     * @Given there is no idnumber mapped to course :shortname
-     */
-    public function there_is_no_idnumber_mapped($shortname) {
-        // nothing to be done. But sure reads better.
-    }
-
-    /**
-     * @Given course :arg1 has the following courses mapped:
-     */
-    public function course_has_the_following_courses_mapped ($shortname, TableNode $node) {
-        global $DB;
-        $courseid = $DB->get_field('course', 'id', array('shortname' => $shortname));
-        $pid = $DB->get_field('block_evasys_sync_courses', 'id', array('course' => $courseid));
-        if (!$pid) {
-            $persistent = new \block_evasys_sync\course_evasys_courses_allocation(0);
-        } else {
-            $persistent = new \block_evasys_sync\course_evasys_courses_allocation($pid);
-        }
-        $hash = $node->getHash();
-        $mapping = array();
-        foreach ($hash as $row) {
-            array_push($mapping, $row[courseid]);
-        }
-        $magicstring = implode("#", $mapping);
-        // If the mapping is empty, remove it.
-        if (empty($magicstring) && $persistent->get('id') != 0) {
-            $persistent->delete();
-        }
-        // Only save the mapping, if the mapping string is not empty.
-        if (!empty($magicstring)) {
-            $persistent->set('course', $courseid);
-            $persistent->set('evasyscourses', $magicstring);
-            $persistent->save();
-        }
-    }
-
-    /**
      * @Then I should see a button named :name
      */
     public function i_should_see_a_button_named($name) {
         $this->find_button($name);
-    }
-
-    private function get_max_idnumber () {
-        global $DB;
-        $max = $DB->get_records_sql("SELECT 'max' AS dummy, max(idnumber) AS max FROM {course}")['max']->max;
-        return $max;
     }
 
     /**
