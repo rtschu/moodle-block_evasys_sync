@@ -7,7 +7,6 @@ CONDENSE_TESTS = True
 category = 1
 coursename = "C1"
 tags = "@block @block_evasys_sync @block_evasys_sync_fulltest"
-lsfcourseid = 0
 # options
 OPTIONS = {
     "automode": ["manual", "auto"],
@@ -18,13 +17,6 @@ OPTIONS = {
     "internalstate": ["notopened", "opened", "closed", "manual", "none"],
     "actualstate": ["open", "closed", "mixed"]
 }
-
-### GLOBAL VARIABLES ###
-# Section for non-intuitive global variables
-# - lsfcourseid:
-#   This variable gets reset to 0 everytime a new scenario is building. Everytime a scenario is added via
-#   declaring a valid idnumber (+1) a single link course (+1) or mutiple linked courses(+2) it gets incremented.
-#   after these parameters have been processed, the text to mock *idnumber* evasyscourses will be added.
 
 
 def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
@@ -103,16 +95,16 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
 >>>>>>> cc0cc54... corrected mistake
 
 
-def get_postcondensing_checks():
+def get_postcondensing_checks(idnumber_state, mapped_state):
     """
     :return: checks for a scenario that should NOT be considered in the condense step
     """
     postchecks = ""
     # Check that surveys are actually shown.
     # We don't want to include this in the sorting, because it only tests a for loop, but multiplies the tests by 2.
-    global lsfcourseid
-    for i in range(0, lsfcourseid):
-        postchecks += "And I should see \"Name: Evatestcourse " + str(i) + "\"\n"
+    postchecks += postcheck_idnumber(idnumber_state)
+    postchecks += postcheck_mappedstate(mapped_state)
+
     postchecks = postchecks.replace("\n", "\n    ")
     return postchecks
 
@@ -166,8 +158,6 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     This constructs the actual scenario by building all courses, states etc.
     :return: string the combined enviroment specifiing string for a scenario
     """
-    global lsfcourseid
-    lsfcourseid = 0
     behat_scenario = manual_auto_mode[mode].replace("{{category}}", str(category)) + "\n"
     behat_scenario += standardtimeMode[standardtime].replace("{{category}}", str(category)) + "\n"
     behat_scenario += studentsState[students_state] + "\n"
@@ -179,7 +169,8 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     behat_scenario += "And I turn editing mode off\n"
     behat_scenario = behat_scenario.replace("\n", "\n    ")
 
-    if actual_state == "mixed" and lsfcourseid < 2:
+    if actual_state == "mixed" and not ((idnumber_state == "one" and (mapped_state == "multi" or mapped_state == "one"))
+                                        or mapped_state == "multi"):
         # a mixed state is impossible with less than 2 lsfscourseids, so we skip this.
         return False
     return behat_scenario
@@ -334,7 +325,7 @@ def main():
             if not scen_text:
                 print("Warning impossible scenario!!!")
                 continue
-            postcheck = get_postcondensing_checks()
+            postcheck = get_postcondensing_checks(idnumber_state, mapped_state)
             output += make_scenario(desc, scen_text, check + postcheck)
 
     output = output.replace("\n    \n", "\n\n")  # remove whitespaces on empty lines

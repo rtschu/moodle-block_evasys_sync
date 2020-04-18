@@ -1,4 +1,4 @@
-from generator import coursename, lsfcourseid
+from generator import coursename
 import random
 # Background
 background = '  Background:\n\
@@ -121,7 +121,6 @@ selector_disabled_checks = {
 # There are only methods when using a dict (like above) is either unnecessarry complicated
 # needs preparation (from a state like "multi" to an array of surveys)
 # or something has to be added programatically (like coursenames or ids)
-lsfcourseid = 0
 
 
 def idnumberState(state, openstate):
@@ -129,7 +128,6 @@ def idnumberState(state, openstate):
     :param state: idnumber state (none/invalid/one)
     :return: String either creating none, an invalid or one evasys-course - moodle-course link via idnumber
     """
-    global lsfcourseid
     if state == "none":
         return "And there is no idnumber mapped to course " + coursename + "\n"
     elif state == "invalid":
@@ -144,7 +142,6 @@ def mappedState(state, openstate):
     :param state: mapped state (none/invalid/one/multi)
     :return: a string creating none, only invalid, one or multiple mappings of a moodle-course to evasys-courses
     """
-    global lsfcourseid
     if state == "none":
         return "And no courses are mapped to course " + coursename + "\n"
     elif state == "invalid":
@@ -197,6 +194,26 @@ def checks_internalstate(internal_state, actual_state, student_state, no_valid_m
         if not (student_state == "none" or student_state == "onlytutors") and not no_valid_mappings:
             checks += "And the submitbutton should be enabled\n"
     return checks
+
+
+def postcheck_idnumber(idnumber_state):
+    if idnumber_state == "one":
+        return 'And I should see "IdnumberSurvey"\n'
+    else:
+        return 'And I should not see "IdnumberSurvey"\n'
+
+
+def postcheck_mappedstate(mapped_state):
+    postchecks = ""
+    if mapped_state == "one":
+        postchecks += 'And I should see "DynamicSurvey0"\n'
+        postchecks += 'And I should not see "DynamicSurvey1"\n'
+    elif mapped_state == "mulit":
+        postchecks += 'And I should see "DynamicSurvey0"\n'
+        postchecks += 'And I should see "DynamicSurvey1"\n'
+    else:
+        postchecks += 'And I should not see "DynamicSurvey"\n'
+    return postchecks
 
 
 def description_modeconsistency(mode, internal_state, actual_state):
