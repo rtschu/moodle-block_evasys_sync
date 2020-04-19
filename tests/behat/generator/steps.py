@@ -45,17 +45,17 @@ mapped_descriptions = {
 
 # Environment configuration
 
-manual_auto_mode = {
+step_manual_auto_mode = {
     "manual": "Given category {{category}} is in manual mode",
     "auto": "Given category {{category}} is in auto mode"
 }
 
-standardtimeMode = {
+step_standardtime_mode = {
     0: "And category {{category}} is not in standardtime mode",
     1: "And category {{category}} is in standardtime mode with dates 1581043586 1582043586"
 }
 
-internalState = {
+step_internal_state = {
     "notopened": "And the internal state of course {{course}} is \"notopened\"",
     "opened": "And the internal state of course {{course}} is \"opened\"",
     "closed": "And the internal state of course {{course}} is \"closed\"",
@@ -63,7 +63,7 @@ internalState = {
     "none": "And there is no internal record of course {{course}}"
 }
 
-studentsState = {
+step_students_state = {
     "none": "And no students enrolled in course " + coursename,
     "onlytutors": "And only tutors enrolled in course " + coursename,
     "multi": "And students enrolled in course " + coursename
@@ -123,7 +123,7 @@ selector_disabled_checks = {
 # or something has to be added programatically (like coursenames or ids)
 
 
-def idnumberState(state, openstate):
+def step_idnumberstate(state, openstate):
     """
     :param state: idnumber state (none/invalid/one)
     :return: String either creating none, an invalid or one evasys-course - moodle-course link via idnumber
@@ -137,7 +137,7 @@ def idnumberState(state, openstate):
         return x
 
 
-def mappedState(state, openstate):
+def step_mappedstate(state, openstate):
     """
     :param state: mapped state (none/invalid/one/multi)
     :return: a string creating none, only invalid, one or multiple mappings of a moodle-course to evasys-courses

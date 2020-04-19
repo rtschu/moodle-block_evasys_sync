@@ -158,12 +158,12 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     This constructs the actual scenario by building all courses, states etc.
     :return: string the combined enviroment specifiing string for a scenario
     """
-    behat_scenario = manual_auto_mode[mode].replace("{{category}}", str(category)) + "\n"
-    behat_scenario += standardtimeMode[standardtime].replace("{{category}}", str(category)) + "\n"
-    behat_scenario += studentsState[students_state] + "\n"
-    behat_scenario += idnumberState(idnumber_state, actual_state)
-    behat_scenario += mappedState(mapped_state, actual_state)
-    behat_scenario += internalState[internal_state].replace("{{course}}", str(coursename)) + "\n"
+    behat_scenario = step_manual_auto_mode[mode].replace("{{category}}", str(category)) + "\n"
+    behat_scenario += step_standardtime_mode[standardtime].replace("{{category}}", str(category)) + "\n"
+    behat_scenario += step_students_state[students_state] + "\n"
+    behat_scenario += step_idnumberstate(idnumber_state, actual_state)
+    behat_scenario += step_mappedstate(mapped_state, actual_state)
+    behat_scenario += step_internal_state[internal_state].replace("{{course}}", str(coursename)) + "\n"
     behat_scenario += "And I turn editing mode on\n"
     behat_scenario += "And I add the \"EvaSys Sync\" block\n"
     behat_scenario += "And I turn editing mode off\n"
