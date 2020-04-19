@@ -45,7 +45,6 @@ function get_course_by_veranstid ($courseid) {
     $fulldata = \behat_block_evasys_sync::get_coursedata_by_courseid($moodleid);
     $coursedata = $fulldata->evacourses[$courseid];
 
-
     $result = new \stdClass();
     if (!$coursedata->valid) {
         $result->veranstid = null;

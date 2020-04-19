@@ -27,7 +27,7 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
     checks = ""
     # If there are no mapped courses the Block not offer the option to "Show surveys"
     if (idnumber_state == "none") and (mapped_state == "none"):
-        return "Then I should see \"Change mapping\"\n    And I should not see \"Name:\"\n"
+        return "Then I should see \"Change mapping\"\n    And I should not see \"Name:\"\n    "
 
     # In all other cases (even if there are only invalid entries) we need to click the button to start code execution
     checks += "And I load the evasys block\n"

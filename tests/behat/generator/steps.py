@@ -6,7 +6,7 @@ background = '  Background:\n\
       | username | firstname | lastname | email |\n\
       | teacher1 | Teacher | 1 | teacher1@example.com |\n\
       | student1 | Student | 1 | student1@example.com |\n\
-      | tutor1   | Tutor   | 1 | tutor1@example.com | \n\
+      | tutor1   | Tutor   | 1 | tutor1@example.com |\n\
     And the following "courses" exist:\n\
       | fullname | shortname | category |\n\
       | Course 1 | C1 | 0 |\n\

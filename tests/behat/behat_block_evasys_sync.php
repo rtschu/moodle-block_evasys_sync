@@ -82,7 +82,7 @@ class behat_block_evasys_sync extends behat_base {
         if (!array_key_exists($courseid, self::$coursedata)) {
             $jsondata = get_course($courseid)->summary;
             $localcoursedata = json_decode($jsondata);
-            if(!is_object($localcoursedata)) {
+            if (!is_object($localcoursedata)) {
                 $localcoursedata = new \stdClass(); // If there is no data initialize a data object.
             }
             self::$coursedata[$courseid] = $localcoursedata;
@@ -142,7 +142,7 @@ class behat_block_evasys_sync extends behat_base {
     /**
      * @Given I load the evasys block
      */
-    public function I_load_the_evasys_block () {
+    public function i_load_the_evasys_block () {
         self::write_coursedata_to_persistent_storage();
         $this->execute('behat_general::i_click_on', ["Show status of surveys", 'button']);
     }
@@ -154,7 +154,7 @@ class behat_block_evasys_sync extends behat_base {
         $count = intval($number);
         $lsfids = array();
         for ($i = 0; $i < $count; $i++) {
-            $surveystatus = $state == "mixed" ? ($i==0 ? "closed" : "open)") : $state; // If mixed first will be closed, rest open.
+            $surveystatus = $state == "mixed" ? ($i == 0 ? "closed" : "open)") : $state; // If mixed first will be closed, rest open.
             $lsfid = $this->add_lsf_evasys_course($shortname, true, $i, "WS 2017/18", 100,
                 "DynamicSurvey" . $i, 1, $surveystatus);
             array_push($lsfids, $lsfid);
@@ -209,8 +209,8 @@ class behat_block_evasys_sync extends behat_base {
 
     /**
      * @Given the idnumber of course :shortname links to a :state Evasyscourse
-      */
-    public function the_idnumber_of_course_links_to_a_Evasyscourse($shortname, $state) {
+     */
+    public function the_idnumber_of_course_links_to_a_evasyscourse($shortname, $state) {
         // If the state is mixed, the course linked by the idnumber should be "open" because we know there is at least
         // one "closed" course mapped.
         $surveystatus = $state == "mixed" ? "open" : $state;
