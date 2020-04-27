@@ -39,11 +39,7 @@ $string['change_mapping'] = "Change mapping";
 $string['semester'] = "Semester";
 $string['direct_invite_checkbox'] = 'Start evaluation immediately';
 $string['reactivate_invite'] = 'Invite students again';
-$string['optional'] = '(optional)';
-$string['standard_period'] = "Standard evaluationperiod:";
-$string['different_period'] = "Exceptional evaluationperiod:";
-$string['activate_nonstandard_time'] = "Alter evaluationperiod for special courses";
-$string['time_set'] = "Standard evaluationperiod set";
+$string['warning_inconsistent_states'] = "There are some open surveys, but all surveys should be closed.";
 
 // Multi allocation strings.
 
@@ -62,7 +58,7 @@ $string['startevaluationnow'] = 'Start evaluation now';
 $string['requestagain'] = 'Request or invite again';
 $string['title_send_success'] = "Evaluation started";
 $string['content_send_success'] = '{$a->sent} of {$a->total} emails have been send. <br />'.
-                                  '{$a->queued} jobs have been queued';
+    '{$a->queued} jobs have been queued';
 $string['send_error'] = "There was an error while trying to send emails. Please contact Your local support, or send the Emails manually via EvaSys";
 
 // Form strings.
@@ -101,31 +97,13 @@ $string['content_uptodate'] = "Your evaluation coordinator has already been inst
 $string['confirm_box'] = "OK";
 
 $string['direct_already'] = "You have already sent invitations to all students.".
-                            "No new invitations have been send";
+    "No new invitations have been send";
 
 $string['direct_title_info'] = "Invitation already complete";
 $string['title_send_rejected'] = "Invalid Date";
 $string['content_send_rejected'] = "One or more dates have been set to a date in the past. <br />" .
-    "This is not allowed. Some evaluation periods may have been altered.<br />";
-$string['content_confirm_reactivate_automated_closed'] = 'Are you sure you want to change the start date?';
-$string['content_confirm_reactivate_automated_open'] = 'Are you sure you want to restart the evaluation?';
-$string['content_confirm_reactivate_manual_closed'] = 'Are you sure you want to restart the evaluation? ' .
-    'Submitting the form will cause the coordinator to be notified of the change, who is then able to restart the evaluation.';
-$string['content_confirm_reactivate_manual_open'] = 'Are you sure you want to change the start date? ' .
-    'Submitting the form will cause the coordinator to be notified of the change, but there is no guarantee ' .
-    'that the dates will be modified in time.';
-
-// Alert Coordinator mail.
-$string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
-$string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
-    'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
-    "\t".'Start: {$a->start}' . "\n" .
-    "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
-    "\t".'EvaSys-IDs:' . "\n" .
-    '{$a->evasyscourses}' . "\n" .
-    'Mit freundlichen Grüßen' . "\n" .
-    'Ihr Learnweb-Support';
+    "This is not allowed. Some evaluationperiods may have been altered.<br />";
+$string['content_confirm_reactivate'] = "Are you sure you want to reactivate the invite options? This will restart all surveys with at least one new participant";
 
 // New invite strings.
 $string['title_success'] = "Success";
@@ -137,10 +115,6 @@ $string['content_invalidend'] = "End is in the past";
 $string['content_start_after_end'] = "Start is after end";
 $string['title_wrong_mode'] = "Invalid operation";
 $string['content_wrong_mode'] = "This course is not in the requested mode!";
-
-// Sync date problems.
-$string['syncendinthepast'] = 'Participants were not synchronised: The requested end date has already passed.';
-$string['syncstartafterend'] = 'Participants were not synchronised: The start date must be before the end date.';
 
 // Survey status.
 $string['surveystatusopen'] = 'open';
@@ -166,11 +140,6 @@ $string['hd_user_cat'] = 'User-Category Allocation';
 $string['addcat'] = 'Add Category';
 $string['delete_confirm'] = 'Are you sure you want to delete the user for this course category?';
 $string['auto_mode'] = 'Automatic mode';
-$string['standard_time_mode'] = "Offer standard period of time";
-$string['activate_standard_time'] = "Use standard timeframe.";
-$string['edit_time'] = "Edit standard timeframe";
-$string['save_failure'] = "Error saving";
-$string['usetimecheckbox'] = "Use standard timeframe";
 
 // Settings - category table.
 $string['category_name'] = 'Course Category';
@@ -187,7 +156,6 @@ $string['invalidcourse'] = "Invalid course";
 $string['invalidsurvey'] = "Invalid survey";
 $string['invaliddate'] = "Invalid date";
 $string['invalidstate'] = "Invalid state code";
-$string['invalid_standard_time_mode'] = "Invalid information whether standard periods of time may be used.";
 
 
 // Privacy API.
@@ -223,8 +191,3 @@ $string['endondate'] = 'until';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationperiod has been set';
 $string['emailsentnotice'] = 'Evaluation has been requested';
-$string['warning_invalid_idnumber'] = "The hard linked evasys-course is invalid!";
-$string['warning_invalid_extra'] = "One of the dynamically mapped evasys-courses is invalid";
-$string['warning_not_all_closed'] = "There are some open surveys, but all surveys should be closed.";
-$string['warning_not_all_open'] = "There are some closed surveys, but all surveys should be open.";
-$string['warning_inconsistent_modes'] = "This evaluation was already started in another mode";

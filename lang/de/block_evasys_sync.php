@@ -19,7 +19,7 @@ $string['evasys_sync'] = 'EvaSys-Export';
 $string['evasys_sync:addinstance'] = 'EvaSys-Export-Block hinzufügen';
 $string['invitestudents'] = 'Evaluation beauftragen';
 $string['checkstatus'] = 'Status der Evaluationen anzeigen';
-$string['countparticipants'] = 'Anzahl Teilnehmer*innen: ';
+$string['countparticipants'] = 'Anzahl Teilnehmer: ';
 $string['surveystatus'] = 'Evaluationsstatus:';
 $string['finishedforms'] = 'Ausgefüllt:';
 $string['evacourseid'] = 'EvaSys-Kurs-ID:';
@@ -31,20 +31,15 @@ $string['nosurveys'] = 'Zur Zeit sind keine Evaluationen verfügbar.';
 $string['syncnotpossible'] = 'Auf Grund technischer Schwierigkeiten konnte die Teilnehmerliste nicht zu EvaSys exportiert werden. Bitte wenden Sie sich an den Support.';
 $string['syncsucessful'] = 'Sync zu EvaSys war erfolgreich.';
 $string['syncalreadyuptodate'] = 'Teilnehmerliste war bereits auf dem aktuellen Stand.';
-$string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer*innen, die evaluieren könnten.';
+$string['syncnostudents'] = 'Es gibt in diesem Kurs keine Teilnehmer, die evaluieren könnten.';
 $string['taskname'] = 'EvaSys-Umfragen öffnen und schließen';
 $string['begin'] = 'Beginn';
 $string['end'] = 'Ende';
 $string['direct_invite_checkbox'] = 'Evaluation sofort starten';
 $string['reactivate_invite'] = 'Einladung erneut durchführen';
-$string['change_mapping'] = "Weitere Veranstaltungen zuordnen";
+$string['warning_inconsistent_states'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
+$string['change_mapping'] = "Zugeordnete Veranstaltungen auswählen";
 $string['semester'] = "Semester";
-$string['optional'] = "(Optional)";
-$string['activate_nonstandard_time'] = "Evaluationszeitraum wegen Sonderveranstaltung ändern";
-$string['activate_standard_time'] = "Standardzeitraum verwenden";
-$string['standard_period'] = "Standard-Evaluationszeitraum:";
-$string['different_period'] = "Abweichender Evaluationszeitraum:";
-$string['time_set'] = "Standard-Evaluationszeitraum gesetzt";
 
 // Multi allocation strings.
 
@@ -63,11 +58,11 @@ $string['startevaluationnow'] = 'Evaluation sofort beginnen';
 $string['requestagain'] = 'Erneut einladen oder beauftragen';
 $string['title_send_success'] = "Evaluation erfolgreich gestartet";
 $string['content_send_success'] = 'Es wurden {$a->sent} von {$a->total} Einladungsmails versendet. <br />' .
-                                  '{$a->queued} Evaluationsperioden wurden festgelegt.';
+    '{$a->queued} Evaluationsperioden wurden festgelegt.';
 $string['title_send_failure'] = "Fehler beim Versand";
 $string['send_error'] = "Es gab einen Fehler beim automatischen Versenden, bitte kontaktieren Sie Ihren Support, oder benutzen Sie den manuellen Versand von EvaSys";
 $string['not_enough_dates'] = "Bitte geben Sie Daten für ALLE Umfragen an!";
-$string['content_nostudents'] = "Dieser Kurs enthält keine Teilnehmer*innen, die an der Evaluation teilnehmen könnten.";
+$string['content_nostudents'] = "Dieser Kurs enthält keine Teilnehmer, die an der Evaluation teilnehmen könnten.";
 $string['direct_already'] = "Sie haben die Evaluation bereits gestartet. <br />" .
     "Es wurden keine neuen Einladungen versendet";
 $string['direct_title_info'] = "Einladungen bereits versandt";
@@ -77,18 +72,6 @@ $string['content_send_rejected'] = "Ein Datum wurde in die Vergangenheit geände
 $string['title_send_invalid'] = "Fehlerhafter Zeitraum";
 $string['content_send_invalid'] = "Eine Evaluationsperiode beginnt nachdem sie endet! <br />" .
     "Alle anderen Evaluationsperioden wurden wie gewohnt geändert.";
-
-// Alert Coordinator mail.
-$string['alert_email_subject'] = 'Evaluationszeitraum gesetzt für {$a}';
-$string['alert_email_body'] = 'Sehr geehrte*r Evaluationskoordinator*in, ' . "\n" .
-    'Sie erhalten diese E-Mail da im Learnweb-Kurs "{$a->name}" der Evaluationszeitraum wie folgt festgesetzt wurde:' . "\n\n" .
-    "\t".'Start: {$a->start}' . "\n" .
-    "\t".'Ende:  {$a->end}' . "\n" .
-    "\t".'Verantwortliche*r: {$a->teacher}' . "\n" .
-    "\t".'EvaSys-IDs:' . "\n" .
-    '{$a->evasyscourses}' . "\n" .
-    'Mit freundlichen Grüßen' . "\n" .
-    'Ihr Learnweb-Support';
 
 // New invite strings.
 $string['title_success'] = "Erfolgreich";
@@ -101,11 +84,8 @@ $string['content_start_after_end'] = "Der Start ist nach dem Ende";
 $string['title_wrong_mode'] = "Unzulässige Operation";
 $string['content_wrong_mode'] = "Dieser Kurs ist nicht im angenommenen Modus. Bitte wenden Sie sich an das Support-Team.";
 
-// Sync date problems.
-$string['syncendinthepast'] = 'Teilnehmer*innen nicht übertragen: Das gewünschte Enddatum liegt in der Vergangenheit.';
-$string['syncstartafterend'] = 'Teilnehmer*innen nicht übertragen: Das Startdatum muss vor dem Enddatum liegen.';
-
 // Form strings.
+
 $string['startplaceholder'] = "Startdatum für die Evaluation";
 $string['endplaceholder'] = "Enddatum für die Evaluation";
 
@@ -116,24 +96,20 @@ $string['title_uptodate'] = "Evaluation bereits beauftragt";
 $string['title_failure']  = "Evaluation nicht beauftragt";
 
 $string['content_success'] = "Sie haben die Evaluation erfolgreich beantragt.<br />" .
-                             "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
-                             "Sie müssen nichts weiter tun, ".
-                             "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
+    "!!!DIE EVALUATION HAT NOCH NICHT BEGONNEN!!!<br />" .
+    "Sie müssen nichts weiter tun, ".
+    "Ihr*e Evaluationsbeauftragte*r wird nach den Richtlinien Ihres Fachbereichs weiter verfahren.";
 
 $string['content_uptodate'] = "Ihr*e Evaluationsbeauftragte*r hat bereist einen Auftrag zum Durchführen der Evaluation von Ihnen erhalten.<br />" .
-                              "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
+    "Für Fragen zum Status Ihrer Evaluation kontaktieren Sie bitte Ihre*n Evaluationsbeauftragte*n.";
 
 $string['content_failure'] = "Leider konnte die Evaluation nicht beauftragt werden.<br />" .
-                             "Bitte wenden Sie sich an den Support.";
+    "Bitte wenden Sie sich an den Support.";
 
 $string['confirm_box'] = "Verstanden";
-$string['content_confirm_reactivate_automated_closed'] = 'Sind Sie sicher, dass Sie die Evaluation erneut beginnen möchten?';
-$string['content_confirm_reactivate_automated_open'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten?';
-$string['content_confirm_reactivate_manual_closed'] = 'Sind Sie sicher, dass Sie die Evaluation erneut beginnen möchten? ' .
-    'Evaluationskoordinator*innen werden über die Änderung informiert und können die Evaluation anschließend neu starten.';
-$string['content_confirm_reactivate_manual_open'] = 'Sind Sie sicher, dass Sie die Startzeit ändern möchten? ' .
-    'Evaluationskoordinator*innen werden über die Änderung informiert und können die Evaluation anpassen, ' .
-    'aber es ist nicht sicher, dass dies rechtzeitig geschieht.';
+$string['content_confirm_reactivate'] = "Diese Option wird die Startzeit erneut freigeben. Eine erneutes Setzen der Startzeit wird " .
+    " alle Evaluationen neu anstoßen, für die mindestens ein*e neue*r Teilnehmer*in vorhanden ist. <br />" .
+    "Sind Sie sicher, dass sie die Startzeit freigeben möchten?";
 
 // Survey status.
 $string['surveystatusopen'] = 'offen';
@@ -159,10 +135,6 @@ $string['hd_user_cat'] = 'Benutzer-Kategorie Zuweisung';
 $string['addcat'] = 'Kategorie hinzufügen';
 $string['delete_confirm'] = 'Sind Sie sicher, dass der Nutzer für diese Kurskategorie gelöscht werden soll?';
 $string['auto_mode'] = 'Automatischer Modus';
-$string['standard_time_mode'] = "Standardzeitraum anbieten";
-$string['edit_time'] = "Standardzeitraum bearbeiten";
-$string['save_failure'] = "Fehler beim speichern";
-$string['usetimecheckbox'] = "Standardzeitraum verwenden";
 
 
 // Settings - category table.
@@ -180,7 +152,6 @@ $string['invalidcourse'] = 'Ungültiger Kurs';
 $string['invalidsurvey'] = "Ungültige Umfrage";
 $string['invaliddate'] = "Ungültiges Datum";
 $string['invalidstate'] = "Ungültiger Statuscode";
-$string['invalid_standard_time_mode'] = "Ungültige Angabe ob Standardzeiten vorhanden sind";
 
 // Privacy API.
 $string['privacy:metadata'] = 'Lade Studierende ein, an Erhebungen zur Qualität der Lehre mit EvaSys-Umfragen teilzunehmen.';
@@ -214,8 +185,3 @@ $string['endondate'] = 'bis';
 // Notices.
 $string['evalperiodsetnotice'] = 'Evaluationszeitraum gesetzt';
 $string['emailsentnotice'] = 'Evaluation beauftragt';
-$string['warning_invalid_idnumber'] = "Der fest zugeordnete Evasys-kurs ist ungültig!";
-$string['warning_invalid_extra'] = "Einer der zugeordneten Evasys-kurse ist ungültig";
-$string['warning_not_all_closed'] = "Einige Umfragen sind geöffnet, aber alle Umfragen sollten geschlossen sein.";
-$string['warning_not_all_open'] = "Einige Umfragen sind geschlossen, aber alle Umfragen sollten offen sein.";
-$string['warning_inconsistent_modes'] = "Diese Evaluation wurde bereits in einem anderen Modus gestartet";
