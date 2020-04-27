@@ -170,7 +170,7 @@ def checks_standardtimemode(standardtime, auto_mode, internal_state, recordstand
     """
     if not recordstandardtimemode == "norecordstandardtimemode":
         standardtime = 1 if recordstandardtimemode == "recordstandardtimemode" else 0
-    if standardtime == 1 and auto_mode == "manual" and (internal_state == "none" or internal_state == "notopened"):
+    if standardtime == 1 and (internal_state == "none" or internal_state == "notopened"):
         return standardtimemode_checks[1]
     return standardtimemode_checks[0]
 

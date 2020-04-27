@@ -83,13 +83,13 @@ class block_evasys_sync extends block_base{
         if ($ismodeautomated) {
             $this->page->requires->js_call_amd('block_evasys_sync/invite_manager', 'init');
         } else {
-            $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
 
             // Only use standardtime js if no record exists.
             if (!$record) {
                 $this->page->requires->js_call_amd('block_evasys_sync/standardtime', 'init');
             }
         }
+        $categoryhasstandardtime = \block_evasys_sync\evasys_synchronizer::get_standard_timemode($this->page->course->category);
         $evasyssynchronizer = new \block_evasys_sync\evasys_synchronizer($this->page->course->id);
         try {
             $evasyscourses = $evasyssynchronizer->get_courses_from_lsf();

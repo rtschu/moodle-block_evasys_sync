@@ -48,6 +48,8 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
     This Function will take the scenario parameters and construct the resulting checks.
     :return: The combined checks for the parameters.
     """
+    if not recordstandardtimemode == "norecordstandardtimemode":
+        standardtime = 1 if recordstandardtimemode == "recordstandardtimemode" else 0
     # If there are no mapped courses the Block not offer the option to "Show surveys"
     if (idnumber_state == "none") and (mapped_state == "none"):
         return "Then I should see \"Change mapping\"\n    And I should not see \"Name:\"\n    "
@@ -86,7 +88,8 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
             checks += "And I should see \"There are some closed surveys, but all surveys should be open.\"" + "\n"
 
     # if the standardtimemodecheckbox should be present from the start we also want to check that
-    checks += checks_standardtimemode(standardtime, mode, internal_state,  recordstandardtimemode) + "\n"
+    if not no_valid_mappings:
+        checks += checks_standardtimemode(standardtime, mode, internal_state,  recordstandardtimemode) + "\n"
     # if there are no students that are eligible to evaluate we want to output a warning
     checks += student_checks[students_state]
     checks = checks.replace("\n", "\n    ")
