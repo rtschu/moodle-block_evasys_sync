@@ -331,6 +331,27 @@ class behat_block_evasys_sync extends behat_base {
         $record->save();
     }
 
+    /**
+     * @Given the recordstandardtimemode for course :shortname is set to :value
+     */
+    public function the_recorstandardtime_for_course_is_set($shortname, $mode) {
+        global $DB;
+        $id = $this->get_courseid_by_shortname($shortname);
+        $record = \block_evasys_sync\course_evaluation_allocation::get_record_by_course($id, false);
+        if (!$record) {
+            $record = new \block_evasys_sync\course_evaluation_allocation(0);
+            $record->set('course', $id);
+        }
+        $record->set('usestandardtime', $mode == "true");
+        $record->save();
+    }
+
+    /**
+     * @Given the recordstandardtimemode for course :shortname is not set
+     */
+    public function the_recordstandardtimemode_for_course_is_not_set($shortname) {
+        return;
+    }
 
     /**
      * @Given no courses are mapped to course :shortname

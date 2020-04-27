@@ -63,6 +63,12 @@ step_internal_state = {
     "none": "And there is no internal record of course {{course}}"
 }
 
+step_record_standardtimemode = {
+    "norecordstandardtimemode": "And the recordstandardtimemode for course {{course}} is not set",
+    "recordstandardtimemode": "And the recordstandardtimemode for course {{course}} is set to true",
+    "recordnonstandardtimemode": "And the recordstandardtimemode for course {{course}} is set to false",
+}
+
 step_students_state = {
     "none": "And no students enrolled in course " + coursename,
     "onlytutors": "And only tutors enrolled in course " + coursename,
@@ -154,14 +160,16 @@ def step_mappedstate(state, openstate):
         return x
 
 
-def checks_standardtimemode(standardtime, auto_mode, internal_state, actual_state):
+def checks_standardtimemode(standardtime, auto_mode, internal_state, recordstandardtimemode):
     """
     The standardtimemode check is a little tricky since the checkbox showing is dependent on 3 states
     :param standardtime: standardtimemode
-    :param auto_mode: auto or manual mode
+    :param recordstandardtimemode: the recordstandardtimemode may overwrite the standardtimemode for the category
     :param internal_state: internal state
     :return: A string checking for the presence or absence of the standardtime checkbox
     """
+    if not recordstandardtimemode == "norecordstandardtimemode":
+        standardtime = 1 if recordstandardtimemode == "recordstandardtimemode" else 0
     if standardtime == 1 and auto_mode == "manual" and (internal_state == "none" or internal_state == "notopened"):
         return standardtimemode_checks[1]
     return standardtimemode_checks[0]

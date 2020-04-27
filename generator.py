@@ -15,20 +15,44 @@ OPTIONS = {
     "idnumber": ["none", "invalid", "one"],
     "mapped": ["none", "invalid", "one", "multi"],
     "internalstate": ["notopened", "opened", "closed", "manual", "none"],
-    "actualstate": ["open", "closed", "mixed"]
+    "actualstate": ["open", "closed", "mixed"],
+    "recordstandardtime": ["recordstandardtimemode", "recordnonstandardtimemode", "norecordstandardtimemode"]
 }
 
+ILLEGALSTATES = [
+    {"recordstandardtime": "recordstandardtimemode", "internalstate": "none"},
+    {"recordstandardtime": "recordnonstandardtimemode", "internalstate": "none"},
+    {"recordstandardtime": "norecordstandardtimemode", "internalstate": "notopened"},
+    {"recordstandardtime": "norecordstandardtimemode", "internalstate": "opened"},
+    {"recordstandardtime": "norecordstandardtimemode", "internalstate": "closed"},
+    {"recordstandardtime": "norecordstandardtimemode", "internalstate": "manual"},
+]
 
-def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+
+def illegal_state(scenario):
+    for fullillegalstate in ILLEGALSTATES:
+        illegal = True
+        for illegalstate in fullillegalstate.keys():
+            if scenario[list(OPTIONS.keys()).index(illegalstate)] != fullillegalstate[illegalstate]:
+                illegal = False
+                break
+        if illegal:
+            return True
+    if scenario[5] == "none" and scenario[7] != "norecordstandardtimemode":
+        print(scenario)
+    return False
+
+
+def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state, recordstandardtimemode):
     """
     This Function will take the scenario parameters and construct the resulting checks.
     :return: The combined checks for the parameters.
     """
-    checks = ""
     # If there are no mapped courses the Block not offer the option to "Show surveys"
     if (idnumber_state == "none") and (mapped_state == "none"):
         return "Then I should see \"Change mapping\"\n    And I should not see \"Name:\"\n    "
 
+    checks = ""
     # In all other cases (even if there are only invalid entries) we need to click the button to start code execution
     checks += "And I load the evasys block\n"
 
@@ -62,7 +86,7 @@ def get_checks(mode, standardtime, students_state, idnumber_state, mapped_state,
             checks += "And I should see \"There are some closed surveys, but all surveys should be open.\"" + "\n"
 
     # if the standardtimemodecheckbox should be present from the start we also want to check that
-    checks += checks_standardtimemode(standardtime, mode, internal_state, actual_state) + "\n"
+    checks += checks_standardtimemode(standardtime, mode, internal_state,  recordstandardtimemode) + "\n"
     # if there are no students that are eligible to evaluate we want to output a warning
     checks += student_checks[students_state]
     checks = checks.replace("\n", "\n    ")
@@ -136,13 +160,15 @@ def get_combi_sentence(set, dictionary, param_name):
 
 
 def get_combi_description(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
-                          actual_state):
+                          actual_state, recordstandardtimemode):
     """
     This will construct the description for a scenario that covers multiple states.
     :return: String the description of the scenario.
     """
     if "none" in mapped_state and "none" in idnumber_state:
         return "If there are no related evasys-courses I should not see any.\n    "
+    if not recordstandardtimemode == "norecordstandardtimemode":
+        standardtime = {1} if recordstandardtimemode == "recordstandardtimemode" else {0}
     description = ""
     description += get_combi_sentence(standardtime, standardtimemode_descriptions, "standardtime")
     description += get_combi_sentence(students_state, students_descriptions, "number of students")
@@ -153,7 +179,7 @@ def get_combi_description(mode, standardtime, students_state, idnumber_state, ma
     return description
 
 
-def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state):
+def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state, actual_state, recordstandardtimemode):
     """
     This constructs the actual scenario by building all courses, states etc.
     :return: string the combined enviroment specifiing string for a scenario
@@ -164,6 +190,7 @@ def get_scenario(mode, standardtime, students_state, idnumber_state, mapped_stat
     behat_scenario += step_idnumberstate(idnumber_state, actual_state)
     behat_scenario += step_mappedstate(mapped_state, actual_state)
     behat_scenario += step_internal_state[internal_state].replace("{{course}}", str(coursename)) + "\n"
+    behat_scenario += step_record_standardtimemode[recordstandardtimemode].replace("{{course}}", str(coursename)) + "\n"
     behat_scenario += "And I turn editing mode on\n"
     behat_scenario += "And I add the \"EvaSys Sync\" block\n"
     behat_scenario += "And I turn editing mode off\n"
@@ -246,6 +273,7 @@ def condense_keep_options(fullarray):
             if changed:
                 break
         fullarray = new_array
+
     return fullarray
 
 
@@ -278,7 +306,7 @@ def main():
     # get the checks for all options to be able to condense options with the same expected outcome
     uncondensed_dict = {}
     for scenario in cartesianoptions:
-        check = get_checks(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5], scenario[6])
+        check = get_checks(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5], scenario[6], scenario[7])
         if not check in uncondensed_dict.keys():
             uncondensed_dict[check] = []
         uncondensed_dict[check].append(scenario)
@@ -286,9 +314,12 @@ def main():
     # condense those scenarios
     condensed_dict = {}
     if CONDENSE_TESTS:
+        i = 0
         for check in uncondensed_dict.keys():
             scenarios = uncondensed_dict[check]
             condensed_dict[check] = condense_keep_options(scenarios)
+            i += 1
+            print("Condensed " + str(i) + " of " + str(len(uncondensed_dict.keys())))
     else:
         for check in uncondensed_dict.keys():
             fullarray = uncondensed_dict[check]
@@ -310,7 +341,7 @@ def main():
             # do a deep-copy of the scenario because sets can only be accessed by pop which alters the set itself
             scenario_copy = copy.deepcopy(scenario)
             desc = get_combi_description(scenario[0], scenario[1], scenario[2], scenario[3], scenario[4], scenario[5],
-                                         scenario[6])
+                                         scenario[6], scenario[7])
             mode = scenario_copy[0].pop()
             standardtime = scenario_copy[1].pop()
             students_state = scenario_copy[2].pop()
@@ -318,10 +349,34 @@ def main():
             mapped_state = scenario_copy[4].pop()
             internal_state = scenario_copy[5].pop()
             actual_state = scenario_copy[6].pop()
+            recordstandardtime = scenario_copy[7].pop()
             if actual_state == "mixed" and len(scenario_copy[6]) > 0:
                 actual_state = scenario_copy[6].pop()
+
+            corrected = True
+            illegal = False
+            illegals = []
+            while corrected:
+                corrected = False
+                if illegal_state([mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
+                                     actual_state, recordstandardtime]):
+                    corrected = True
+                    illegals.append([mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
+                                     actual_state, recordstandardtime])
+                    if len(scenario_copy[5]) >= 1:
+                        internal_state = scenario_copy[5].pop()
+                    elif len(scenario_copy[7]) >= 1:
+                        recordstandardtime = scenario_copy[7].pop()
+                    else:
+                        if len(illegals) > 1:
+                            print("Illegal multiscenario")
+                            print(illegals)
+                        illegal = True
+                        corrected = False
+            if illegal:
+                continue
             scen_text = get_scenario(mode, standardtime, students_state, idnumber_state, mapped_state, internal_state,
-                                     actual_state)
+                                     actual_state, recordstandardtime)
             if not scen_text:
                 print("Warning impossible scenario!!!")
                 continue
