@@ -311,7 +311,6 @@ class evasys_inviter {
             $parents = \core_course_category::get($category)->get_parents();
             for ($i = count($parents) - 1; $i >= 0; $i--) {
                 $mode = $DB->get_record('block_evasys_sync_categories', array('course_category' => $parents[$i]));
-                var_dump($mode);
                 if ($mode !== false) {
                     return (bool) $mode->category_mode;
                 }
