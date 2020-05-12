@@ -47,6 +47,7 @@ $string['activate_standard_time'] = "Standardzeitraum verwenden";
 $string['standard_period'] = "Standard-Evaluationszeitraum:";
 $string['different_period'] = "Abweichender Evaluationszeitraum:";
 $string['time_set'] = "Standard-Evaluationszeitraum gesetzt";
+$string['evasys_sync:modifymapping'] = "Zugeordnete Evasys-Kurse bearbeiten";
 
 // Multi allocation strings.
 

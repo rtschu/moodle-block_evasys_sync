@@ -46,6 +46,7 @@ $string['standard_period'] = "Standard evaluationperiod:";
 $string['different_period'] = "Exceptional evaluationperiod:";
 $string['activate_nonstandard_time'] = "Alter evaluationperiod for special courses";
 $string['time_set'] = "Standard evaluationperiod set";
+$string['evasys_sync:modifymapping'] = "Map and unmap Evasys courses to moodle courses.";
 
 // Multi allocation strings.
 
